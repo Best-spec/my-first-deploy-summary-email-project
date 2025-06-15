@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}File Manager{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% block extra_css %}
+    <style>
+        /* Custom scrollbar styles */
+        .file-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .file-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .file-list::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 3px;
+        }
+
+        .file-list::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+    </style>
+    {% endblock %}
+</head>
+<body class="font-sans bg-[#f9fafb]">
+    {% block content %}{% endblock %}
+    
+    {% block extra_js %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'js/script.js' %}" type="module"></script>
+    {% endblock %}
+</body>
+</html>

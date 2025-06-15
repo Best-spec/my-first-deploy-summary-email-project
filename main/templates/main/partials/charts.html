@@ -1,0 +1,108 @@
+<div id="showchart" class="grid grid-cols-3 gap-8 m-10">  
+    <div class="bg-white rounded-xl shadow-xl p-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">bar chart</h3>
+        <canvas id="quarterlyChart" height="300"></canvas>
+         <!-- <div class="bg-black rounded-xl shadow-xl p-6 h-30"></div> -->
+    </div>
+    <div class="bg-white rounded-xl shadow-xl p-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Pie chart</h3>
+        <canvas id="categoryChart" height="300"></canvas>
+    </div>
+</div>
+<!--  -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ข้อมูลปลอมสำหรับกราฟ
+    const quarterlyData = {
+        labels: ['มค-มีค 24', 'เมย-มิย 24', 'กค-กย 24', 'ตค-ธค 24'],
+    datasets: [{
+            label: 'ยอดขาย',
+            data: [15.2, 18.7, 22.3, 25.8], // ข้อมูลปลอม หน่วยล้านบาท
+            backgroundColor: 'rgb(59, 130, 246)',
+            borderWidth: 0
+        }, {
+            label: 'กำไรสุทธิ',
+            data: [3.8, 4.5, 5.2, 6.1], // ข้อมูลปลอม หน่วยล้านบาท
+            backgroundColor: 'rgb(34, 197, 94)',
+            borderWidth: 0
+        }]
+    };
+
+    const categoryData = {
+        labels: [
+            'เครื่องใช้ไฟฟ้า',
+            'เครื่องประดับ',
+            'เฟอร์นิเจอร์',
+            'เสื้อผ้า',
+            'อาหารและเครื่องดื่ม'
+        ],
+        datasets: [{
+            data: [35, 25, 20, 15, 5], // เปอร์เซ็นต์
+            backgroundColor: [
+                'rgb(59, 130, 246)',   // น้ำเงิน
+                'rgb(249, 115, 22)',   // ส้ม
+                'rgb(234, 179, 8)',    // เหลือง
+                'rgb(34, 197, 94)',    // เขียว
+                'rgb(168, 85, 247)'    // ม่วง
+            ]
+        }]
+    };    // สร้างกราฟแท่งผลการดำเนินงาน
+    new Chart(document.getElementById('quarterlyChart'), {
+        type: 'bar',
+        data: quarterlyData,
+        options: {
+            responsive: true,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'ผลประกอบการปี 2024'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': ' + context.parsed.y.toLocaleString('th-TH') + ' ล้านบาท';
+                        }
+                    }
+                }
+            },
+            barPercentage: 0.8,
+            categoryPercentage: 0.9,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString('th-TH') + ' ล้านบาท';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // สร้างกราฟสัดส่วนประเภท
+    new Chart(document.getElementById('categoryChart'), {
+        type: 'doughnut',
+        data: categoryData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.label + ': ' + context.parsed + '%';
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
