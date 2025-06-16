@@ -24,9 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-um71wk-_pvdlwnxt4*ys@zxj!!hmv6e3$-em@l(8ep)o-jlln$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['summary-inquiry.onrender.com']
+ALLOWED_HOSTS = ['summary-inquiry.onrender.com','127.0.0.1']
+# ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -131,3 +132,8 @@ CSRF_COOKIE_HTTPONLY = False  # False since we need to access it from JavaScript
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login/'
+

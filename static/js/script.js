@@ -64,56 +64,62 @@ function handleDrop(e) {
 }
 
 function handleFileSelect(e) {
+    console.log('input id:', e.target.id); // ต้องเป็น fileInput
     const files = e.target.files;
+    console.log(files); // ดูว่าเป็น FileList จริงมั้ย
     handleFiles(files);
 }
 
 function handleFiles(files) {
+    // console.log('okkk')
     // Show loading state
-    const dropZone = document.getElementById('dropZone');
-    const originalDropZoneContent = dropZone.innerHTML;
-    dropZone.innerHTML = `
-        <div class="text-center">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
-            <div class="text-gray-600">กำลังอัปโหลด...</div>
-        </div>
-    `;
-
+    // const dropZone = document.getElementById('dropZone');
+    // const originalDropZoneContent = dropZone.innerHTML;
+    // dropZone.innerHTML = `
+    //     <div class="text-center">
+    //         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+    //         <div class="text-gray-600">กำลังอัปโหลด...</div>
+    //     </div>
+    // `;
+    for (const file of files) {
+        console.log(file.name);
+    }
     const formData = new FormData();
     [...files].forEach(file => formData.append('files', file));
+    
 
-    fetch('/upload/', {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': csrftoken
-        },
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Update with all files from server
-            uploadedFiles = data.allFiles;
-            updateFileList();
+    // fetch('/upload/', {
+    //     method: 'POST',
+    //     headers: {
+    //         'X-CSRFToken': csrftoken
+    //     },
+    //     body: formData
+    // })
+    // .then(response => response.json())
+    // .then(data => {
+    //     if (data.success) {
+    //         // Update with all files from server
+    //         uploadedFiles = data.allFiles;
+    //         updateFileList();
             
-            // Restore drop zone
-            dropZone.innerHTML = originalDropZoneContent;
+    //         // Restore drop zone
+    //         dropZone.innerHTML = originalDropZoneContent;
             
-            // Show success message
-            showErrorToast('อัปโหลดไฟล์สำเร็จ', 'success');
-        } else {
-            throw new Error(data.error || 'เกิดข้อผิดพลาดในการอัปโหลด');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
+    //         // Show success message
+    //         showErrorToast('อัปโหลดไฟล์สำเร็จ', 'success');
+    //     } else {
+    //         throw new Error(data.error || 'เกิดข้อผิดพลาดในการอัปโหลด');
+    //     }
+    // })
+    // .catch(error => {
+    //     console.error('Error:', error);
         
-        // Restore drop zone
-        dropZone.innerHTML = originalDropZoneContent;
+    //     // Restore drop zone
+    //     dropZone.innerHTML = originalDropZoneContent;
         
-        // Show error message
-        showErrorToast(error.message || 'เกิดข้อผิดพลาดในการอัปโหลด', 'error');
-    });
+    //     // Show error message
+    //     showErrorToast(error.message || 'เกิดข้อผิดพลาดในการอัปโหลด', 'error');
+    // });
 }
 
 function updateFileList() {
@@ -254,11 +260,16 @@ function handleAnalyze(actionId) {
 
 // Initialize handlers when document is ready
 document.addEventListener('DOMContentLoaded', function() {
+    // handleFileSelect();
     // initializeDropZone();
-    // initializeFileInput();
+    initializeFileInput();
     // initializeCharts();
     // initializeDeleteHandlers();
     // handleAnalyze();
+    const input = document.getElementById('fileInput');
+    input.addEventListener('change', (e) => {
+      
+    });
 
     const actionButtons = document.querySelectorAll('.analyze-btn');
 

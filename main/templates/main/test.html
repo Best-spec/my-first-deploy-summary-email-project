@@ -150,6 +150,19 @@
         updateFileCount();
     }
 
+    function uploadToModels(file) {
+        const fil = file;
+        console.log('เลือกไฟล์แล้ว', fil);
+        if (fil.length === 0) {
+            console.log('ยังไม่มีไฟล์...');
+        } else {
+            for (let f of fil) {
+            console.log('ชื่อไฟล์:', f.name);
+            }
+        }
+        
+    }
+
     function deleteFile(fileId) {
         const fileElement = document.querySelector(`[data-file-id="${fileId}"]`);
         if (fileElement) {
@@ -206,6 +219,7 @@
     document.getElementById('fileInput').addEventListener('change', async (e) => {
         const selectedFiles = Array.from(e.target.files);
         selectedFiles.forEach(file => addFile(file));
+        uploadToModels(selectedFiles);
         e.target.value = ''; // เคลียร์ input
     });
 
