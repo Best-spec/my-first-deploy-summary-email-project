@@ -18,7 +18,6 @@ def index(request):
     context = {
         'files': files,
         'analysis_actions': constants.ANALYSIS_ACTIONS.values(),
-        'sales_data': constants.sales_data
     }
     return render(request, 'main/index.html', context)
 
@@ -73,15 +72,19 @@ def upload_file(request):
     })
 
 @require_POST
-def delete_file(request, file_id):
-    file_id = int(file_id)  # Ensure file_id is an integer
+def delete_uploaded_file(request):
+    file_id = request.POST.get('file_id')
+
+    if not file_id:
+        return JsonResponse({'success': False, 'message': 'Missing file ID'})
+
     try:
         file = UploadedFile.objects.get(id=file_id)
-        file.file.delete()  # ลบจาก disk
-        file.delete()       # ลบจาก database
-        return JsonResponse({'status': 'ok'})
+        file.file.delete()  # ลบไฟล์จริงจาก disk ด้วย
+        file.delete()       # ลบ record ออกจาก database
+        return JsonResponse({'success': True})
     except UploadedFile.DoesNotExist:
-        return JsonResponse({'error': 'File not found'}, status=404)
+        return JsonResponse({'success': False, 'message': 'File not found'})
 
 def showtest(request):
     return render(request, 'main/test.html')

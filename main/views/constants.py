@@ -1,45 +1,62 @@
+from .inquiry import find_inquiry
+from .appointment import find_Appointment
+from .feedback_package import find_FeedbackAndPackage
+from .plot_all import find_PlotAll
+from .top_center import find_TopCenter
+from .total_month import find_TotalMonth
+from django.http import JsonResponse
 
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
 
 ANALYSIS_ACTIONS = {
-    'inquiry': {'id': 'inquiry', 'name': 'Inquiry', 'color': 'blue', 'icon': '💬'},
-    'appointment': {'id': 'appointment', 'name': 'Appointment', 'color': 'green', 'icon': '📅'},
-    'feedback': {'id': 'feedback', 'name': 'Feedback', 'color': 'purple', 'icon': '❤️'},
-    'plot-all': {'id': 'plot-all', 'name': 'Plot All', 'color': 'orange', 'icon': '📊'},
-    'top-center': {'id': 'top-center', 'name': 'Top Center', 'color': 'red', 'icon': '⭐'},
-    'total-month': {'id': 'total-month', 'name': 'Total Month', 'color': 'teal', 'icon': '📈'},
+    'inquiry': {
+        'id': 'inquiry', 'name': 'Inquiry', 'color': 'blue', 'icon': '💬',
+        'function': find_inquiry
+    },
+    'appointment': {
+        'id': 'appointment', 'name': 'Appointment', 'color': 'green', 'icon': '📅',
+        'function': find_Appointment
+    },
+    'feedback': {
+        'id': 'feedback', 'name': 'Feedback', 'color': 'purple', 'icon': '❤️',
+        'function': find_FeedbackAndPackage
+    },
+    'plot-all': {
+        'id': 'plot-all', 'name': 'Plot All', 'color': 'orange', 'icon': '📊',
+        'function': find_PlotAll
+    },
+    'top-center': {
+        'id': 'top-center', 'name': 'Top Center', 'color': 'red', 'icon': '⭐',
+        'function': find_TopCenter
+    },
+    'total-month': {
+        'id': 'total-month', 'name': 'Total Month', 'color': 'teal', 'icon': '📈',
+        'function': find_TotalMonth
+    },
 }
 
-sales_data = [
-    {
-    'name': 'เครื่องใช้ไฟฟ้า',
-    'icon': '🔌',
-    'sales': '2,458,000',
-    'profit': '425,000',
-    'growth_rate': 12.8,
-    'growth_positive': True
-    },
-    {
-    'name': 'เสื้อผ้า',
-    'icon': '👕',
-    'sales': '1,850,000',
-    'profit': '380,000',
-    'growth_rate': 8.5,
-    'growth_positive': True
-    },
-    {
-    'name': 'อาหาร',
-    'icon': '🍔',
-    'sales': '3,200,000',
-    'profit': '640,000',
-    'growth_rate': -2.3,
-    'growth_positive': False
-    },
-    {
-    'name': 'เครื่องสำอาง',
-    'icon': '💄',
-    'sales': '950,000',
-    'profit': '285,000',
-    'growth_rate': 15.2,
-    'growth_positive': True
-    }
-    ]
+@csrf_exempt
+def analyze(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Only POST method is allowed'}, status=405)
+
+    try:
+        body = json.loads(request.body)
+        action_id = body.get('action_id')
+
+        action = ANALYSIS_ACTIONS.get(action_id)
+        if not action:
+            return JsonResponse({'error': f'Invalid action_id: {action_id}'}, status=400)
+
+        # ดึงฟังก์ชันแล้วเรียกใช้
+        func = action.get('function')
+        if not func:
+            return JsonResponse({'error': f'No function defined for {action_id}'}, status=500)
+
+        data = func()
+        return JsonResponse({'data': data})
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
