@@ -1,127 +1,126 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // ข้อมูลสำหรับกราฟผลประกอบการรายไตรมาส
-    const quarterlyData = {
-        labels: ['มค-มีค 24', 'เมย-มิย 24', 'กค-กย 24', 'ตค-ธค 24'],
-        datasets: [{
-            label: 'ยอดขาย',
-            data: [15.2, 18.7, 22.3, 25.8],
-            borderColor: 'rgb(59, 130, 246)',
-            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-            tension: 0.3,
-            fill: true
-        }, {
-            label: 'กำไรสุทธิ',
-            data: [3.8, 4.5, 5.2, 6.1],
-            borderColor: 'rgb(34, 197, 94)',
-            backgroundColor: 'rgba(34, 197, 94, 0.1)',
-            tension: 0.3,
-            fill: true
-        }]
-    };
+let autoChartInstance = null;
 
-    // ข้อมูลสำหรับกราฟวงกลม
-    const categoryData = {
-        labels: [
-            'เครื่องใช้ไฟฟ้า',
-            'เครื่องประดับ',
-            'เฟอร์นิเจอร์',
-            'เสื้อผ้า',
-            'อาหารและเครื่องดื่ม'
-        ],
-        datasets: [{
-            data: [35, 25, 20, 15, 5],
-            backgroundColor: [
-                'rgb(59, 130, 246)',   // น้ำเงิน
-                'rgb(34, 197, 94)',    // เขียว
-                'rgb(245, 158, 11)',   // ส้ม
-                'rgb(239, 68, 68)',    // แดง
-                'rgb(107, 114, 128)'   // เทา
-            ]
-        }]
-    };
+export function renderAutoChart(data, canvasId = 'barChart') {
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    console.error('📉 No data provided');
+    return;
+  }
 
-    // สร้างกราฟเส้นแสดงผลประกอบการรายไตรมาส
-    const quarterlyCtx = document.getElementById('quarterlyChart');
-    if (quarterlyCtx) {
-        new Chart(quarterlyCtx, {
-            type: 'line',
-            data: quarterlyData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    title: {
-                        display: false
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        callbacks: {
-                            label: function(context) {
-                                let value = context.parsed.y;
-                                return context.dataset.label + ': ' + 
-                                    value.toLocaleString('th-TH', {
-                                        minimumFractionDigits: 1,
-                                        maximumFractionDigits: 1
-                                    }) + ' ล้านบาท';
-                            }
-                        }
-                    }
-                },
-                hover: {
-                    mode: 'nearest',
-                    intersect: false
-                },
-                scales: {
-                    x: {
-                        grid: {
-                            display: false
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return value.toLocaleString('th-TH') + ' ล้าน';
-                            }
-                        },
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.1)'
-                        }
-                    }
-                }
-            }
-        });
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) {
+    console.error(`🛑 Canvas with id "${canvasId}" not found`);
+    return;
+  }
+
+  const ctx = canvas.getContext('2d');
+
+  // เคลียร์ chart เดิมถ้ามี
+  if (autoChartInstance) {
+    autoChartInstance.destroy();
+  }
+
+  const keys = Object.keys(data[0]);
+  if (keys.length < 2) {
+    console.error('❗ Data must have at least 2 fields');
+    return;
+  }
+
+  const xKey = keys[0]; // สมมุติ key แรกเป็น x-axis
+  const yKeys = keys.slice(1); // ที่เหลือคือข้อมูลที่ plot
+
+  const labels = data.map(d => d[xKey]);
+
+  const colors = [
+    '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#F87171', '#34D399'
+  ];
+
+  const datasets = yKeys.map((key, i) => ({
+    label: key.replace(/_/g, ' ').toUpperCase(),
+    data: data.map(d => d[key]),
+    backgroundColor: colors[i % colors.length],
+    borderColor: colors[i % colors.length],
+    borderWidth: 1
+  }));
+
+  autoChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        title: {
+          display: true,
+          text: `Auto Chart: ${yKeys.join(', ')} by ${xKey}`
+        }
+      },
+      scales: {
+        y: { beginAtZero: true }
+      }
     }
+  });
+}
 
-    // สร้างกราฟวงกลมแสดงสัดส่วนประเภทสินค้า
-    const categoryCtx = document.getElementById('categoryChart');
-    if (categoryCtx) {
-        new Chart(categoryCtx, {
-            type: 'doughnut',
-            data: categoryData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'right',
-                        labels: {
-                            font: {
-                                size: 12
-                            },
-                            padding: 15
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.label + ': ' + context.raw + '%';
-                            }
-                        }
-                    }
-                }
-            }
-        });
+let pieInstance = null;
+
+export function renderAutoPieChart(data, canvasId = 'myPieChart') {
+  if (!data || data.length === 0) {
+    console.error('📉 ไม่มีข้อมูล');
+    return;
+  }
+
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) {
+    console.error(`🛑 ไม่เจอ canvas id "${canvasId}"`);
+    return;
+  }
+
+  const ctx = canvas.getContext('2d');
+
+  if (pieInstance) pieInstance.destroy();
+
+  const keys = Object.keys(data[0]);
+  if (keys.length < 2) {
+    console.error('❗ Data ต้องมีอย่างน้อย 2 field');
+    return;
+  }
+
+  const labelKey = keys[0];      // อันแรกใช้เป็น label (เช่น "language")
+  const valueKey = keys[1];      // อันถัดมาใช้เป็น value (เช่น "total")
+
+  const labels = data.map(d => d[labelKey]);
+  const values = data.map(d => d[valueKey]);
+
+  const colors = [
+    '#60A5FA', '#34D399', '#FBBF24', '#F87171',
+    '#A78BFA', '#F472B6', '#FCD34D', '#4ADE80'
+  ];
+
+  pieInstance = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels,
+      datasets: [{
+        label: valueKey.toUpperCase(),
+        data: values,
+        backgroundColor: colors.slice(0, values.length),
+        borderWidth: 1,
+        borderColor: '#fff'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' },
+        title: {
+          display: true,
+          text: `Pie Chart: ${valueKey.replace(/_/g, ' ')} by ${labelKey}`
+        }
+      }
     }
-});
+  });
+}
+
