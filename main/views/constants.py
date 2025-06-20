@@ -1,7 +1,7 @@
 from .inquiry import find_inquiry
-from .appointment import find_Appointment
-from .feedback_package import find_FeedbackAndPackage
-from .plot_all import find_PlotAll
+from .appointment import find_appointment
+from .feedback_package import find_FeedbackAndPackage, FPtotal
+from .plot_all import aggregate_summary_for_plot
 from .top_center import find_TopCenter
 from .total_month import find_TotalMonth
 from django.http import JsonResponse
@@ -17,7 +17,7 @@ ANALYSIS_ACTIONS = {
     },
     'appointment': {
         'id': 'appointment', 'name': 'Appointment', 'color': 'green', 'icon': '📅',
-        'function': find_Appointment
+        'function': find_appointment
     },
     'feedback': {
         'id': 'feedback', 'name': 'Feedback', 'color': 'purple', 'icon': '❤️',
@@ -25,7 +25,7 @@ ANALYSIS_ACTIONS = {
     },
     'plot-all': {
         'id': 'plot-all', 'name': 'Plot All', 'color': 'orange', 'icon': '📊',
-        'function': find_PlotAll
+        'function': aggregate_summary_for_plot
     },
     'top-center': {
         'id': 'top-center', 'name': 'Top Center', 'color': 'red', 'icon': '⭐',

@@ -18,41 +18,31 @@ export async function fetchDataAndRender(actionId) {
 
 
     const result = await res.json();
-    const realData = result.data[0];
-    const data_chart = result.data[1];
-    console.log(data_chart)
+    let realData;
+    let data_chart;
+    let data;
 
-    // if (Array.isArray(result.data)) {
-    //   // data เป็น array
-    //   const dataLength = result.data.length;
-    //   console.log("Data is array, length:", dataLength);
+    if (Array.isArray(result.data)) {
+      // data เป็น array
+      const dataLength = result.data.length;
+      console.log("Data is array, length:", dataLength);
 
-    //   if (dataLength === 1) {
-    //     const realData = result.data[0];
-    //     console.log("Only realData:", realData);
-    //   } else if (dataLength === 2) {
-    //     const realData = result.data[0];
-    //     const data_chart = result.data[1];
-    //     console.log("Real:", realData, "Chart:", data_chart);
-    //   }
-
-    // } else if (typeof result.data === 'object') {
-    //   // data เป็น object
-    //   const keys = Object.keys(result.data);
-    //   console.log("Data is object, keys:", keys);
-
-    //   if (keys.length === 1) {
-    //     const [key] = keys;
-    //     const value = result.data[key];
-    //     console.log("Only 1 key in object:", key, value);
-    //   } else {
-    //     // จัดการ object หลาย key
-    //   }
-    // } else {
-    //   console.warn("Unknown data format:", result.data);
-    // }
-
-    const data = realData;
+      if (dataLength === 1) {
+        realData = result.data[0];
+        renderAutoChart(realData);
+        renderAutoPieChart(realData);
+        data = realData;
+        console.log("is one var", result.data)
+      } else if (dataLength === 2) {
+        realData = result.data[0];
+        data_chart = result.data[1];
+        data = realData;
+        renderAutoPieChart(realData);
+        renderAutoChart(data_chart);
+        console.log("is two var",result.data)
+      } else {
+        console.warn("Unknown data format:", result.data);
+        }
 
     if (!data || data.length === 0) {
       document.getElementById('header-row').innerHTML = `
@@ -75,33 +65,31 @@ export async function fetchDataAndRender(actionId) {
     document.getElementById('header-row').innerHTML = headerHtml;
 
     // 🟢 Rows
-  const rowsHtml = data.map(row => {
-    const cells = headers.map(key => {
-      let value = row[key];
+    const rowsHtml = data.map(row => {
+      const cells = headers.map(key => {
+        let value = row[key];
 
-      // 🔧 Custom display
-      if (typeof value === 'number' && key.includes('cost')) {
-        value = `฿ ${value}`;
-      } else if (typeof value === 'number' && key.includes('contact')) {
-        value = `<span class="px-2 py-0.5 rounded-full text-sm bg-green-100 text-green-800">↑ ${value}%</span>`;
-      } else if (key === 'total') {
-        value = `<span class="px-2 py-0.5 rounded-full text-sm bg-gray-200 text-gray-800 font-bold">${value}</span>`;
-      }
+        // 🔧 Custom display
+        if (typeof value === 'number' && key.includes('cost')) {
+          value = `฿ ${value}`;
+        } else if (typeof value === 'number' && key.includes('contact')) {
+          value = `<span class="px-2 py-0.5 rounded-full text-sm bg-green-100 text-green-800">↑ ${value}%</span>`;
+        } else if (key === 'total') {
+          value = `<span class="px-2 py-0.5 rounded-full text-sm bg-gray-200 text-gray-800 font-bold">${value}</span>`;
+        }
 
-      return `<div class="text-center flex items-center justify-center">${value}</div>`;
+        return `<div class="text-center flex items-center justify-center">${value}</div>`;
+      }).join('');
+
+      return `<div class="${gridClass} p-4 hover:bg-gray-50 transition-colors">${cells}</div>`;
     }).join('');
 
-    return `<div class="${gridClass} p-4 hover:bg-gray-50 transition-colors">${cells}</div>`;
-  }).join('');
+    document.getElementById('data-rows').innerHTML = rowsHtml;
 
-  document.getElementById('data-rows').innerHTML = rowsHtml;
-
-    // renderChart(realData);
-    // renderPieChart(realData);
-    renderAutoChart(data_chart);
-    renderAutoPieChart(realData);
-    console.log(realData);
-
+    data = '';
+    realData = '';
+    data_chart = '';
+  }
   } catch (error) {
     console.error(error);
     document.getElementById('header-row').innerHTML = `
@@ -109,6 +97,7 @@ export async function fetchDataAndRender(actionId) {
     `;
   }
 }
+
 
 export function initAnalyzeButtons() {
   const buttons = document.querySelectorAll('.analyze-btn');

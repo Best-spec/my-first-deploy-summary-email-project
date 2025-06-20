@@ -29,7 +29,6 @@ let files = [];
 let fileIdCounter = 1;
 
 function updateFileCount() {
-    console.log('from updatacount',files)
     const fileCount = document.getElementById('fileCount');
     fileCount.textContent = files.length;
     
@@ -116,7 +115,6 @@ async function uploadToModels(files) {
 
         const data = await response.json();
         if (data.success) {
-            console.log('อัปโหลดสำเร็จ:', data.files);
             showSuccessToast('อัปโหลดเสร็จเรียบร้อย');
         } else {
             console.error('อัปโหลดไม่สำเร็จ:', data.error);
@@ -136,14 +134,8 @@ async function loadFiles() {
         if (!data.success) {
             showErrorToast('ดึงรายชื่อไฟล์ไม่สำเร็จ');
             return;
-        } else {
-            console.log(data.output)
-            console.log(data.files)
         }
-
         files = data.files;
-        console.log('form load files',files)
-
         
 
     } catch (err) {
@@ -157,7 +149,6 @@ function renderFiles() {
     fileItems.innerHTML = '';
 
     files.forEach(file => {
-        console.log(file.name)
         const fileElement = document.createElement('div');
         fileElement.className = 'file-item mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 fade-in';
         fileElement.setAttribute('data-file-id', file.id);
@@ -184,7 +175,6 @@ function renderFiles() {
 
         fileItems.appendChild(fileElement);
     });
-    console.log(123231)
 
 }
 
@@ -251,16 +241,13 @@ function analyzeAll() {
   fetch('/analyze-all/')
     .then(res => res.json())
     .then(data => {
-        console.log(data)
       if (data.success) {
-        // console.log("ผลลัพธ์ทั้งหมด:", data.results)
         // document.getElementById('kpi-container').innerHTML = data.results;
         // มึงจะโชว์ตารางหรือกราฟก็ได้ตรงนี้
       } else {
         showErrorToast("เกิดข้อผิดพลาด ดึงข้อมูลไม่ได้", "red")
       }
     })
-    console.log('ปุ่มทํางานอยู่')
 }
 
 window.analyzeAll = analyzeAll;
