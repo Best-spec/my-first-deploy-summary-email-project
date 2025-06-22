@@ -26,6 +26,7 @@ export async function fetchDataAndRender(actionId) {
       // data เป็น array
       const dataLength = result.data.length;
       console.log("Data is array, length:", dataLength);
+      // console.log("Data content:", result);
 
       if (dataLength === 1) {
         realData = result.data[0];

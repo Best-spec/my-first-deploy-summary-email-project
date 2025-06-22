@@ -91,23 +91,6 @@ def showtest(request):
 
 def showDF_file(request):
     try:
-        # results = []
-        # for file in UploadedFile.objects.all():
-        #     if file.name.endswith('.csv'): 
-        #         df = pd.read_csv(file.file)  
-        #     elif file.name.endswith(('.xls', '.xlsx')):
-        #         df = pd.read_excel(file.file)
-        #     else:
-        #         raise ValueError(f'Unsupported file type: {file.name}')
-
-        #     df = df.where(pd.notnull(df), None)  # ✅ แปลง NaN เป็น None
-        #     results.append({
-        #         'data': df.to_dict(orient='records'),
-        #         'columns': df.columns.tolist(),
-        #         'rows': len(df)
-        #     })
-        # df = df.where(pd.notnull(df), None)
-        # results = df.to_dict(orient='records')
         results = "จาก back"
         return JsonResponse({'success': True, 'results': results})
 

@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from collections import defaultdict
 
 from .inquiry import find_inquiry
-from .appointment import find_appointment
+from .appointment import find_appointment_summary
 from .feedback_package import FPtotal
 
 json_temp = [
@@ -19,18 +19,23 @@ json_temp = [
 
 def aggregate_summary_for_plot():
     try:
-        # raw, summary = find_inquiry()            # dict ภาษา-> dict category-> count
+        raw, summary = find_inquiry()        # dict ภาษา-> dict category-> count
         summaryFeed = FPtotal()
-        # summaryAppointment = find_appointment()  # dict ภาษา-> count fields
+        summaryAppointment = find_appointment_summary()  # dict ภาษา-> count fields
 
-        index1 = summaryFeed[0].get('General Inquiry')
-        index2 = summaryFeed[0].get('Estimated Cost')
-        index3 = summaryFeed[0].get('Other')
-        index4 = summaryFeed[0].get('Contact My Doctor at Bangkok Hospital Pattaya')
+        # print("raw:", raw)
+        # print("summary:", summary)
+        # print("summaryFeed:", summaryFeed)
+        # print("summaryAppointment:", summaryAppointment)
+
+        index1 = summary[0].get('General Inquiry')
+        index2 = summary[0].get('Estimated Cost')
+        index3 = summary[0].get('Other')
+        index4 = summary[0].get('Contact My Doctor at Bangkok Hospital Pattaya')
         index5 = summaryFeed[0].get('Packages')
         index6 = summaryFeed[0].get('Feedback')
-        index7 = summaryFeed[0].get('Appointment')
-        index8 = summaryFeed[0].get('Appointment Recommended')
+        index7 = summaryAppointment[0].get('appointment count')
+        index8 = summaryAppointment[0].get('appointment recommended count')
         index9 = summaryFeed[0].get('Web Commerce')
 
         json_temp = [
@@ -47,8 +52,8 @@ def aggregate_summary_for_plot():
                 }
         ];
 
-        print(json_temp)
-        # return [categories_list, counts]
+        # print(json_temp)
+        return [json_temp]
         
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)

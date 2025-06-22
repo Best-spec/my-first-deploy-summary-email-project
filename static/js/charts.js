@@ -3,6 +3,7 @@ let autoChartInstance = null;
 export function renderAutoChart(data, canvasId = 'barChart') {
   if (!data || !Array.isArray(data) || data.length === 0) {
     console.error('📉 No data provided');
+    // console.log(data);
     return;
   }
 

@@ -10,6 +10,7 @@ import pandas as pd
 import glob
 import os
 
+total_all_col_rec, total_all_col = 0, 0
 def find_appointment():
     try:
         folder = "media/uploads"
@@ -24,7 +25,7 @@ def find_appointment():
             "zh": "Chinese"
         }
         lang_summary = {lang: {"appointment count": 0, "appointment recommended count": 0} for lang in langs}
-        total_all_col_rec, total_all_col = 0, 0
+        # total_all_col_rec, total_all_col = 0, 0
 
         # อ่านไฟล์ recommended
         recommended_files = glob.glob(os.path.join(folder, "*appointment-recommended*.csv"))
@@ -82,3 +83,15 @@ def find_appointment():
     except Exception as e:
         print("🔥 ERROR:", e)
         return []
+    
+
+def find_appointment_summary():
+    try:
+
+        return [{
+            "appointment count": total_all_col,
+            "appointment recommended count": total_all_col_rec
+        }]
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
