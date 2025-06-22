@@ -1,21 +1,41 @@
-# Python
-*.py[cod]
+# Byte-compiled / optimized / DLL files
 __pycache__/
-*.log
+*.py[cod]
+*$py.class
 
-# Django
-*.sqlite3
-*.db
-/media/
-*.pot
-
-# Venv
-env/
+# Virtual environment
 .venv/
+venv/
+ENV/
+env/
 
-# IDE
+# Django stuff:
+*.log
+*.pot
+*.pyc
+*.pyo
+*.db
+*.sqlite3
+db.sqlite3
+
+# Media / file uploads
+/media/
+*.media
+
+# Static file dumps
+/staticfiles/
+staticfiles/
+
+# VS Code
 .vscode/
-.idea/
 
-# Secrets
+# Mac / Windows junk
+.DS_Store
+Thumbs.db
+
+# Python dotenv environment file
 .env
+
+# migrations if you want to reset sometimes (optional)
+**/migrations/*.pyc
+**/migrations/__pycache__/

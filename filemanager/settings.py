@@ -12,19 +12,25 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+DEBUG = os.getenv("DEBUG") == "True"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(os.path.join(BASE_DIR, ".env"))  # โหลดไฟล์ .env
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-um71wk-_pvdlwnxt4*ys@zxj!!hmv6e3$-em@l(8ep)o-jlln$'
+# SECRET_KEY = 'django-insecure-um71wk-_pvdlwnxt4*ys@zxj!!hmv6e3$-em@l(8ep)o-jlln$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
 ALLOWED_HOSTS = ['summary-inquiry.onrender.com','127.0.0.1']
 # ALLOWED_HOSTS = []
