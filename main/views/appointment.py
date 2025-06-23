@@ -3,16 +3,18 @@ from main.models import UploadedFile
 from pathlib import Path
 from collections import defaultdict
 import pandas as pd
-
-from pathlib import Path
-from collections import defaultdict
-import pandas as pd
 import glob
 import os
 
-total_all_col_rec, total_all_col = 0, 0
+
+appointment_summary_shared = {
+    "appointment count": 0,
+    "appointment recommended count": 0
+}
 def find_appointment():
     try:
+        global appointment_summary_shared
+
         folder = "media/uploads"
         folder_path = Path(folder)
         langs = ["ar", "de", "en", "ru", "th", "zh"]
@@ -25,7 +27,8 @@ def find_appointment():
             "zh": "Chinese"
         }
         lang_summary = {lang: {"appointment count": 0, "appointment recommended count": 0} for lang in langs}
-        # total_all_col_rec, total_all_col = 0, 0
+        total_all_col_rec, total_all_col = 0, 0
+
 
         # อ่านไฟล์ recommended
         recommended_files = glob.glob(os.path.join(folder, "*appointment-recommended*.csv"))
@@ -68,6 +71,9 @@ def find_appointment():
                 "Total": data["appointment count"] + data["appointment recommended count"]
             }
             appointment.append(entry)
+        
+        appointment_summary_shared["appointment count"] = total_all_col
+        appointment_summary_shared["appointment recommended count"] = total_all_col_rec
 
         # รวม total ทั้งหมด
         total_entry = {
@@ -87,11 +93,8 @@ def find_appointment():
 
 def find_appointment_summary():
     try:
-
-        return [{
-            "appointment count": total_all_col,
-            "appointment recommended count": total_all_col_rec
-        }]
-
+        find_appointment()
+        print("📅 Appointment Summary:", appointment_summary_shared)
+        return [appointment_summary_shared]
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)

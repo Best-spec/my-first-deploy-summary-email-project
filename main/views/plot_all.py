@@ -23,15 +23,10 @@ def aggregate_summary_for_plot():
         summaryFeed = FPtotal()
         summaryAppointment = find_appointment_summary()  # dict ภาษา-> count fields
 
-        # print("raw:", raw)
-        # print("summary:", summary)
-        # print("summaryFeed:", summaryFeed)
-        # print("summaryAppointment:", summaryAppointment)
-
         index1 = summary[0].get('General Inquiry')
         index2 = summary[0].get('Estimated Cost')
         index3 = summary[0].get('Other')
-        index4 = summary[0].get('Contact My Doctor at Bangkok Hospital Pattaya')
+        index4 = summary[0].get('Contact Doctor')
         index5 = summaryFeed[0].get('Packages')
         index6 = summaryFeed[0].get('Feedback')
         index7 = summaryAppointment[0].get('appointment count')
@@ -40,15 +35,15 @@ def aggregate_summary_for_plot():
 
         json_temp = [
                 {
-                    'General Inquiry'                    : 111,
-                    'Estimated Cost'                     : 105,
-                    'Other'                              : 32,
-                    'Contact My Doctor at Bangkok Hospital Pattaya': 14,
+                    'General Inquiry'                    : index1,
+                    'Estimated Cost'                     : index2,
+                    'Other'                              : index3,
+                    'Contact Doctor': index4,
                     'Package Inquiry'                    : index5,
                     'Feedback & Suggestion'              : index6,
-                    'Appointment'                        : 234,
-                    'Appointment Recommended'            : 234,
-                    'Web Commerce'                       : 123,
+                    'Appointment'                        : index7,
+                    'Appointment Recommended'            : index8,
+                    'Web Commerce'                       : index9,
                 }
         ];
 

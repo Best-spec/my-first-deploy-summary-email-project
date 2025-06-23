@@ -2,7 +2,7 @@ from .inquiry import find_inquiry
 from .appointment import find_appointment
 from .feedback_package import find_FeedbackAndPackage, FPtotal
 from .plot_all import aggregate_summary_for_plot
-from .top_center import find_TopCenter
+from .top_center import find_top_clinics_summary
 from .total_month import find_TotalMonth
 from django.http import JsonResponse
 
@@ -29,7 +29,7 @@ ANALYSIS_ACTIONS = {
     },
     'top-center': {
         'id': 'top-center', 'name': 'Top Center', 'color': 'red', 'icon': '⭐',
-        'function': find_TopCenter
+        'function': find_top_clinics_summary
     },
     'total-month': {
         'id': 'total-month', 'name': 'Total Month', 'color': 'teal', 'icon': '📈',
