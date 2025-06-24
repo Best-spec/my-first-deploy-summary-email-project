@@ -132,12 +132,12 @@ def find_top_clinics_summary(folder_path="media/uploads"):
     result = sorted(result, key=lambda x: x["total"], reverse=True)[:20]
 
     # เพิ่ม total summary รวมท้ายรายการ
-    total_sum = {
-        "clinic": "Total",
-        "appointment_count": sum(r["appointment_count"] for r in result),
-        "recommended_count": sum(r["recommended_count"] for r in result),
-        "total": sum(r["total"] for r in result),
-    }
-    result.append(total_sum)
+    # total_sum = {
+    #     "clinic": "Total",
+    #     "appointment_count": sum(r["appointment_count"] for r in result),
+    #     "recommended_count": sum(r["recommended_count"] for r in result),
+    #     "total": sum(r["total"] for r in result),
+    # }
+    # result.append(total_sum)
 
     return [result]

@@ -21,29 +21,78 @@ export async function fetchDataAndRender(actionId) {
     let realData;
     let data_chart;
     let data;
+    let data_chart2;
+    // document.getElementById('showchart').classList.add('grid-cols-3');
 
-    if (Array.isArray(result.data)) {
-      // data เป็น array
-      const dataLength = result.data.length;
-      console.log("Data is array, length:", dataLength);
-      // console.log("Data content:", result);
+    if (actionId === 'top-center') {
+      document.getElementById('showchart').classList.remove('grid-cols-3');
+      document.getElementById('showchart').classList.add('grid-cols-1');
+      document.getElementById('piechart').classList.add('hidden');
+      document.getElementById('barHorizontal').classList.add('hidden')
+      // document.getElementById('barChart').style.height = '600px';
+      // document.getElementById('myPieChart').setAttribute('height', '300');
+      console.log('this is top')
+      realData = result.data[0];
+      renderAutoChart(realData);
+        // renderAutoPieChart(realData);
+      data = realData;
+      console.log("is one var", result.data)
+    } else if (actionId === 'total-month') {
+      console.log('this is total')
+      const csslist = document.getElementById('showchart').classList;
 
-      if (dataLength === 1) {
+      // ใช้ Array.from() เพื่อ clone ออกมาก่อนลูป
+      Array.from(csslist).forEach(cls => {
+        if (cls.startsWith('grid-cols-')) {
+          csslist.remove(cls);
+        }
+      });
+      csslist.add(`grid-cols-2`);
+      document.getElementById('piechart').classList.add('hidden')
+      document.getElementById('barHorizontal').classList.remove('hidden')
+      realData = result.data[0];
+      data_chart = result.data[1];
+      data_chart2 = result.data[2];
+      // renderAutoChart(data_chart);
+      renderAutoChart(data_chart, 'barChart');              // ปกติ
+      renderAutoChart(data_chart2, 'barChartHorizontal'); // ประเภทเป็นแกน x
+      data = realData;
+      console.log(data)
+    } else {
+      document.getElementById('barHorizontal').classList.add('hidden')
+      const csslist = document.getElementById('showchart').classList;
+
+      // ใช้ Array.from() เพื่อ clone ออกมาก่อนลูป
+      Array.from(csslist).forEach(cls => {
+        if (cls.startsWith('grid-cols-')) {
+          csslist.remove(cls);
+        }
+      });
+      csslist.add(`grid-cols-2`);
+      document.getElementById('piechart').classList.remove('hidden');
+      if (Array.isArray(result.data)) {
+        // data เป็น array
+        const dataLength = result.data.length;
+        console.log("Data is array, length:", dataLength);
+        if (dataLength === 1) {
         realData = result.data[0];
         renderAutoChart(realData);
         renderAutoPieChart(realData);
         data = realData;
         console.log("is one var", result.data)
-      } else if (dataLength === 2) {
+        } else if (dataLength === 2) {
         realData = result.data[0];
         data_chart = result.data[1];
         data = realData;
         renderAutoPieChart(realData);
         renderAutoChart(data_chart);
         console.log("is two var",result.data)
+        }
       } else {
         console.warn("Unknown data format:", result.data);
-        }
+      }
+    }
+      
 
     if (!data || data.length === 0) {
       document.getElementById('header-row').innerHTML = `
@@ -90,13 +139,12 @@ export async function fetchDataAndRender(actionId) {
     data = '';
     realData = '';
     data_chart = '';
-  }
   } catch (error) {
-    console.error(error);
-    document.getElementById('header-row').innerHTML = `
-      <div class="col-span-6 text-center text-red-500">Error loading data</div>
-    `;
-  }
+      console.error(error);
+      document.getElementById('header-row').innerHTML = `
+        <div class="col-span-6 text-center text-red-500">Error loading data</div>
+      `;
+    }
 }
 
 

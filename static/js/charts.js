@@ -1,9 +1,8 @@
-let autoChartInstance = null;
+let chartInstances = {};  // ใช้ object เก็บ chart แต่ละอันแยกตาม id
 
 export function renderAutoChart(data, canvasId = 'barChart') {
   if (!data || !Array.isArray(data) || data.length === 0) {
     console.error('📉 No data provided');
-    // console.log(data);
     return;
   }
 
@@ -15,9 +14,8 @@ export function renderAutoChart(data, canvasId = 'barChart') {
 
   const ctx = canvas.getContext('2d');
 
-  // เคลียร์ chart เดิมถ้ามี
-  if (autoChartInstance) {
-    autoChartInstance.destroy();
+  if (chartInstances[canvasId]) {
+    chartInstances[canvasId].destroy();
   }
 
   const keys = Object.keys(data[0]);
@@ -26,8 +24,8 @@ export function renderAutoChart(data, canvasId = 'barChart') {
     return;
   }
 
-  const xKey = keys[0]; // สมมุติ key แรกเป็น x-axis
-  const yKeys = keys.slice(1); // ที่เหลือคือข้อมูลที่ plot
+  const xKey = keys[0];  // แกน x
+  const yKeys = keys.slice(1); // แต่ละชุดข้อมูล
 
   const labels = data.map(d => d[xKey]);
 
@@ -43,7 +41,7 @@ export function renderAutoChart(data, canvasId = 'barChart') {
     borderWidth: 1
   }));
 
-  autoChartInstance = new Chart(ctx, {
+  chartInstances[canvasId] = new Chart(ctx, {
     type: 'bar',
     data: {
       labels,
@@ -55,7 +53,7 @@ export function renderAutoChart(data, canvasId = 'barChart') {
         legend: { position: 'top' },
         title: {
           display: true,
-          text: `Auto Chart: ${yKeys.join(', ')} by ${xKey}`
+          text: `Chart: ${yKeys.join(', ')} by ${xKey}`
         }
       },
       scales: {
@@ -65,6 +63,7 @@ export function renderAutoChart(data, canvasId = 'barChart') {
   });
 }
 
+// setTimeout(() => autoChartInstance.resize(), 0);
 let pieInstance = null;
 
 export function renderAutoPieChart(data, canvasId = 'myPieChart') {

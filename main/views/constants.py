@@ -1,9 +1,9 @@
-from .inquiry import find_inquiry
+from .inquiry import find_inquiry, get_total_languages_summary
 from .appointment import find_appointment
 from .feedback_package import find_FeedbackAndPackage, FPtotal
-from .plot_all import aggregate_summary_for_plot
+from .Type_email import aggregate_summary_for_plot
 from .top_center import find_top_clinics_summary
-from .total_month import find_TotalMonth
+from .Total_Email_of_Language import find_TotalMonth
 from django.http import JsonResponse
 
 from django.views.decorators.csrf import csrf_exempt
@@ -12,19 +12,19 @@ import json
 
 ANALYSIS_ACTIONS = {
     'inquiry': {
-        'id': 'inquiry', 'name': 'Inquiry', 'color': 'blue', 'icon': '💬',
+        'id': 'inquiry', 'name': 'Type Inquiry', 'color': 'blue', 'icon': '💬',
         'function': find_inquiry
     },
     'appointment': {
-        'id': 'appointment', 'name': 'Appointment', 'color': 'green', 'icon': '📅',
+        'id': 'appointment', 'name': 'Type Appointment', 'color': 'green', 'icon': '📅',
         'function': find_appointment
     },
     'feedback': {
-        'id': 'feedback', 'name': 'Feedback', 'color': 'purple', 'icon': '❤️',
+        'id': 'feedback', 'name': 'Type Feedback', 'color': 'purple', 'icon': '❤️',
         'function': find_FeedbackAndPackage
     },
     'plot-all': {
-        'id': 'plot-all', 'name': 'Plot All', 'color': 'orange', 'icon': '📊',
+        'id': 'plot-all', 'name': 'Type Email', 'color': 'orange', 'icon': '📊',
         'function': aggregate_summary_for_plot
     },
     'top-center': {
@@ -32,7 +32,7 @@ ANALYSIS_ACTIONS = {
         'function': find_top_clinics_summary
     },
     'total-month': {
-        'id': 'total-month', 'name': 'Total Month', 'color': 'teal', 'icon': '📈',
+        'id': 'total-month', 'name': 'Total Email of Language', 'color': 'teal', 'icon': '📈',
         'function': find_TotalMonth
     },
 }

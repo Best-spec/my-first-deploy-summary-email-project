@@ -22,7 +22,7 @@ def find_appointment():
             "ar": "Arabic",
             "de": "German", 
             "en": "English",
-            "ru": "Russian",
+            "ru": "Russia",
             "th": "Thai",
             "zh": "Chinese"
         }

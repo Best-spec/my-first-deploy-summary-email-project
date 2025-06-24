@@ -22,7 +22,7 @@ def find_FeedbackAndPackage():
         elif '-en' in basename:
             return 'English'
         elif '-ru' in basename:
-            return 'Russian'
+            return 'Russia'
         elif '-th' in basename:
             return 'Thai'
         elif '-zh' in basename:

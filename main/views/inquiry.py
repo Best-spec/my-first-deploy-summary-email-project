@@ -62,6 +62,8 @@ category_mapping = {
     'Contact Doctor': ['Contact My Doctor at Bangkok Hospital Pattaya', 'Arzt im Bangkok Hospital Pattaya kontaktieren', 'Написать врачу', 'ติดต่อกับหมอประจำตัวที่โรงพยาบาลกรุงเทพพัทยา', '联系芭提雅曼谷医院医生'],
     'Other': ['Other', 'Andere', 'Другое', 'อื่นๆ', '其他']
 }
+
+
 def find_inquiry():
     try:
         folder_path = Path("media/uploads")
@@ -168,41 +170,28 @@ def find_inquiry():
 
         for_table = output
         for_chart = [data_chart]
-
+        # print(grand_total)
         return for_table, for_chart
     
     except Exception as e:
         print("🔥 ERROR:", e)
-    # print('bbbbbbrbr')
 
-    # return summary_json
+def get_total_languages_summary():
+    try:
+        table, _ = find_inquiry()  # ดึงข้อมูลตารางจาก find_inquiry()
 
+        result = []
+        for row in table:
+            lang = row.get("language")
+            total = row.get("Total Language", 0)
+            if lang and "Total Language" in row:
+                result.append({
+                    "language": lang,
+                    "Total Language": total
+                })
+        # print(result)
+        return result
 
-    # inquiry_json = [
-    #     {
-    #         "language": "thailand",
-    #         "general_inquiry": 10,
-    #         "estimated_cost": 5,
-    #         "contact_doctor": 3,
-    #         "other": 2,
-    #         "total": 20
-    #     },
-    #     {
-    #         "language": "thailand",
-    #         "general_inquiry": 10,
-    #         "estimated_cost": 5,
-    #         "contact_doctor": 3,
-    #         "other": 2,
-    #         "total": 20
-    #     },
-    #     {
-    #         "language": "thailand",
-    #         "general_inquiry": 10,
-    #         "estimated_cost": 5,
-    #         "contact_doctor": 3,
-    #         "other": 2,
-    #         "total": 20
-    #     },
-    # ]
-
-    # return inquiry_json
+    except Exception as e:
+        print("🔥 ERROR (get_total_languages_summary):", e)
+        return []
