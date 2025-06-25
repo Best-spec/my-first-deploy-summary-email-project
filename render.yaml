@@ -1,13 +1,13 @@
 services:
   - type: web
-    name: django-app
+    name: dashboard-bph
     env: python
-    buildCommand: |
-      pip install -r requirements.txt
-      python manage.py collectstatic --noinput
-    startCommand: gunicorn filemanager.wsgi:application
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn filemanager.wsgi
     envVars:
-      - key: DJANGO_SETTINGS_MODULE
-        value: filemanager.settings
       - key: SECRET_KEY
-        generateValue: true
+        value: "your_secret_key_here"
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "summary-inquiry.onrender.com"
