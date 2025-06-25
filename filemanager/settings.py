@@ -31,8 +31,8 @@ DEBUG = os.getenv("DEBUG") == "True"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['summary-inquiry.onrender.com','127.0.0.1']
-# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['summary-email-inquiry.onrender.com', '127.0.0.1']
+
 
 
 # Application definition
