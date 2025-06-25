@@ -375,3 +375,17 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+const btn = document.getElementById("dropdownBtn");
+const menu = document.getElementById("dropdownMenu");
+
+btn.addEventListener("click", () => {
+menu.classList.toggle("hidden");
+});
+
+// ปิด dropdown เมื่อคลิกนอก
+document.addEventListener("click", (e) => {
+if (!btn.contains(e.target) && !menu.contains(e.target)) {
+    menu.classList.add("hidden");
+}
+});
