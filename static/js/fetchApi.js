@@ -4,7 +4,8 @@ export function getCsrfToken() {
   return document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
 }
 
-export async function fetchDataAndRender(actionId) {
+let webcom;
+export async function fetchDataAndRender(actionId, datetimeset) {
   try {
     const res = await fetch('/analyze/', {
       method: 'post',
@@ -12,7 +13,10 @@ export async function fetchDataAndRender(actionId) {
         'Content-Type': 'application/json',
         'X-CSRFToken': getCsrfToken(),
       },
-      body: JSON.stringify({ action_id: actionId }),
+      body: JSON.stringify({ 
+        action_id: actionId,
+        date: datetimeset,
+       }),
     });
 
 
@@ -38,7 +42,33 @@ export async function fetchDataAndRender(actionId) {
       data = realData;
       console.log("is one var", result.data)
     } else if (actionId === 'total-month') {
-      console.log('this is total')
+        console.log('this is total')
+        const csslist = document.getElementById('showchart').classList;
+
+        // ใช้ Array.from() เพื่อ clone ออกมาก่อนลูป
+        Array.from(csslist).forEach(cls => {
+          if (cls.startsWith('grid-cols-')) {
+            csslist.remove(cls);
+          }
+        });
+        csslist.add(`grid-cols-2`);
+        document.getElementById('piechart').classList.add('hidden')
+        document.getElementById('barHorizontal').classList.remove('hidden')
+        realData = result.data[0];
+        data_chart = result.data[1];
+        data_chart2 = result.data[2];
+        // renderAutoChart(data_chart);
+        renderAutoChart(data_chart, 'barChart');              // ปกติ
+        renderAutoChart(data_chart2, 'barChartHorizontal'); // ประเภทเป็นแกน x
+        data = realData;
+        console.log(data)
+    } else if (actionId === 'plot-all'){
+      realData = result.data[0];
+      realData[0]["Web Commerce"] = webcom;
+      data = realData;
+      renderAutoChart(data);
+      renderAutoPieChart(data);
+      document.getElementById('barHorizontal').classList.add('hidden')
       const csslist = document.getElementById('showchart').classList;
 
       // ใช้ Array.from() เพื่อ clone ออกมาก่อนลูป
@@ -48,16 +78,7 @@ export async function fetchDataAndRender(actionId) {
         }
       });
       csslist.add(`grid-cols-2`);
-      document.getElementById('piechart').classList.add('hidden')
-      document.getElementById('barHorizontal').classList.remove('hidden')
-      realData = result.data[0];
-      data_chart = result.data[1];
-      data_chart2 = result.data[2];
-      // renderAutoChart(data_chart);
-      renderAutoChart(data_chart, 'barChart');              // ปกติ
-      renderAutoChart(data_chart2, 'barChartHorizontal'); // ประเภทเป็นแกน x
-      data = realData;
-      console.log(data)
+      document.getElementById('piechart').classList.remove('hidden');
     } else {
       document.getElementById('barHorizontal').classList.add('hidden')
       const csslist = document.getElementById('showchart').classList;
@@ -148,13 +169,53 @@ export async function fetchDataAndRender(actionId) {
 }
 
 
+const openModal = document.getElementById("openModal");
+const closeModal = document.getElementById("closeModal");
+const modal = document.getElementById("myModal");
+const webdata = document.getElementById("name");
+const okbutton = document.getElementById("ok");
+
 export function initAnalyzeButtons() {
   const buttons = document.querySelectorAll('.analyze-btn');
+
   buttons.forEach(btn => {
     btn.addEventListener('click', () => {
       const actionId = btn.dataset.actionId;
-      fetchDataAndRender(actionId);
-      console.log(`Analyzing: ${actionId}`);
+
+      // ✅ ใช้ rangeObj ที่อัปเดตไว้ตอนเลือกวันที่
+      const datetimeset = rangeObj;
+
+      if (actionId === "plot-all") {
+        console.log('แสดง modal นี้แหละ');
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+
+        okbutton.addEventListener("click", () => {
+          const str = webdata.value;
+          webcom = parseInt(str);
+          console.log(":", webcom ,"type:", typeof webcom);
+          modal.classList.remove("flex");
+          modal.classList.add("hidden");
+
+          fetchDataAndRender(actionId, datetimeset);
+        });
+
+        closeModal.addEventListener("click", () => {
+          modal.classList.remove("flex");
+          modal.classList.add("hidden");
+        });
+
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) {
+            modal.classList.remove("flex");
+            modal.classList.add("hidden");
+          }
+        });
+
+      } else {
+        // ถ้าไม่ใช่ plot-all ก็เรียกตรงๆ เลย
+        fetchDataAndRender(actionId, datetimeset);
+      }
     });
   });
 }

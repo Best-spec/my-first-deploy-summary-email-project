@@ -2,12 +2,12 @@ from django.http import JsonResponse
 from main.models import UploadedFile
 from .inquiry import get_total_languages_summary
 from .feedback_package import find_FeedbackAndPackage
-from .appointment import find_appointment
+from .appointment import find_appointment_from_csv_folder
 def find_TotalMonth():
     try:
         total_inquiry = get_total_languages_summary()
         total_feedback_package = find_FeedbackAndPackage()
-        total_appointment = find_appointment()
+        total_appointment = find_appointment_from_csv_folder()
 
         # flatten ถ้าเป็น list ซ้อน
         if isinstance(total_feedback_package, list) and isinstance(total_feedback_package[0], dict) is False:

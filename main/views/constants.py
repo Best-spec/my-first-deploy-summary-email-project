@@ -1,5 +1,5 @@
 from .inquiry import find_inquiry, get_total_languages_summary
-from .appointment import find_appointment
+from .appointment import find_appointment_from_csv_folder
 from .feedback_package import find_FeedbackAndPackage, FPtotal
 from .Type_email import aggregate_summary_for_plot
 from .top_center import find_top_clinics_summary
@@ -17,7 +17,7 @@ ANALYSIS_ACTIONS = {
     },
     'appointment': {
         'id': 'appointment', 'name': 'Type Appointment', 'color': 'green', 'icon': '📅',
-        'function': find_appointment
+        'function': find_appointment_from_csv_folder
     },
     'feedback': {
         'id': 'feedback', 'name': 'Type Feedback', 'color': 'purple', 'icon': '❤️',
@@ -45,6 +45,7 @@ def analyze(request):
     try:
         body = json.loads(request.body)
         action_id = body.get('action_id')
+        datetime = body.get('date')
 
         action = ANALYSIS_ACTIONS.get(action_id)
         if not action:
@@ -55,7 +56,7 @@ def analyze(request):
         if not func:
             return JsonResponse({'error': f'No function defined for {action_id}'}, status=500)
 
-        data = func()
+        data = func(datetime)
         return JsonResponse({'data': data})
 
     except Exception as e:

@@ -376,16 +376,31 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-const btn = document.getElementById("dropdownBtn");
-const menu = document.getElementById("dropdownMenu");
+let rangeObj = null;
 
-btn.addEventListener("click", () => {
-menu.classList.toggle("hidden");
+$('input[name="daterange"]').daterangepicker({
+  autoUpdateInput: false,
+  locale: {
+    format: 'YYYY-MM-DD',
+    cancelLabel: 'Clear'
+  }
 });
 
-// ปิด dropdown เมื่อคลิกนอก
-document.addEventListener("click", (e) => {
-if (!btn.contains(e.target) && !menu.contains(e.target)) {
-    menu.classList.add("hidden");
-}
+$('input[name="daterange"]').on('apply.daterangepicker', function (ev, picker) {
+  $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+
+  rangeObj = {
+    startDate: picker.startDate.format('YYYY-MM-DD'),
+    endDate: picker.endDate.format('YYYY-MM-DD'),
+    startDay: picker.startDate.date(),
+    endDay: picker.endDate.date(),
+    startMonth: picker.startDate.month() + 1,
+    endMonth: picker.endDate.month() + 1,
+    startYear: picker.startDate.year(),
+    endYear: picker.endDate.year()
+  };
+
+  console.log("🔧 ช่วงวันที่เลือก:", rangeObj);
 });
+
+    
