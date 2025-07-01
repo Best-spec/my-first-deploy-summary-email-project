@@ -3,7 +3,7 @@ from main.models import UploadedFile
 from .inquiry import get_total_languages_summary
 from .feedback_package import find_FeedbackAndPackage
 from .appointment import find_appointment_from_csv_folder
-def find_TotalMonth():
+def find_TotalMonth(date=None):
     try:
         total_inquiry = get_total_languages_summary()
         total_feedback_package = find_FeedbackAndPackage()

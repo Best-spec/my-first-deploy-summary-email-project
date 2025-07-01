@@ -17,7 +17,7 @@ json_temp = [
     'Web Commerce',
 ]
 
-def aggregate_summary_for_plot():
+def aggregate_summary_for_plot(date=None):
     try:
         raw, summary = find_inquiry()        # dict ภาษา-> dict category-> count
         summaryFeed = FPtotal()

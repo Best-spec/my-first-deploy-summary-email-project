@@ -20,7 +20,7 @@ export async function fetchDataAndRender(actionId, datetimeset) {
     });
 
 
-
+    console.log(datetimeset.startDate)
     const result = await res.json();
     let realData;
     let data_chart;
@@ -183,7 +183,8 @@ export function initAnalyzeButtons() {
       const actionId = btn.dataset.actionId;
 
       // ✅ ใช้ rangeObj ที่อัปเดตไว้ตอนเลือกวันที่
-      const datetimeset = rangeObj;
+      const datetimeset = window.rangeObj;
+      // const datetimeset = window.rangeObj;
 
       if (actionId === "plot-all") {
         console.log('แสดง modal นี้แหละ');
@@ -219,3 +220,43 @@ export function initAnalyzeButtons() {
     });
   });
 }
+
+window.rangeObj = {
+  startDate: moment().format('YYYY-MM-DD'),
+  endDate: moment().format('YYYY-MM-DD'),
+};
+
+$('input[name="daterange"]').daterangepicker({
+  autoUpdateInput: true, // <<< ให้มันอัปเดต input อัตโนมัติด้วย
+  startDate: moment(),   // ค่าเริ่มต้น
+  endDate: moment(),     // ค่าเริ่มต้น
+  locale: {
+    format: 'YYYY-MM-DD',
+    cancelLabel: 'Clear'
+  },
+  ranges: {
+    'Today': [moment(), moment()],
+    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+    'This Month': [moment().startOf('month'), moment().endOf('month')],
+    'Last Month': [
+      moment().subtract(1, 'month').startOf('month'),
+      moment().subtract(1, 'month').endOf('month')
+    ]
+  }
+}, function(start, end, label) {
+  // เวลาเลือกจาก predefined หรือเลือกเอง
+  window.rangeObj = {
+    startDate: start.format('YYYY-MM-DD'),
+    endDate: end.format('YYYY-MM-DD'),
+    startDay: start.date(),
+    endDay: end.date(),
+    startMonth: start.month() + 1,
+    endMonth: end.month() + 1,
+    startYear: start.year(),
+    endYear: end.year()
+  };
+
+  console.log("📆 เลือกช่วงเวลา:", label, window.rangeObj);
+});
