@@ -1,70 +1,193 @@
+import pandas as pd
 import os
 import glob
-import pandas as pd
 from collections import defaultdict
-from django.http import JsonResponse
+import json
+from datetime import datetime
 
-def find_top_clinics_summary(folder_path="media/uploads"):
-    langs = ["ar", "de", "en", "ru", "th", "zh-hans"]
+def csv_to_json(folder_path="media/uploads", langs=None, start_date=None, end_date=None):
+    """
+    อ่านไฟล์ CSV จากโฟลเดอร์ที่ระบุ แปลงข้อมูลที่เกี่ยวข้องให้เป็นรายการของพจนานุกรม
+    พร้อมดึง Entry Date และ Type โดยกรองตามช่วงวันที่ในคอลัมน์ 'Entry Date' ของ CSV
 
-    centers_and_clinics = {
-        "Ambulance Service": 0,
-        "Prestige Wellness Center": 0,
-        "Dermatology and Plastic Surgery Center": 0,
-        "Breast Center": 0,
-        "Breast Feeding Clinic": 0,
-        "Cardiac Care Unit": 0,
-        "Cardiac Cath Lab": 0,
-        "Cardiac Rehabilitations": 0,
-        "Dental Cosmetic and Implant Center": 0,
-        "Diabetes Mellitus (DM) & Endocrinology Center": 0,
-        "Diagnostic Imaging Dept (JTH)": 0,
-        "Ear Nose Throat Center": 0,
-        "Emergency Medical Service Center": 0,
-        "Emergency & Accident Dept(JTH)": 0,
-        "Eye Center": 0,
-        "Fertility Center": 0,
-        "Gastrointestinal & Liver Center": 0,
-        "Gastrointestinal": 0,
-        "Health Promotion Center": 0,
-        "Hearing Speech Balance Tinnitus Center": 0,
-        "Heart Center": 0,
-        "Hemodialysis Center": 0,
-        "Hyperbaric Oxygen Therapy": 0,
-        "Diagnostic Imaging and Interventional Radiology Center": 0,
-        "ICU - Trauma and Surgery": 0,
-        "Intermediate Intensive Care": 0,
-        "Laboratory": 0,
-        "Labour Room": 0,
-        "Lasik and SuperSight Surgery Center": 0,
-        "Internal Medicine Center": 0,
-        "Mental Health Center": 0,
-        "Neonatal Intensive Care Unit (NICU)": 0,
-        "Neuroscience Center": 0,
-        "Nursery": 0,
-        "Women's Health Center": 0,
-        "Oncology Center": 0,
-        "Operating Room": 0,
-        "Orthopedic Center": 0,
-        "Pediatric Intensive Care Unit or PICU": 0,
-        "Child Health Center": 0,
-        "Rehabilitation Center": 0,
-        "Surgery Center": 0,
-        "Urology Center": 0,
-        "Wound Care Unit": 0,
-        "Hospital Director Office": 0,
-        "Medical Staff Organization": 0,
-        "Anesthetic": 0,
-        "BPH Clinic : Bangsare": 0,
-        "BPH Clinic : Bo Win": 0,
-        "BPH Clinic : Kreua Sahaphat": 0,
-        "ICU Medicine": 0,
-        "ICU Neurosciences": 0,
-        "KOH LARN Clinic": 0,
-        "Nutrition Therapeutic": 0,
-        "U-Tapao Clinic": 0,
-        "Jomtien Hospital": 0,
+    อาร์กิวเมนต์:
+        folder_path (str): พาธไปยังโฟลเดอร์ที่มีไฟล์ CSV
+        langs (list): รายการรหัสภาษาที่ใช้สำหรับชื่อไฟล์
+        start_date (str, optional): วันที่เริ่มต้นการกรอง (รูปแบบ 'DD/MM/YYYY')
+        end_date (str, optional): วันที่สิ้นสุดการกรอง (รูปแบบ 'DD/MM/YYYY')
+
+    ส่งคืน:
+        dict: พจนานุกรมที่มีสองคีย์คือ 'normal_appointments' และ 'recommended_appointments',
+              แต่ละคีย์เก็บรายการของพจนานุกรมที่มี "Centers & Clinics", "Entry Date" และ "Type"
+    """
+    if langs is None:
+        langs = ["ar", "de", "en", "ru", "th", "zh-hans"]
+
+    all_data = {
+        "normal_appointments": [],
+        "recommended_appointments": []
     }
+
+    # แปลง start_date และ end_date เป็นวัตถุ datetime เพื่อการเปรียบเทียบ
+    filter_start_dt = None
+    filter_end_dt = None
+    if start_date:
+        try:
+            filter_start_dt = datetime.strptime(start_date, '%d/%m/%Y')
+        except ValueError:
+            print(f"Warning: รูปแบบ start_date '{start_date}' ไม่ถูกต้อง. คาดหวัง DD/MM/YYYY.")
+            start_date = None
+    if end_date:
+        try:
+            filter_end_dt = datetime.strptime(end_date, '%d/%m/%Y')
+        except ValueError:
+            print(f"Warning: รูปแบบ end_date '{end_date}' ไม่ถูกต้อง. คาดหวัง DD/MM/YYYY.")
+            end_date = None
+
+    for lang in langs:
+        # ประมวลผลการนัดหมายปกติ
+        normal_files = glob.glob(os.path.join(folder_path, f"appointment-{lang}-*.csv"))
+        for file in normal_files:
+            try:
+                df = pd.read_csv(file)
+                df.columns = df.columns.str.strip().str.replace('\ufeff', '')
+
+                if len(df.columns) < 2 or 'Entry Date' not in df.columns:
+                    # ไม่จำเป็นต้องมีวันที่ในชื่อไฟล์อีกต่อไป ดังนั้น glob.glob จะหาไฟล์ที่ชื่อตรงกับ appointment-{lang}-*.csv
+                    # โดยไม่สนใจวันที่ในชื่อไฟล์ หากคุณมีไฟล์ที่ไม่มีวันที่ในชื่อและต้องการให้มันถูกรวมด้วย
+                    print(f"Warning: ไฟล์ '{file}' ไม่มีคอลัมน์ที่ 2 หรือ 'Entry Date'. ข้ามไฟล์นี้.")
+                    continue
+
+                clinic_column_name = df.columns[1]
+                file_type = "appointment"
+
+                for index, row in df.iterrows():
+                    clinic_name = str(row[clinic_column_name]).strip()
+                    entry_date_full_str = str(row['Entry Date']).strip() # ดึงวันที่เต็มรูปแบบ (รวมเวลา)
+
+                    # ตัดส่วนเวลาออก (ถ้ามี) และพยายามแปลงเป็นวันที่เท่านั้น
+                    row_date_dt = None
+                    entry_date_only_str = entry_date_full_str # Default to full string if parsing fails
+                    try:
+                        # ลองแปลงเป็น datetime object ก่อน
+                        # รูปแบบทั่วไปที่พบ: 'YYYY-MM-DD HH:MM:SS' หรือ 'DD/MM/YYYY HH:MM:SS'
+                        # หรือเพียงแค่ 'YYYY-MM-DD' หรือ 'DD/MM/YYYY'
+                        
+                        # ลองรูปแบบ YYYY-MM-DD HH:MM:SS
+                        if '-' in entry_date_full_str and ':' in entry_date_full_str:
+                            row_date_dt = datetime.strptime(entry_date_full_str, '%Y-%m-%d %H:%M:%S')
+                            entry_date_only_str = row_date_dt.strftime('%Y-%m-%d') # กำหนด output เป็น YYYY-MM-DD
+                        # ลองรูปแบบ DD/MM/YYYY HH:MM:SS
+                        elif '/' in entry_date_full_str and ':' in entry_date_full_str:
+                             row_date_dt = datetime.strptime(entry_date_full_str, '%d/%m/%Y %H:%M:%S')
+                             entry_date_only_str = row_date_dt.strftime('%d/%m/%Y') # กำหนด output เป็น DD/MM/YYYY
+                        # ลองรูปแบบ YYYY-MM-DD (ไม่มีเวลา)
+                        elif '-' in entry_date_full_str:
+                            row_date_dt = datetime.strptime(entry_date_full_str, '%Y-%m-%d')
+                            entry_date_only_str = entry_date_full_str
+                        # ลองรูปแบบ DD/MM/YYYY (ไม่มีเวลา)
+                        elif '/' in entry_date_full_str:
+                            row_date_dt = datetime.strptime(entry_date_full_str, '%d/%m/%Y')
+                            entry_date_only_str = entry_date_full_str
+                        else:
+                            raise ValueError("Unrecognized date format") # หากไม่ตรงกับรูปแบบที่คาดหวัง
+
+                        # ตรวจสอบและกรองวันที่จากคอลัมน์ 'Entry Date' (เฉพาะส่วนวันที่)
+                        if filter_start_dt or filter_end_dt:
+                            if (filter_start_dt and row_date_dt < filter_start_dt) or \
+                               (filter_end_dt and row_date_dt > filter_end_dt):
+                                continue # ข้ามแถวนี้หากวันที่ไม่อยู่ในช่วง
+
+                    except ValueError:
+                        print(f"Warning: รูปแบบวันที่ในคอลัมน์ 'Entry Date' ของไฟล์ '{file}' แถวที่ {index+1} ('{entry_date_full_str}') ไม่ถูกต้อง หรือไม่สามารถ parse ได้. ข้ามการกรองวันที่สำหรับแถวนี้.")
+                        # ถ้าไม่สามารถ parse วันที่ได้ จะไม่กรองแถวนี้ด้วยเงื่อนไขวันที่
+                        # และจะใช้ entry_date_full_str เป็นค่า Entry Date ใน JSON Output
+
+                    all_data["normal_appointments"].append({
+                        "Centers & Clinics": clinic_name,
+                        "Entry Date": entry_date_only_str, # ใช้เฉพาะส่วนวันที่ที่ตัดแล้ว หรือ string เดิม
+                        "Type": file_type
+                    })
+            except Exception as e:
+                print(f"เกิดข้อผิดพลาดในการอ่านไฟล์ {file}: {e}")
+
+        # ประมวลผลการนัดหมายที่แนะนำ
+        recommended_files = glob.glob(os.path.join(folder_path, f"appointment-recommended-{lang}-*.csv"))
+        for file in recommended_files:
+            try:
+                df = pd.read_csv(file)
+                df.columns = df.columns.str.strip().str.replace('\ufeff', '')
+
+                if len(df.columns) < 2 or 'Entry Date' not in df.columns:
+                    print(f"Warning: ไฟล์ '{file}' ไม่มีคอลัมน์ที่ 2 หรือ 'Entry Date'. ข้ามไฟล์นี้.")
+                    continue
+
+                clinic_column_name = df.columns[1]
+                file_type = "recommended"
+
+                for index, row in df.iterrows():
+                    clinic_name = str(row[clinic_column_name]).strip()
+                    entry_date_full_str = str(row['Entry Date']).strip()
+
+                    row_date_dt = None
+                    entry_date_only_str = entry_date_full_str
+                    try:
+                        if '-' in entry_date_full_str and ':' in entry_date_full_str:
+                            row_date_dt = datetime.strptime(entry_date_full_str, '%Y-%m-%d %H:%M:%S')
+                            entry_date_only_str = row_date_dt.strftime('%Y-%m-%d')
+                        elif '/' in entry_date_full_str and ':' in entry_date_full_str:
+                             row_date_dt = datetime.strptime(entry_date_full_str, '%d/%m/%Y %H:%M:%S')
+                             entry_date_only_str = row_date_dt.strftime('%d/%m/%Y')
+                        elif '-' in entry_date_full_str:
+                            row_date_dt = datetime.strptime(entry_date_full_str, '%Y-%m-%d')
+                            entry_date_only_str = entry_date_full_str
+                        elif '/' in entry_date_full_str:
+                            row_date_dt = datetime.strptime(entry_date_full_str, '%d/%m/%Y')
+                            entry_date_only_str = entry_date_full_str
+                        else:
+                            raise ValueError("Unrecognized date format")
+
+                        if filter_start_dt or filter_end_dt:
+                            if (filter_start_dt and row_date_dt < filter_start_dt) or \
+                               (filter_end_dt and row_date_dt > filter_end_dt):
+                                continue
+
+                    except ValueError:
+                        print(f"Warning: รูปแบบวันที่ในคอลัมน์ 'Entry Date' ของไฟล์ '{file}' แถวที่ {index+1} ('{entry_date_full_str}') ไม่ถูกต้อง หรือไม่สามารถ parse ได้. ข้ามการกรองวันที่สำหรับแถวนี้.")
+
+                    all_data["recommended_appointments"].append({
+                        "Centers & Clinics": clinic_name,
+                        "Entry Date": entry_date_only_str,
+                        "Type": file_type
+                    })
+            except Exception as e:
+                print(f"เกิดข้อผิดพลาดในการอ่านไฟล์ {file}: {e}")
+    return all_data
+
+def process_clinic_data(raw_json_data):
+    """
+    ประมวลผลข้อมูล JSON ดิบเพื่อเพื่อนับจำนวนการนัดหมายสำหรับแต่ละคลินิก.
+    """
+    centers_and_clinics_list = [
+        "Ambulance Service", "Prestige Wellness Center", "Dermatology and Plastic Surgery Center",
+        "Breast Center", "Breast Feeding Clinic", "Cardiac Care Unit", "Cardiac Cath Lab",
+        "Cardiac Rehabilitations", "Dental Cosmetic and Implant Center", "Diabetes Mellitus (DM) & Endocrinology Center",
+        "Diagnostic Imaging Dept (JTH)", "Ear Nose Throat Center", "Emergency Medical Service Center",
+        "Emergency & Accident Dept(JTH)", "Eye Center", "Fertility Center", "Gastrointestinal & Liver Center",
+        "Gastrointestinal", "Health Promotion Center", "Hearing Speech Balance Tinnitus Center",
+        "Heart Center", "Hemodialysis Center", "Hyperbaric Oxygen Therapy",
+        "Diagnostic Imaging and Interventional Radiology Center", "ICU - Trauma and Surgery",
+        "Intermediate Intensive Care", "Laboratory", "Labour Room", "Lasik and SuperSight Surgery Center",
+        "Internal Medicine Center", "Mental Health Center", "Neonatal Intensive Care Unit (NICU)",
+        "Neuroscience Center", "Nursery", "Women's Health Center", "Oncology Center",
+        "Operating Room", "Orthopedic Center", "Pediatric Intensive Care Unit or PICU",
+        "Child Health Center", "Rehabilitation Center", "Surgery Center", "Urology Center",
+        "Wound Care Unit", "Hospital Director Office", "Medical Staff Organization",
+        "Anesthetic", "BPH Clinic : Bangsare", "BPH Clinic : Bo Win",
+        "BPH Clinic : Kreua Sahaphat", "ICU Medicine", "ICU Neurosciences",
+        "KOH LARN Clinic", "Nutrition Therapeutic", "U-Tapao Clinic", "Jomtien Hospital",
+    ]
+    centers_and_clinics = {clinic_name: 0 for clinic_name in centers_and_clinics_list}
 
     name_map = {
         "แผนกเคลื่อนย้ายผู้ป่วยทางการแพทย์": "Ambulance Service",
@@ -93,51 +216,93 @@ def find_top_clinics_summary(folder_path="media/uploads"):
         "ศูนย์แก้ไขสายตาด้วยเลสิคและซุปเปอร์ไซต์": "Lasik and SuperSight Surgery Center",
         "ศูนย์ดูแลแผล": "Wound Care Unit",
         "ศูนย์โภชนบำบัด": "Nutrition Therapeutic",
+        "ศูนย์สุขภาพสตรี": "Women's Health Center",
     }
 
     total_normal_counts = defaultdict(int)
     total_recommended_counts = defaultdict(int)
 
-    def count_from_files(file_pattern, target_counts):
-        files = glob.glob(file_pattern)
-        for file in files:
-            df = pd.read_csv(file)
-            df.columns = df.columns.str.strip().str.replace('\ufeff', '')
-            if len(df.columns) < 2:
-                continue
-            col_name = df.columns[1]
-            for dept in df[col_name].astype(str).str.strip():
-                if dept in centers_and_clinics:
-                    target_counts[dept] += 1
-                else:
-                    key = name_map.get(dept)
-                    if key:
-                        target_counts[key] += 1
+    # ประมวลผลการนัดหมายปกติ
+    for item in raw_json_data["normal_appointments"]:
+        dept = item["Centers & Clinics"]
+        if dept in centers_and_clinics:
+            total_normal_counts[dept] += 1
+        else:
+            key = name_map.get(dept)
+            if key:
+                total_normal_counts[key] += 1
 
-    for lang in langs:
-        count_from_files(os.path.join(folder_path, f"appointment-{lang}-*.csv"), total_normal_counts)
-        count_from_files(os.path.join(folder_path, f"appointment-recommended-{lang}-*.csv"), total_recommended_counts)
+    # ประมวลผลการนัดหมายที่แนะนำ
+    for item in raw_json_data["recommended_appointments"]:
+        dept = item["Centers & Clinics"]
+        if dept in centers_and_clinics:
+            total_recommended_counts[dept] += 1
+        else:
+            key = name_map.get(dept)
+            if key:
+                total_recommended_counts[key] += 1
 
-    result = [
-        {
-            "clinic": k,
-            "appointment_count": total_normal_counts[k],
-            "recommended_count": total_recommended_counts[k],
-            "total": total_normal_counts[k] + total_recommended_counts[k]
-        }
-        for k in centers_and_clinics
-    ]
+    processed_data = []
+    for k in centers_and_clinics_list:
+        normal_count = total_normal_counts[k]
+        recommended_count = total_recommended_counts[k]
+        total = normal_count + recommended_count
+        if total > 0:
+            processed_data.append({
+                "clinic": k,
+                "appointment_count": normal_count,
+                "recommended_count": recommended_count,
+                "total": total
+            })
 
-    result = [r for r in result if r["total"] > 0]
-    result = sorted(result, key=lambda x: x["total"], reverse=True)[:20]
+    processed_data = sorted(processed_data, key=lambda x: x["total"], reverse=True)[:20]
+    return processed_data
 
-    # เพิ่ม total summary รวมท้ายรายการ
-    # total_sum = {
-    #     "clinic": "Total",
-    #     "appointment_count": sum(r["appointment_count"] for r in result),
-    #     "recommended_count": sum(r["recommended_count"] for r in result),
-    #     "total": sum(r["total"] for r in result),
-    # }
-    # result.append(total_sum)
+def output_to_json(processed_data, output_file_name="top_clinics_summary.json"):
+    """
+    บันทึกข้อมูลคลินิกที่ประมวลผลแล้วลงในไฟล์ JSON.
+    """
+    with open(output_file_name, 'w', encoding='utf-8') as f:
+        json.dump(processed_data, f, ensure_ascii=False, indent=4)
+    print(f"สรุปคลินิกยอดนิยมถูกบันทึกที่ {output_file_name}")
 
-    return [result]
+def find_top_clinics_summary_main(date_param=None, folder_path="media/uploads", output_file="top_clinics_summary.json"):
+    """
+    ฟังก์ชันหลักเพื่อควบคุมการทำงานในการค้นหาคลินิกยอดนิยม.
+
+    อาร์กิวเมนต์:
+        folder_path (str): พาธไปยังโฟลเดอร์ที่มีไฟล์ CSV.
+        output_file (str): ชื่อไฟล์ JSON เอาต์พุต.
+        start_date (str, optional): วันที่เริ่มต้นการกรอง (รูปแบบ 'DD/MM/YYYY').
+        end_date (str, optional): วันที่สิ้นสุดการกรอง (รูปแบบ 'DD/MM/YYYY').
+
+    ส่งคืน:
+        list: รายการคลินิกยอดนิยมที่จัดเรียงแล้ว.
+    """
+    start_date = datetime.strptime(date_param["startDate"], "%Y-%m-%d").strftime("%d/%m/%Y")
+    end_date = datetime.strptime(date_param["endDate"], "%Y-%m-%d").strftime("%d/%m/%Y")
+    date_range_str = ""
+    if start_date and end_date:
+        date_range_str = f"ตั้งแต่ {start_date} ถึง {end_date}"
+    elif start_date:
+        date_range_str = f"ตั้งแต่ {start_date} เป็นต้นไป"
+    elif end_date:
+        date_range_str = f"จนถึง {end_date}"
+    else:
+        date_range_str = "ทุกวันที่ที่มีอยู่"
+
+    print(f"--- กำลังเริ่มต้นการประมวลผลข้อมูลคลินิก {date_range_str} ---")
+
+    print("ขั้นตอนที่ 1: กำลังอ่าน CSV และแปลงเป็นข้อมูลคล้าย JSON ดิบ (พร้อมกรองวันที่ในคอลัมน์ 'Entry Date' และตัดเวลา)...")
+    langs = ["ar", "de", "en", "ru", "th", "zh-hans"]
+    raw_data = csv_to_json(folder_path=folder_path, langs=langs,
+                           start_date=start_date, end_date=end_date)
+
+    print("ขั้นตอนที่ 2: กำลังประมวลผลข้อมูลดิบเพื่อนับจำนวนการนัดหมายของคลินิก...")
+    processed_clinic_info = process_clinic_data(raw_data)
+
+    print(f"ขั้นตอนที่ 3: กำลังบันทึกข้อมูลที่ประมวลผลแล้วไปยัง {output_file}...")
+    output_to_json(processed_clinic_info, output_file)
+
+    print("--- การประมวลผลข้อมูลคลินิกเสร็จสมบูรณ์แล้ว ---")
+    return processed_clinic_info

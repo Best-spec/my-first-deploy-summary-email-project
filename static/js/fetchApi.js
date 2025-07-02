@@ -36,7 +36,8 @@ export async function fetchDataAndRender(actionId, datetimeset) {
       // document.getElementById('barChart').style.height = '600px';
       // document.getElementById('myPieChart').setAttribute('height', '300');
       console.log('this is top')
-      realData = result.data[0];
+      realData = result.data;
+      console.log(realData)
       renderAutoChart(realData);
         // renderAutoPieChart(realData);
       data = realData;

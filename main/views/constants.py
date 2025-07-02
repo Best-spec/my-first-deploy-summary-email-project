@@ -2,7 +2,7 @@ from .inquiry import find_inquiry, get_total_languages_summary
 from .appointment import find_appointment_from_csv_folder
 from .feedback_package import find_FeedbackAndPackage, FPtotal
 from .Type_email import aggregate_summary_for_plot
-from .top_center import find_top_clinics_summary
+from .top_center import find_top_clinics_summary_main
 from .Total_Email_of_Language import find_TotalMonth
 from django.http import JsonResponse
 
@@ -29,7 +29,7 @@ ANALYSIS_ACTIONS = {
     },
     'top-center': {
         'id': 'top-center', 'name': 'Top Center', 'color': 'red', 'icon': '⭐',
-        'function': find_top_clinics_summary
+        'function': find_top_clinics_summary_main
     },
     'total-month': {
         'id': 'total-month', 'name': 'Total Email of Language', 'color': 'teal', 'icon': '📈',

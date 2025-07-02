@@ -9,7 +9,7 @@ LANG_MAP = {
     "-th": "Thai",
     "-en": "English",
     "-ar": "Arabic",
-    "-ru": "Russian",  # ✅ ให้ตรงกับ categories
+    "-ru": "Russia",  # ✅ ให้ตรงกับ categories
     "-de": "German",
     "-zh": "Chinese",
 }
@@ -27,7 +27,7 @@ categories = {
         "ติดต่อกับหมอประจำตัวที่โรงพยาบาลกรุงเทพพัทยา",
         "อื่นๆ"
     ],
-    'Russian': [  # ✅ เปลี่ยนจาก 'Russia'
+    'Russia': [  # ✅ เปลี่ยนจาก 'Russia'
         "Общий запрос",
         "Узнать про цену",
         "Написать врачу",
@@ -74,15 +74,6 @@ category_mapping = {
 def load_csv_to_json(start_date=None, end_date=None):
     folder_path = Path("media/uploads")
     all_data = []
-
-    LANG_MAP = {
-        "-th": "Thai",
-        "-en": "English",
-        "-ar": "Arabic",
-        "-ru": "Russian",  # ✅ แก้ตรงนี้
-        "-de": "German",
-        "-zh": "Chinese",
-    }
 
     files = folder_path.glob("inquiry-form-*.csv")
 
@@ -237,7 +228,6 @@ def load_csv_to_json(start_date=None, end_date=None):
 #     except Exception as e:
 #         print("🔥 ERROR:", e)
 
-from collections import defaultdict
 
 def calculate_inquiry_summary(data_json):
     try:
@@ -440,9 +430,9 @@ def find_inquiry(date_param):
 #     except Exception as e:
 #         print("🔥 ERROR:", e)
 
-def get_total_languages_summary():
+def get_total_languages_summary(date):
     try:
-        table, _ = find_inquiry()  # ดึงข้อมูลตารางจาก find_inquiry()
+        table, _ = find_inquiry(date)  # ดึงข้อมูลตารางจาก find_inquiry()
 
         result = []
         for row in table:

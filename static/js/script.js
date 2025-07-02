@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderFiles();
   updateFileCount();
   initAnalyzeButtons();
+  handleToggle();
 });
 
 
@@ -376,31 +377,8 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// window.rangeObj = "2024-01-01";
-
-// $('input[name="daterange"]').daterangepicker({
-//   autoUpdateInput: false,
-//   locale: {
-//     format: 'YYYY-MM-DD',
-//     cancelLabel: 'Clear'
-//   }
-// });
-
-// $('input[name="daterange"]').on('apply.daterangepicker', function (ev, picker) {
-//   $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
-
-//   rangeObj = {
-//     startDate: picker.startDate.format('YYYY-MM-DD'),   
-//     endDate: picker.endDate.format('YYYY-MM-DD'),
-//     startDay: picker.startDate.date(),
-//     endDay: picker.endDate.date(),
-//     startMonth: picker.startDate.month() + 1,
-//     endMonth: picker.endDate.month() + 1,
-//     startYear: picker.startDate.year(),
-//     endYear: picker.endDate.year()
-//   };
-
-//   console.log("🔧 ช่วงวันที่เลือก:", rangeObj);
-// });
-
-    
+window.handleToggle = function (checkbox) {
+    if (checkbox.checked) {
+        console.log("Checked")
+    }
+}

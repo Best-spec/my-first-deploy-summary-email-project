@@ -156,9 +156,9 @@ def find_appointment_from_csv_folder(datetime):
         print("🔥 ERROR:", e)
         return []
 
-def find_appointment_summary():
+def find_appointment_summary(datetime):
     try:
-        find_appointment_from_csv_folder()
+        find_appointment_from_csv_folder(datetime)
         print("📅 Appointment Summary:", appointment_summary_shared)
         return [appointment_summary_shared]
     except Exception as e:

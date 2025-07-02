@@ -136,6 +136,12 @@ def convert_csv_to_json(folder_path="media/uploads"):
 
     return all_data
 
+import json
+from datetime import datetime
+
+import json
+from datetime import datetime
+
 def process_json_list(data_list, date_col='Entry Date', start_date=None, end_date=None):
     """
     คำนวณจำนวน Feedback และ Packages จาก JSON list
@@ -143,11 +149,51 @@ def process_json_list(data_list, date_col='Entry Date', start_date=None, end_dat
     """
     lang_stats = {}
 
-    dt_start = datetime.strptime(start_date, "%d/%m/%Y").date() #01/04/2025
-    dt_end = datetime.strptime(end_date, "%d/%m/%Y").date() #30/04/2025
+    dt_start = None
+    dt_end = None
 
-    print(json.dumps(data_list, indent=2 ,ensure_ascii=False))
+    # แปลงวันที่เริ่มต้นและสิ้นสุดที่รับเข้ามาให้อยู่ในรูปแบบ datetime.date
+    if start_date:
+        try:
+            dt_start = datetime.strptime(start_date, "%d/%m/%Y").date()
+        except ValueError:
+            print(f"คำเตือน: รูปแบบวันที่เริ่มต้น '{start_date}' ไม่ถูกต้อง. ควรเป็น DD/MM/YYYY")
+            return [] # อาจจะต้องการจัดการข้อผิดพลาดในรูปแบบอื่น
+    if end_date:
+        try:
+            dt_end = datetime.strptime(end_date, "%d/%m/%Y").date()
+        except ValueError:
+            print(f"คำเตือน: รูปแบบวันที่สิ้นสุด '{end_date}' ไม่ถูกต้อง. ควรเป็น DD/MM/YYYY")
+            return [] # อาจจะต้องการจัดการข้อผิดพลาดในรูปแบบอื่น
+
     for record in data_list:
+        entry_date_str = record.get(date_col)
+        if not entry_date_str:
+            continue # ข้ามรายการที่ไม่มีคอลัมน์วันที่
+
+        record_date = None
+        # เพิ่มรูปแบบวันที่และเวลาที่คุณมีเข้าไปในลิสต์
+        date_formats = ["%Y-%m-%d %H:%M:%S", "%d/%m/%Y", "%Y-%m-%d", "%d-%m-%Y"] # เพิ่มรูปแบบใหม่ที่นี่
+        for fmt in date_formats:
+            try:
+                # แปลงเป็น datetime object ก่อน แล้วค่อยเอาแค่ส่วน date มาเปรียบเทียบ
+                record_datetime = datetime.strptime(entry_date_str, fmt)
+                record_date = record_datetime.date() # เอาเฉพาะส่วนวันที่มาใช้ในการกรอง
+                break # หากแปลงได้แล้ว ให้ออกจากลูป
+            except ValueError:
+                continue # ลองรูปแบบถัดไป
+
+        if not record_date:
+            print(f"คำเตือน: ไม่สามารถแยกวิเคราะห์วันที่ '{entry_date_str}' ได้. ข้ามรายการนี้.")
+            continue # ข้ามรายการที่ไม่สามารถแปลงวันที่ได้
+
+        # --- ส่วนของการกรองข้อมูลตามวันที่ ---
+        if dt_start and record_date < dt_start:
+            continue # ข้ามถ้าวันที่ในรายการอยู่ก่อนวันเริ่มต้น
+        if dt_end and record_date > dt_end:
+            continue # ข้ามถ้าวันที่ในรายการอยู่หลังวันสิ้นสุด
+        # --- สิ้นสุดส่วนของการกรองข้อมูลตามวันที่ ---
+
         lang = record.get('Language', 'Unknown')
         typ = record.get('Type', 'Unknown')
 
@@ -159,7 +205,7 @@ def process_json_list(data_list, date_col='Entry Date', start_date=None, end_dat
         elif typ == 'Packages':
             lang_stats[lang]['Packages'] += 1
 
-    # รวมผล
+    # สรุปผลลัพธ์
     result = []
     total_feedback = total_packages = 0
     for lang, data in lang_stats.items():
@@ -181,24 +227,23 @@ def process_json_list(data_list, date_col='Entry Date', start_date=None, end_dat
     })
 
     return result
-
 def find_FeedbackAndPackage(date_param):
     try:
         start_date = datetime.strptime(date_param["startDate"], "%Y-%m-%d").strftime("%d/%m/%Y")
         end_date = datetime.strptime(date_param["endDate"], "%Y-%m-%d").strftime("%d/%m/%Y")
-        print(start_date)
+        # print(start_date)
         data = convert_csv_to_json()
-        print(data[0]['Type'])
+        # print(data[0])
         # print(json.dumps(data, indent=2, ensure_ascii=False))  # พิมพ์ให้ดูสวย อ่านง่าย
-        summary = process_json_list(data, date_col='Entry Date', start_date=start_date, end_date=end_date)
-        print(summary)
+        summary = process_json_list(data, start_date=start_date, end_date=end_date)
+        # print(summary)
         return [summary]
     except Exception as e:
         print(f"🔥 Error in find_FeedbackAndPackage: {e}")
         return None
 
-def FPtotal():
-    raw_json = find_FeedbackAndPackage()
+def FPtotal(date_param):
+    raw_json = find_FeedbackAndPackage(date_param)
     result = raw_json[0]
 
     total = [{key: val for key, val in result[-1].items() if key in ("Feedback", "Packages")}]

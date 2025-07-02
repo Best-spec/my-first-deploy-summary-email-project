@@ -3,11 +3,12 @@ from main.models import UploadedFile
 from .inquiry import get_total_languages_summary
 from .feedback_package import find_FeedbackAndPackage
 from .appointment import find_appointment_from_csv_folder
+
 def find_TotalMonth(date=None):
     try:
-        total_inquiry = get_total_languages_summary()
-        total_feedback_package = find_FeedbackAndPackage()
-        total_appointment = find_appointment_from_csv_folder()
+        total_inquiry = get_total_languages_summary(date)
+        total_feedback_package = find_FeedbackAndPackage(date)
+        total_appointment = find_appointment_from_csv_folder(date)
 
         # flatten ถ้าเป็น list ซ้อน
         if isinstance(total_feedback_package, list) and isinstance(total_feedback_package[0], dict) is False:
@@ -41,6 +42,7 @@ def find_TotalMonth(date=None):
                     "appointment recommended": appointment_recommended,
                     "total all": inquiry + feedback + packages + appointment + appointment_recommended,
                 })
+                print(summary)
 
         # ✅ เพิ่มแถวรวม
         total_row = {
@@ -94,35 +96,9 @@ def find_TotalMonth(date=None):
             )
         transposed.append(total_all_row)
 
-        print(summary)
+        # print(summary)
         return [summary, plot_data, transposed]
 
     except Exception as e:
         print("🔥 ERROR:", e)
         return [[],[]]
-
-
-
-    # print(summary)
-    # print(feedback_map)
-    # print(appointment_map)
-
-    # raw_data = {
-    #     'Inquiry': [111, 90, 10],
-    #     'Package': [1, 5, 2],
-    #     'Feedback': [3, 2, 0],
-    #     'Appointment': [10, 8, 1],
-    #     'Appointment Recommended': [20, 15, 3]
-    # }
-    
-    # json = [
-    #     {
-    #         'Language': 'English',       
-    #         'Inquiry': 111,
-    #         'Package': 1,
-    #         'Feedback': 3, 
-    #         'Appointment': 10,
-    #         'Appointment Recommended': 20,
-    #     }
-    # ]
-    # return json
