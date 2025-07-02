@@ -17,11 +17,11 @@ json_temp = [
     'Web Commerce',
 ]
 
-def aggregate_summary_for_plot():
+def aggregate_summary_for_plot(date=None):
     try:
-        raw, summary = find_inquiry()        # dict ภาษา-> dict category-> count
-        summaryFeed = FPtotal()
-        summaryAppointment = find_appointment_summary()  # dict ภาษา-> count fields
+        raw, summary = find_inquiry(date)        # dict ภาษา-> dict category-> count
+        summaryFeed = FPtotal(date)
+        summaryAppointment = find_appointment_summary(date)  # dict ภาษา-> count fields
 
         index1 = summary[0].get('General Inquiry')
         index2 = summary[0].get('Estimated Cost')
@@ -35,6 +35,7 @@ def aggregate_summary_for_plot():
 
         json_temp = [
                 {
+                    'Type Email'                         : 'Total',
                     'General Inquiry'                    : index1,
                     'Estimated Cost'                     : index2,
                     'Other'                              : index3,
@@ -46,6 +47,8 @@ def aggregate_summary_for_plot():
                     'Web Commerce'                       : index9,
                 }
         ];
+
+        
 
         # print(json_temp)
         return [json_temp]
