@@ -4,11 +4,13 @@ from collections import defaultdict
 import pandas as pd
 from pathlib import Path
 from datetime import datetime
+# from compare.data_loader import loadSet1, loadSet2
+# from compare.result_compare import Resultcompare
 
 LANG_MAP = {
     "-th": "Thai",
     "-en": "English",
-    "-ar": "Arabic",
+    "-ar": "Arabic",    
     "-ru": "Russia",  # ✅ ให้ตรงกับ categories
     "-de": "German",
     "-zh": "Chinese",
@@ -305,14 +307,41 @@ def calculate_inquiry_summary(data_json):
         print("🔥 ERROR:", e)
         return [], []
 
-import json
+
+def cal(start, end):
+    start_date = datetime.strptime(start, "%Y-%m-%d").strftime("%d/%m/%Y")
+    end_date = datetime.strptime(end, "%Y-%m-%d").strftime("%d/%m/%Y")
+    json_data = load_csv_to_json(start_date=start_date, end_date=end_date)
+    for_table, for_chart = calculate_inquiry_summary(json_data)
+    # print(for_table, for_chart)
+    return for_table, for_chart
+
+
 def find_inquiry(date_param):
     try:
-        start_date = datetime.strptime(date_param["startDate"], "%Y-%m-%d").strftime("%d/%m/%Y")
-        end_date = datetime.strptime(date_param["endDate"], "%Y-%m-%d").strftime("%d/%m/%Y")
-        json_data = load_csv_to_json(start_date=start_date, end_date=end_date)
-        for_table, for_chart = calculate_inquiry_summary(json_data)
-        return for_table, for_chart
+        if len(date_param) <= 1:
+            print(date_param, len(date_param))
+            start = date_param[0]['startDate']
+            end = date_param[0]['endDate']
+            for_table, for_chart = cal(start, end)
+            return for_table, for_chart
+
+        else:
+            print('มากกว่าสอง')
+            startset1 = date_param[0]['startDate']
+            endset1 = date_param[0]['endDate']
+            startset2 = date_param[1]['startDate']
+            endset2 = date_param[1]['endDate']
+            print(date_param)
+            # loadSet1(startset1, endset1)
+            # loadSet2(startset2, endset2)
+            # # set1 = cal(startset1, endset1)
+            # # set2 = cal(startset2, endset2)
+            # for_table, for_chart = Resultcompare()
+            # return for_table, for_chart
+
+
+
     except Exception as e:
         print("🔥 ERROR in find_inquiry():", e)
         return [], []

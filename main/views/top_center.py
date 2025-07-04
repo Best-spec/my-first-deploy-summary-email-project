@@ -266,21 +266,10 @@ def output_to_json(processed_data, output_file_name="top_clinics_summary.json"):
         json.dump(processed_data, f, ensure_ascii=False, indent=4)
     print(f"สรุปคลินิกยอดนิยมถูกบันทึกที่ {output_file_name}")
 
-def find_top_clinics_summary_main(date_param=None, folder_path="media/uploads", output_file="top_clinics_summary.json"):
-    """
-    ฟังก์ชันหลักเพื่อควบคุมการทำงานในการค้นหาคลินิกยอดนิยม.
-
-    อาร์กิวเมนต์:
-        folder_path (str): พาธไปยังโฟลเดอร์ที่มีไฟล์ CSV.
-        output_file (str): ชื่อไฟล์ JSON เอาต์พุต.
-        start_date (str, optional): วันที่เริ่มต้นการกรอง (รูปแบบ 'DD/MM/YYYY').
-        end_date (str, optional): วันที่สิ้นสุดการกรอง (รูปแบบ 'DD/MM/YYYY').
-
-    ส่งคืน:
-        list: รายการคลินิกยอดนิยมที่จัดเรียงแล้ว.
-    """
-    start_date = datetime.strptime(date_param["startDate"], "%Y-%m-%d").strftime("%d/%m/%Y")
-    end_date = datetime.strptime(date_param["endDate"], "%Y-%m-%d").strftime("%d/%m/%Y")
+def sumf_top(start, end):
+    folder_path="media/uploads"
+    start_date = datetime.strptime(start, "%Y-%m-%d").strftime("%d/%m/%Y")
+    end_date = datetime.strptime(end, "%Y-%m-%d").strftime("%d/%m/%Y")
     date_range_str = ""
     if start_date and end_date:
         date_range_str = f"ตั้งแต่ {start_date} ถึง {end_date}"
@@ -301,8 +290,48 @@ def find_top_clinics_summary_main(date_param=None, folder_path="media/uploads", 
     print("ขั้นตอนที่ 2: กำลังประมวลผลข้อมูลดิบเพื่อนับจำนวนการนัดหมายของคลินิก...")
     processed_clinic_info = process_clinic_data(raw_data)
 
-    print(f"ขั้นตอนที่ 3: กำลังบันทึกข้อมูลที่ประมวลผลแล้วไปยัง {output_file}...")
-    output_to_json(processed_clinic_info, output_file)
-
     print("--- การประมวลผลข้อมูลคลินิกเสร็จสมบูรณ์แล้ว ---")
     return processed_clinic_info
+
+def find_top_clinics_summary_main(date_param=None):
+    """
+    ฟังก์ชันหลักเพื่อควบคุมการทำงานในการค้นหาคลินิกยอดนิยม.
+
+    อาร์กิวเมนต์:
+        folder_path (str): พาธไปยังโฟลเดอร์ที่มีไฟล์ CSV.
+        output_file (str): ชื่อไฟล์ JSON เอาต์พุต.
+        start_date (str, optional): วันที่เริ่มต้นการกรอง (รูปแบบ 'DD/MM/YYYY').
+        end_date (str, optional): วันที่สิ้นสุดการกรอง (รูปแบบ 'DD/MM/YYYY').
+
+    ส่งคืน:
+        list: รายการคลินิกยอดนิยมที่จัดเรียงแล้ว.
+    """ 
+    try:
+        if len(date_param) <= 1:
+            print(date_param, len(date_param))
+            start = date_param[0]['startDate']
+            end = date_param[0]['endDate']
+            for_table, for_chart = cal_top(start, end)
+            return for_table, for_chart
+
+        else:
+            print('มากกว่าสอง')
+            startset1 = date_param[0]['startDate']
+            endset1 = date_param[0]['endDate']
+            startset2 = date_param[1]['startDate']
+            endset2 = date_param[1]['endDate']
+            print(date_param)
+            # loadSet1(startset1, endset1)
+            # loadSet2(startset2, endset2)
+            # # set1 = cal(startset1, endset1)
+            # # set2 = cal(startset2, endset2)
+            # for_table, for_chart = Resultcompare()
+            # return for_table, for_chart
+
+
+
+    except Exception as e:
+        print("🔥 ERROR in find_inquiry():", e)
+        return [], [] 
+    
+    

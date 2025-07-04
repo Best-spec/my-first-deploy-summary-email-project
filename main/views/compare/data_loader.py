@@ -8,9 +8,10 @@ import os
 from datetime import datetime
 
 from views.appointment import find_appointment_from_csv_folder
+from views.inquiry import cal
 
-def loadSet1():
-    return find_appointment_from_csv_folder
-
-def loadSet2():
-    return find_appointment_from_csv_folder        
+def loadSet1(start, end):
+    return cal(start, end)
+    
+def loadSet2(start, end):
+    return cal(start, end)

@@ -183,9 +183,10 @@ export function initAnalyzeButtons() {
     btn.addEventListener('click', () => {
       const actionId = btn.dataset.actionId;
 
-      // ✅ ใช้ rangeObj ที่อัปเดตไว้ตอนเลือกวันที่
-      const datetimeset = window.rangeObj;
-      // const datetimeset = window.rangeObj;
+      const datetimeset = window.rangedateset2 === null  
+        ? [window.rangedateset1]
+        : [window.rangedateset1, window.rangedateset2]; // [{set1},{set2}] fomat
+      // const datetimeset = window.rangedateset1;
 
       if (actionId === "plot-all") {
         console.log('แสดง modal นี้แหละ');
@@ -222,7 +223,12 @@ export function initAnalyzeButtons() {
   });
 }
 
-window.rangeObj = {
+window.rangedateset1 = {
+  startDate: moment().format('YYYY-MM-DD'),
+  endDate: moment().format('YYYY-MM-DD'),
+};
+
+window.rangedateset2 = {
   startDate: moment().format('YYYY-MM-DD'),
   endDate: moment().format('YYYY-MM-DD'),
 };
@@ -248,7 +254,7 @@ $('input[name="daterange"]').daterangepicker({
   }
 }, function(start, end, label) {
   // เวลาเลือกจาก predefined หรือเลือกเอง
-  window.rangeObj = {
+  window.rangedateset1 = {
     startDate: start.format('YYYY-MM-DD'),
     endDate: end.format('YYYY-MM-DD'),
     startDay: start.date(),
@@ -259,5 +265,6 @@ $('input[name="daterange"]').daterangepicker({
     endYear: end.year()
   };
 
-  console.log("📆 เลือกช่วงเวลา:", label, window.rangeObj);
+  console.log("📆 เลือกช่วงเวลา:", label, window.rangedateset1);
 });
+

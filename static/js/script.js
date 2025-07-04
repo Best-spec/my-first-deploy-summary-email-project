@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderFiles();
   updateFileCount();
   initAnalyzeButtons();
-  handleToggle();
 });
 
 
@@ -377,8 +376,57 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-window.handleToggle = function (checkbox) {
-    if (checkbox.checked) {
-        console.log("Checked")
+const toggle = document.getElementById("toggle");
+const compareDiv = document.getElementById("rangecompare");
+const compareInput = document.querySelector('input[name="datecompare"]');
+
+toggle.addEventListener("change", () => {
+  if (toggle.checked) {
+    // ✅ เปิด compare: แสดง div + bind datepicker
+    compareDiv.classList.remove("hidden");
+
+    if (!compareDiv.dataset.inited) {
+      // ✅ bind datepicker แค่รอบเดียว
+      $(compareInput).daterangepicker({
+        autoUpdateInput: true,
+        startDate: moment(),
+        endDate: moment(),
+        locale: {
+          format: 'YYYY-MM-DD',
+          cancelLabel: 'Clear'
+        },
+        ranges: {
+          'Today': [moment(), moment()],
+          'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+          'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+          'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+          'This Month': [moment().startOf('month'), moment().endOf('month')],
+          'Last Month': [
+            moment().subtract(1, 'month').startOf('month'),
+            moment().subtract(1, 'month').endOf('month')
+          ]
+        }
+      }, function(start, end, label) {
+        window.rangedateset2 = {
+          startDate: start.format('YYYY-MM-DD'),
+          endDate: end.format('YYYY-MM-DD'),
+          startDay: start.date(),
+          endDay: end.date(),
+          startMonth: start.month() + 1,
+          endMonth: end.month() + 1,
+          startYear: start.year(),
+          endYear: end.year()
+        };
+        console.log("📆 ตั้ง compare:", label, window.rangedateset2);
+      });
+
+      compareDiv.dataset.inited = "true";
     }
-}
+
+  } else {
+    // ❌ ปิด compare: ซ่อน div + ล้างค่า
+    compareDiv.classList.add("hidden");
+    compareInput.value = '';
+    window.rangedateset2 = null;
+  }
+});
