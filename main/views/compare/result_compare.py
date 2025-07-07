@@ -1,10 +1,9 @@
-import data_loader as dl
-import data_comparator as dc
-import raw_to_json as tj
+from . import data_loader as dl
+from . import data_comparator as dc
+from . import raw_to_json as tj
 
-def Resultcompare():
-    date_1 = dl.loadSet1
-    data_2 = dl.loadSet2
-    raw = dc.compareData(date_1, data_2)
-    json = tj.raw_to_json_res(raw)
-    return json
+def Resultcompare(data1, data2):
+    raw = dc.compareData(data1, data2)
+    forCompareTable = tj.raw_to_json_res(raw)
+    print('re com', forCompareTable)
+    return forCompareTable

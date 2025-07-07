@@ -224,8 +224,8 @@ export function initAnalyzeButtons() {
 }
 
 window.rangedateset1 = {
-  startDate: moment().format('YYYY-MM-DD'),
-  endDate: moment().format('YYYY-MM-DD'),
+  startDate: moment('2025-04-01').format('YYYY-MM-DD'),
+  endDate: moment('2025-04-30').format('YYYY-MM-DD'),
 };
 
 window.rangedateset2 = {
@@ -235,8 +235,8 @@ window.rangedateset2 = {
 
 $('input[name="daterange"]').daterangepicker({
   autoUpdateInput: true, // <<< ให้มันอัปเดต input อัตโนมัติด้วย
-  startDate: moment(),   // ค่าเริ่มต้น
-  endDate: moment(),     // ค่าเริ่มต้น
+  startDate: moment(window.rangedateset1.startDate),
+  endDate: moment(window.rangedateset1.endDate),
   locale: {
     format: 'YYYY-MM-DD',
     cancelLabel: 'Clear'

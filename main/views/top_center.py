@@ -4,6 +4,8 @@ import glob
 from collections import defaultdict
 import json
 from datetime import datetime
+from .compare.data_loader import *
+from .compare.result_compare import Resultcompare
 
 def csv_to_json(folder_path="media/uploads", langs=None, start_date=None, end_date=None):
     """
@@ -311,8 +313,8 @@ def find_top_clinics_summary_main(date_param=None):
             print(date_param, len(date_param))
             start = date_param[0]['startDate']
             end = date_param[0]['endDate']
-            for_table, for_chart = cal_top(start, end)
-            return for_table, for_chart
+            for_table = sumf_top(start, end)
+            return for_table
 
         else:
             print('มากกว่าสอง')
@@ -320,13 +322,12 @@ def find_top_clinics_summary_main(date_param=None):
             endset1 = date_param[0]['endDate']
             startset2 = date_param[1]['startDate']
             endset2 = date_param[1]['endDate']
-            print(date_param)
-            # loadSet1(startset1, endset1)
-            # loadSet2(startset2, endset2)
-            # # set1 = cal(startset1, endset1)
-            # # set2 = cal(startset2, endset2)
-            # for_table, for_chart = Resultcompare()
-            # return for_table, for_chart
+            datatop1 = sumf_top(startset1, endset1)
+            datatop2 = sumf_top(startset2, endset2)
+            # loadSet1(datatop1)
+            # loadSet2(datatop2)
+            print(Resultcompare(datatop1, datatop2))
+            return Resultcompare(datatop1, datatop2)
 
 
 

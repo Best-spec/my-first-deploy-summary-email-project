@@ -4,8 +4,8 @@ from collections import defaultdict
 import pandas as pd
 from pathlib import Path
 from datetime import datetime
-# from compare.data_loader import loadSet1, loadSet2
-# from compare.result_compare import Resultcompare
+from .compare.data_loader import *
+from .compare.result_compare import Resultcompare
 
 LANG_MAP = {
     "-th": "Thai",
@@ -332,13 +332,10 @@ def find_inquiry(date_param):
             endset1 = date_param[0]['endDate']
             startset2 = date_param[1]['startDate']
             endset2 = date_param[1]['endDate']
-            print(date_param)
-            # loadSet1(startset1, endset1)
-            # loadSet2(startset2, endset2)
-            # # set1 = cal(startset1, endset1)
-            # # set2 = cal(startset2, endset2)
-            # for_table, for_chart = Resultcompare()
-            # return for_table, for_chart
+            set1 = cal(startset1, endset1)
+            set2 = cal(startset2, endset2)
+            # print(Resultcompare())
+            # return Resultcompare(set1, set2)
 
 
 

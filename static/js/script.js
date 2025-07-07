@@ -380,6 +380,8 @@ const toggle = document.getElementById("toggle");
 const compareDiv = document.getElementById("rangecompare");
 const compareInput = document.querySelector('input[name="datecompare"]');
 
+window.rangedateset2 = null;
+
 toggle.addEventListener("change", () => {
   if (toggle.checked) {
     // ✅ เปิด compare: แสดง div + bind datepicker
@@ -406,19 +408,20 @@ toggle.addEventListener("change", () => {
             moment().subtract(1, 'month').endOf('month')
           ]
         }
-      }, function(start, end, label) {
+      }, 
+      function(start, end, label) {
         window.rangedateset2 = {
           startDate: start.format('YYYY-MM-DD'),
           endDate: end.format('YYYY-MM-DD'),
-          startDay: start.date(),
-          endDay: end.date(),
-          startMonth: start.month() + 1,
-          endMonth: end.month() + 1,
-          startYear: start.year(),
-          endYear: end.year()
         };
         console.log("📆 ตั้ง compare:", label, window.rangedateset2);
       });
+        // 🛠 เพิ่มตรงนี้เพื่อให้ rangedateset2 มีค่าทันทีตอนเปิด toggle
+        const picker = $(compareInput).data('daterangepicker');
+        window.rangedateset2 = {
+            startDate: picker.startDate.format('YYYY-MM-DD'),
+            endDate: picker.endDate.format('YYYY-MM-DD'),
+        };
 
       compareDiv.dataset.inited = "true";
     }

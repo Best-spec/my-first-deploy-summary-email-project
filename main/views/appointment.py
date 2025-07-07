@@ -6,6 +6,8 @@ import pandas as pd
 import glob
 import os
 from datetime import datetime
+from .compare.data_loader import *
+from .compare.result_compare import Resultcompare
 
 
 appointment_summary_shared = {
@@ -95,7 +97,7 @@ def filter_date_range(filtered_list, start_date, end_date, date_key="Entry Date"
         try:
             entry = datetime.strptime(entry_str.split(" ")[0], "%Y-%m-%d")  # ดึงแค่วันที่
             if start <= entry <= end:
-                print(item["Entry Date"], item['lang_code'])
+                # print(item["Entry Date"], item['lang_code'])
                 result.append(item)
         except ValueError:
             print(f"❌ Invalid date format: {entry_str}")
@@ -105,11 +107,11 @@ def filter_date_range(filtered_list, start_date, end_date, date_key="Entry Date"
     return result
 
 def load_date(datetime):
-    start = datetime['startDate']
-    end = datetime['endDate']     
+    start = datetime[0]['startDate']
+    end = datetime[0]['endDate']
     return start, end
 
-def find_appointment_from_csv_folder(datetime):
+def find_appointment_from_csv_folder(dateset):
     try:
         global appointment_summary_shared
         folder = "media/uploads"
@@ -143,7 +145,7 @@ def find_appointment_from_csv_folder(datetime):
             for d in all_data
         ]
 
-        start_date, end_date = load_date(datetime)
+        start_date, end_date = load_date(dateset)
 
         fil = filter_date_range(filtered_list, start_date, end_date)
 
@@ -155,7 +157,24 @@ def find_appointment_from_csv_folder(datetime):
     except Exception as e:
         print("🔥 ERROR:", e)
         return []
-
+    
+def find_appointment(dateset):
+    try:
+        if len(dateset) <= 1:
+            print(dateset)
+            return find_appointment_from_csv_folder(dateset)
+        else :
+            print('it 2 !!')
+            set1 = dateset[0]
+            set2 = dateset[1]
+            data1 = find_appointment_from_csv_folder(set1)
+            data2 = find_appointment_from_csv_folder(set2)
+            loadSet1(data1)
+            loadSet2(data2)
+            print(Resultcompare())
+            # return Resultcompare()
+    except Exception as e:
+        print('From appointment', e)
 def find_appointment_summary(datetime):
     try:
         find_appointment_from_csv_folder(datetime)
