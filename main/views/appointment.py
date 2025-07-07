@@ -85,19 +85,22 @@ def calculate_appointment_from_json(data_list):
 
     return appointment
 
+
 def filter_date_range(filtered_list, start_date, end_date, date_key="Entry Date"):
     result = []
 
-    # แปลง start และ end เป็น datetime object
+    # start & end ต้องเป็น datetime object ด้วย pattern เดียวกับ entry
     start = datetime.strptime(start_date, "%Y-%m-%d")
     end = datetime.strptime(end_date, "%Y-%m-%d")
+    print(f"🔍 Filtering entries from {start.strftime('%d/%m/%Y')} to {end.strftime('%d/%m/%Y')}")
 
     for item in filtered_list:
         entry_str = item.get(date_key, "")
         try:
-            entry = datetime.strptime(entry_str.split(" ")[0], "%Y-%m-%d")  # ดึงแค่วันที่
+            # ใช้ pattern "%d/%m/%Y" แทน
+            entry = datetime.strptime(entry_str.split(" ")[0], "%d/%m/%Y")
             if start <= entry <= end:
-                # print(item["Entry Date"], item['lang_code'])
+                print(item["Entry Date"], item.get("lang_code", ''))
                 result.append(item)
         except ValueError:
             print(f"❌ Invalid date format: {entry_str}")
@@ -127,7 +130,7 @@ def find_appointment_from_csv_folder(dateset):
             if lang:
                 all_data.extend(csv_to_json_with_type(file, "appointment-recommended", lang))
 
-        # ไฟล์ appointment ปกติ
+        # ไฟล์ appointment ปกติ   
         normal_files = [
             f for f in glob.glob(os.path.join(folder_path, "*appointment*.csv"))
             if "appointment-recommended" not in os.path.basename(f)
@@ -161,7 +164,7 @@ def find_appointment_from_csv_folder(dateset):
 def find_appointment(dateset):
     try:
         if len(dateset) <= 1:
-            print(dateset)
+            # print(dateset)
             return find_appointment_from_csv_folder(dateset)
         else :
             print('it 2 !!')
@@ -171,7 +174,7 @@ def find_appointment(dateset):
             data2 = find_appointment_from_csv_folder(set2)
             loadSet1(data1)
             loadSet2(data2)
-            print(Resultcompare())
+            # print(Resultcompare())
             # return Resultcompare()
     except Exception as e:
         print('From appointment', e)

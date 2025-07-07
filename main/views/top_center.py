@@ -324,8 +324,7 @@ def find_top_clinics_summary_main(date_param=None):
             endset2 = date_param[1]['endDate']
             datatop1 = sumf_top(startset1, endset1)
             datatop2 = sumf_top(startset2, endset2)
-            # loadSet1(datatop1)
-            # loadSet2(datatop2)
+
             print(Resultcompare(datatop1, datatop2))
             return Resultcompare(datatop1, datatop2)
 
