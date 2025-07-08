@@ -7,6 +7,8 @@ def compareData(data1, data2):
     # แปลงเป็น dict เพื่อเข้าถึงตาม clinic
     data1_dict = {item['clinic']: item['total'] for item in data1}
     data2_dict = {item['clinic']: item['total'] for item in data2}
+    # print(data1)
+    # print(data1_dict)
 
     def explain_percent_change(new, old):
         if old == 0:
@@ -22,12 +24,9 @@ def compareData(data1, data2):
     for clinic, total1 in data1_dict.items():
         total2 = data2_dict.get(clinic, 0)  # ถ้า data2 ไม่มี ให้เป็น 0
         result = explain_percent_change(total2, total1)
-        print(f"{clinic}: {total1} → {total2} = {result}")
+        # print(f"{clinic}: {total1} → {total2} = {result}")
         
-        result_compare.append({
-            "clinic": clinic,
-            "result": result
-        })
+        result_compare.append(result)
     # print(result_compare)
     return result_compare
 

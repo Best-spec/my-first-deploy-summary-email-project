@@ -125,7 +125,7 @@ export async function fetchDataAndRender(actionId, datetimeset) {
     }
 
     const headers = Object.keys(data[0]);
-
+    console.log('header',headers)
     // 🧠 Set grid-cols dynamically
     const gridClass = `grid grid-cols-${headers.length}`;
 
@@ -137,9 +137,10 @@ export async function fetchDataAndRender(actionId, datetimeset) {
     document.getElementById('header-row').innerHTML = headerHtml;
 
     // 🟢 Rows
-    const rowsHtml = data.map(row => {
-      const cells = headers.map(key => {
-        let value = row[key];
+    const rowsHtml = data.map(row => { //obj แต่ละตัววนทั้งหมด 20 ตัว
+      // console.log('row',data[0])
+      const cells = headers.map(key => { // header แต่ละตัว
+        let value = row[key]; // ได้ value แต่ละ header ได้ไปใช้แล้วตัวใหม่มาทับต่อ
 
         // 🔧 Custom display
         if (typeof value === 'number' && key.includes('cost')) {
@@ -147,9 +148,8 @@ export async function fetchDataAndRender(actionId, datetimeset) {
         } else if (typeof value === 'number' && key.includes('contact')) {
           value = `<span class="px-2 py-0.5 rounded-full text-sm bg-green-100 text-green-800">↑ ${value}%</span>`;
         } else if (key === 'total') {
-          value = `<span class="px-2 py-0.5 rounded-full text-sm bg-gray-200 text-gray-800 font-bold">${value}</span>`;
+          value = `<span class="px-2 py-0.5 rounded-full text-sm bg-gray-200 text-green-800 font-bold">↑ ${value}</span>`;
         }
-
         return `<div class="text-center flex items-center justify-center">${value}</div>`;
       }).join('');
 
@@ -161,6 +161,7 @@ export async function fetchDataAndRender(actionId, datetimeset) {
     data = '';
     realData = '';
     data_chart = '';
+
   } catch (error) {
       console.error(error);
       document.getElementById('header-row').innerHTML = `
