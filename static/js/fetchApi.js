@@ -1,4 +1,5 @@
 import { renderAutoChart, renderAutoPieChart } from "./charts.js";
+import { rangedateset1, rangedateset2 } from './datetime.js';
 
 export function getCsrfToken() {
   return document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
@@ -19,8 +20,7 @@ export async function fetchDataAndRender(actionId, datetimeset) {
        }),
     });
 
-
-    console.log(datetimeset.startDate)
+    console.log('datetime',datetimeset)
     const result = await res.json();
     let realData;
     let data_chart;
@@ -124,36 +124,74 @@ export async function fetchDataAndRender(actionId, datetimeset) {
       return;
     }
 
-    const headers = Object.keys(data[0]);
-    console.log('header',headers)
-    // 🧠 Set grid-cols dynamically
+    let excludeKeys;
+    let headers;
+
+    if (Object.keys(data[0]).length >= 5) {
+      console.log("5 keys");
+      excludeKeys = ['sub'];
+      headers = Object.keys(data[0]).filter(key => !excludeKeys.includes(key));
+    } else {
+      console.log("4 keys")
+      headers = Object.keys(data[0])
+    }
+
     const gridClass = `grid grid-cols-${headers.length}`;
 
-    // 🟣 Header
     const headerHtml = headers.map(h => `
       <div class="text-center font-semibold capitalize">${h.replace(/_/g, ' ')}</div>
     `).join('');
     document.getElementById('header-row').className = `${gridClass} bg-gradient-to-r from-indigo-500 to-purple-700 text-white p-4`;
     document.getElementById('header-row').innerHTML = headerHtml;
 
-    // 🟢 Rows
-    const rowsHtml = data.map(row => { //obj แต่ละตัววนทั้งหมด 20 ตัว
-      // console.log('row',data[0])
-      const cells = headers.map(key => { // header แต่ละตัว
-        let value = row[key]; // ได้ value แต่ละ header ได้ไปใช้แล้วตัวใหม่มาทับต่อ
-
-        // 🔧 Custom display
-        if (typeof value === 'number' && key.includes('cost')) {
-          value = `฿ ${value}`;
-        } else if (typeof value === 'number' && key.includes('contact')) {
-          value = `<span class="px-2 py-0.5 rounded-full text-sm bg-green-100 text-green-800">↑ ${value}%</span>`;
-        } else if (key === 'total') {
-          value = `<span class="px-2 py-0.5 rounded-full text-sm bg-gray-200 text-green-800 font-bold">↑ ${value}</span>`;
-        }
+    const rowsHtml = data.map(row => {
+      const cells = headers.map(key => {
+        let value = row[key];
         return `<div class="text-center flex items-center justify-center">${value}</div>`;
       }).join('');
 
-      return `<div class="${gridClass} p-4 hover:bg-gray-50 transition-colors">${cells}</div>`;
+      const subRows = Array.isArray(row.sub) ? row.sub.map(sub => {
+        // console.log("sub",sub)
+        const subCells = headers.map(key => {
+          // console.log("key",key)
+          let value = sub[key] ?? '-';
+          let changeKey;
+          let changeVal;
+
+          // 👉 ถ้าเป็น compare row
+          if (sub.type === 'compare') {
+            changeKey = `${key}_change`;
+            changeVal = sub[changeKey];
+            // console.log("changeKey",changeKey)
+            // console.log("changeVal",changeVal)
+
+            if (changeVal !== undefined) {
+              const isPositive = changeVal >= 0;
+              const arrow = isPositive ? '▲' : '▼';
+              const color = isPositive ? 'text-green-600' : 'text-red-600';
+              value = `<span class="${color}">${arrow} ${Math.abs(changeVal)}%</span>`;
+            } else {
+              value = '-';
+            }
+          }
+
+          // 👉 ถ้า key คือ clinic แล้วมี date_range → ใช้แทน clinic
+          if (key === 'clinic' && sub.date_range) {
+            value = `<span class="text-red-400">${sub.date_range}</span>`;
+          } else if (key === 'clinic' && sub.type){
+            value = `<span class="">${sub.type}</span>`;
+          }
+
+          return `<div class="text-center flex items-center justify-center">${value}</div>`;
+        }).join('');
+
+        return `<div class="${gridClass} px-4 py-2">${subCells}</div>`;
+      }).join('') : '';
+
+      return `<div>
+        <div class="${gridClass} p-4 hover:bg-gray-50 transition-colors">${cells}</div>
+        ${subRows}
+      </div>`;
     }).join('');
 
     document.getElementById('data-rows').innerHTML = rowsHtml;
@@ -170,24 +208,26 @@ export async function fetchDataAndRender(actionId, datetimeset) {
     }
 }
 
-
 const openModal = document.getElementById("openModal");
 const closeModal = document.getElementById("closeModal");
 const modal = document.getElementById("myModal");
 const webdata = document.getElementById("name");
 const okbutton = document.getElementById("ok");
+let rangedateset2;
 
-export function initAnalyzeButtons() {
+export function initAnalyzeButtons(rangedateset1, rangedateset2) {
   const buttons = document.querySelectorAll('.analyze-btn');
 
   buttons.forEach(btn => {
     btn.addEventListener('click', () => {
       const actionId = btn.dataset.actionId;
 
-      const datetimeset = window.rangedateset2 === null  
-        ? [window.rangedateset1]
-        : [window.rangedateset1, window.rangedateset2]; // [{set1},{set2}] fomat
+      const datetimeset = rangedateset2 === null  
+        ? [rangedateset1]
+        : [rangedateset1, rangedateset2]; // [{set1},{set2}] fomat
       // const datetimeset = window.rangedateset1;
+      console.log("from fetch set1",rangedateset1)
+      console.log("from fetch set2",rangedateset2)
 
       if (actionId === "plot-all") {
         console.log('แสดง modal นี้แหละ');
@@ -224,48 +264,48 @@ export function initAnalyzeButtons() {
   });
 }
 
-window.rangedateset1 = {
-  startDate: moment('2025-04-01').format('YYYY-MM-DD'),
-  endDate: moment('2025-04-30').format('YYYY-MM-DD'),
-};
+// window.rangedateset1 = {
+//   startDate: moment('2025-04-01').format('YYYY-MM-DD'),
+//   endDate: moment('2025-04-15').format('YYYY-MM-DD'),
+// };
 
-window.rangedateset2 = {
-  startDate: moment().format('YYYY-MM-DD'),
-  endDate: moment().format('YYYY-MM-DD'),
-};
+// window.rangedateset2 = {
+//   startDate: moment('2025-04-16').format('YYYY-MM-DD'),
+//   endDate: moment('2025-04-30').format('YYYY-MM-DD'),
+// };
 
-$('input[name="daterange"]').daterangepicker({
-  autoUpdateInput: true, // <<< ให้มันอัปเดต input อัตโนมัติด้วย
-  startDate: moment(window.rangedateset1.startDate),
-  endDate: moment(window.rangedateset1.endDate),
-  locale: {
-    format: 'YYYY-MM-DD',
-    cancelLabel: 'Clear'
-  },
-  ranges: {
-    'Today': [moment(), moment()],
-    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-    'This Month': [moment().startOf('month'), moment().endOf('month')],
-    'Last Month': [
-      moment().subtract(1, 'month').startOf('month'),
-      moment().subtract(1, 'month').endOf('month')
-    ]
-  }
-}, function(start, end, label) {
-  // เวลาเลือกจาก predefined หรือเลือกเอง
-  window.rangedateset1 = {
-    startDate: start.format('YYYY-MM-DD'),
-    endDate: end.format('YYYY-MM-DD'),
-    startDay: start.date(),
-    endDay: end.date(),
-    startMonth: start.month() + 1,
-    endMonth: end.month() + 1,
-    startYear: start.year(),
-    endYear: end.year()
-  };
+// $('input[name="daterange"]').daterangepicker({
+//   autoUpdateInput: true, // <<< ให้มันอัปเดต input อัตโนมัติด้วย
+//   startDate: moment(window.rangedateset1.startDate),
+//   endDate: moment(window.rangedateset1.endDate),
+//   locale: {
+//     format: 'YYYY-MM-DD',
+//     cancelLabel: 'Clear'
+//   },
+//   ranges: {
+//     'Today': [moment(), moment()],
+//     'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+//     'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+//     'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+//     'This Month': [moment().startOf('month'), moment().endOf('month')],
+//     'Last Month': [
+//       moment().subtract(1, 'month').startOf('month'),
+//       moment().subtract(1, 'month').endOf('month')
+//     ]
+//   }
+// }, function(start, end, label) {
+//   // เวลาเลือกจาก predefined หรือเลือกเอง
+//   window.rangedateset1 = {
+//     startDate: start.format('YYYY-MM-DD'),
+//     endDate: end.format('YYYY-MM-DD'),
+//     startDay: start.date(),
+//     endDay: end.date(),
+//     startMonth: start.month() + 1,
+//     endMonth: end.month() + 1,
+//     startYear: start.year(),
+//     endYear: end.year()
+//   };
 
-  console.log("📆 เลือกช่วงเวลา:", label, window.rangedateset1);
-});
+//   console.log("📆 เลือกช่วงเวลา:", label, window.rangedateset1);
+// });
 
