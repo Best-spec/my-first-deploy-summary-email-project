@@ -177,7 +177,7 @@ def find_appointment(dateset):
             # print(Resultcompare())
             # return Resultcompare()
     except Exception as e:
-        print('From appointment', e)
+        print('From appointment', e)    
 def find_appointment_summary(datetime):
     try:
         find_appointment_from_csv_folder(datetime)

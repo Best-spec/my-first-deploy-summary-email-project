@@ -4,31 +4,39 @@
 def compareData(data1, data2):
     result_compare = []
 
-    # แปลงเป็น dict เพื่อเข้าถึงตาม clinic
-    data1_dict = {item['clinic']: item['total'] for item in data1}
-    data2_dict = {item['clinic']: item['total'] for item in data2}
-
     def explain_percent_change(new, old):
         if old == 0:
             return "⚠️ เปรียบเทียบไม่ได้ (old = 0)"
         change = ((new - old) / old) * 100
         if change > 0:
-            return f"✅ โตขึ้น {change:.2f}%"
+            return f"{change:.2f}"
         elif change < 0:
-            return f"❌ ลดลง {abs(change):.2f}%"
+            return f"{change:.2f}"
         else:
-            return "⭕ เท่ากัน 0.00%"
+            return 0.00
 
-    for clinic, total1 in data1_dict.items():
-        total2 = data2_dict.get(clinic, 0)  # ถ้า data2 ไม่มี ให้เป็น 0
-        result = explain_percent_change(total2, total1)
-        print(f"{clinic}: {total1} → {total2} = {result}")
-        
+    for i, obj in enumerate(data1):
+        obj2 = data2[i]
+
+        app_count1 = obj.get("appointment_count", 0)
+        app_count2 = obj2.get("appointment_count", 0)
+        percent_appointment_count = explain_percent_change(app_count2, app_count1)
+
+        r_count1 = obj.get("recommended_count", 0)
+        r_count2 = obj2.get("recommended_count", 0)
+        percent_recommended_count = explain_percent_change(r_count2, r_count1)
+
+        total1 = obj.get("total", 0)
+        total2 = obj2.get("total", 0)
+        total_result = explain_percent_change(total2, total1)
+
         result_compare.append({
-            "clinic": clinic,
-            "result": result
+            'percent_appointment_count': percent_appointment_count,
+            'percent_recommended_count': percent_recommended_count,
+            'total_result': total_result
         })
-    # print(result_compare)
+
+    print('-----------------------------------------')
     return result_compare
 
     

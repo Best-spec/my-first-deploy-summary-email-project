@@ -258,6 +258,7 @@ def process_clinic_data(raw_json_data):
             })
 
     processed_data = sorted(processed_data, key=lambda x: x["total"], reverse=True)[:20]
+    # print([obj.get('normal_appointments') for i, obj in enumerate(raw_json_data)])
     return processed_data
 
 def output_to_json(processed_data, output_file_name="top_clinics_summary.json"):
@@ -324,6 +325,7 @@ def find_top_clinics_summary_main(date_param=None):
             endset2 = date_param[1]['endDate']
             datatop1 = sumf_top(startset1, endset1)
             datatop2 = sumf_top(startset2, endset2)
+            return Resultcompare(datatop1, datatop2, date_param)
 
             print(Resultcompare(datatop1, datatop2))
             return Resultcompare(datatop1, datatop2)
@@ -331,7 +333,7 @@ def find_top_clinics_summary_main(date_param=None):
 
 
     except Exception as e:
-        print("🔥 ERROR in find_inquiry():", e)
+        print("🔥 ERROR in topCetner():", e)
         return [], [] 
     
     
