@@ -452,14 +452,16 @@ export function initComparePicker() {
     const okbutton = document.getElementById("ok");
 
     rangedateset1 = {
-    startDate: moment().format('YYYY-MM-DD'),
-    endDate: moment().format('YYYY-MM-DD'),
+        startDate: moment().format('YYYY-MM-DD'),
+        endDate: moment().format('YYYY-MM-DD'),
     };
+
 
     rangedateset2 = {
     startDate: moment().format('YYYY-MM-DD'),
     endDate: moment().format('YYYY-MM-DD'),
     };
+
 
     $('input[name="daterange"]').daterangepicker({
     autoUpdateInput: true, // <<< ให้มันอัปเดต input อัตโนมัติด้วย
@@ -470,7 +472,7 @@ export function initComparePicker() {
         cancelLabel: 'Clear'
     },
     ranges: {
-        'Today': [moment(), moment()],
+        'Today': [moment('2025-04-01'), moment('2025-04-15')],
         'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
         'Last 7 Days': [moment().subtract(6, 'days'), moment()],
         'Last 30 Days': [moment().subtract(29, 'days'), moment()],
@@ -492,6 +494,8 @@ export function initComparePicker() {
         startYear: start.year(),
         endYear: end.year()
     };
+    setDateRange1(rangedateset1);
+
 
     console.log("📆 เลือกช่วงเวลา:", label, rangedateset1);
     });
@@ -510,7 +514,7 @@ export function initComparePicker() {
                 cancelLabel: 'Clear'
             },
             ranges: {
-                'Today': [moment(), moment()],
+                'Today': [moment('2025-04-16'), moment('2025-04-30')],
                 'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
                 'Last 7 Days': [moment().subtract(6, 'days'), moment()],
                 'Last 30 Days': [moment().subtract(29, 'days'), moment()],
@@ -533,6 +537,7 @@ export function initComparePicker() {
                 startYear: picker.startDate.year(),
                 endYear: picker.endDate.year()
             };
+            setDateRange2(rangedateset2);
             console.log("📆 กำหนด compare ใหม่:", rangedateset2);
             });
 
@@ -547,13 +552,16 @@ export function initComparePicker() {
                 startYear: picker.startDate.year(),
                 endYear: picker.endDate.year()
             };
+            setDateRange2(rangedateset2);
+
+
 
             compareDiv.dataset.inited = "true";
         }
         } else {
         compareDiv.classList.add("hidden");
         compareInput.value = '';
-        rangedateset2 = null;
+        setDateRange2(null);
         }
     });
 }

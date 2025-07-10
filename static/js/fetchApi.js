@@ -1,5 +1,5 @@
 import { renderAutoChart, renderAutoPieChart } from "./charts.js";
-import { rangedateset1, rangedateset2 } from './datetime.js';
+import { getDateRange1, getDateRange2 } from './datetime.js';
 
 export function getCsrfToken() {
   return document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
@@ -37,7 +37,6 @@ export async function fetchDataAndRender(actionId, datetimeset) {
       // document.getElementById('myPieChart').setAttribute('height', '300');
       console.log('this is top')
       realData = result.data;
-      console.log(realData)
       renderAutoChart(realData);
         // renderAutoPieChart(realData);
       data = realData;
@@ -147,49 +146,51 @@ export async function fetchDataAndRender(actionId, datetimeset) {
     const rowsHtml = data.map(row => {
       const cells = headers.map(key => {
         let value = row[key];
+        // console.log(value)
+        let changeKey;
+        let changeVal;
+
+        changeVal = `${value}`;  
+        // changeVal = key[changeKey];
+        // console.log("changeKey",changeKey)
+        // console.log("changeVal",typeof(changeVal)) 
+        const isNumber = !isNaN(+changeVal) && changeVal.trim() !== '';
+
+        if (isNumber && datetimeset.length >= 2) {
+          // console.log('in if not str', changeVal)
+          const isPositive = +changeVal >= 0;
+          const arrow = isPositive ? '▲' : '▼';
+          const color = isPositive ? 'text-green-600' : 'text-red-600';
+          value = `<span class="${color}">${arrow} ${Math.abs(changeVal)}%</span>`;
+        } else {
+          value = changeVal;
+        }
         return `<div class="text-center flex items-center justify-center">${value}</div>`;
       }).join('');
 
-      const subRows = Array.isArray(row.sub) ? row.sub.map(sub => {
+      const subRows = Array.isArray(row.sub) ? row.sub.map(sub => { //{key: v,key: v,key: v,key: v}
         // console.log("sub",sub)
-        const subCells = headers.map(key => {
+        const subCells = headers.map(key => { // [key,key,key,key]
           // console.log("key",key)
-          let value = sub[key] ?? '-';
-          let changeKey;
-          let changeVal;
-
-          // 👉 ถ้าเป็น compare row
-          if (sub.type === 'compare') {
-            changeKey = `${key}_change`;
-            changeVal = sub[changeKey];
-            // console.log("changeKey",changeKey)
-            // console.log("changeVal",changeVal)
-
-            if (changeVal !== undefined) {
-              const isPositive = changeVal >= 0;
-              const arrow = isPositive ? '▲' : '▼';
-              const color = isPositive ? 'text-green-600' : 'text-red-600';
-              value = `<span class="${color}">${arrow} ${Math.abs(changeVal)}%</span>`;
-            } else {
-              value = '-';
-            }
-          }
+          let value = sub[key] ?? '-';  // key : value
 
           // 👉 ถ้า key คือ clinic แล้วมี date_range → ใช้แทน clinic
           if (key === 'clinic' && sub.date_range) {
-            value = `<span class="text-red-400">${sub.date_range}</span>`;
-          } else if (key === 'clinic' && sub.type){
-            value = `<span class="">${sub.type}</span>`;
+            value = `<span class="">${sub.date_range}</span>`;
+          } else if (key === 'clinic' && sub.date_range2){
+            value = `<span class="text-gray-400">${sub.date_range2}</span>`;
+          } else if (key === 'appointment_count' && sub.appointment_count){
+            value = `<span class="text-gray-400">${sub.appointment_count}</span>`;
           }
 
           return `<div class="text-center flex items-center justify-center">${value}</div>`;
         }).join('');
 
-        return `<div class="${gridClass} px-4 py-2">${subCells}</div>`;
+        return `<div class="${gridClass} px-4 py-2 ">${subCells}</div>`;
       }).join('') : '';
 
       return `<div>
-        <div class="${gridClass} p-4 hover:bg-gray-50 transition-colors">${cells}</div>
+        <div class="${gridClass} p-4 hover:bg-gray-50 transition-colors ">${cells}</div>
         ${subRows}
       </div>`;
     }).join('');
@@ -213,21 +214,23 @@ const closeModal = document.getElementById("closeModal");
 const modal = document.getElementById("myModal");
 const webdata = document.getElementById("name");
 const okbutton = document.getElementById("ok");
-let rangedateset2;
+// let rangedateset2;
 
-export function initAnalyzeButtons(rangedateset1, rangedateset2) {
+export function initAnalyzeButtons() {
   const buttons = document.querySelectorAll('.analyze-btn');
 
   buttons.forEach(btn => {
     btn.addEventListener('click', () => {
       const actionId = btn.dataset.actionId;
+      const date1 = getDateRange1();
+      const date2 = getDateRange2();
 
-      const datetimeset = rangedateset2 === null  
-        ? [rangedateset1]
-        : [rangedateset1, rangedateset2]; // [{set1},{set2}] fomat
+      const datetimeset = date2 === null  
+        ? [date1]
+        : [date1, date2]; // [{set1},{set2}] fomat
       // const datetimeset = window.rangedateset1;
-      console.log("from fetch set1",rangedateset1)
-      console.log("from fetch set2",rangedateset2)
+      console.log("from fetch set1",date1)
+      console.log("from fetch set2",date2)
 
       if (actionId === "plot-all") {
         console.log('แสดง modal นี้แหละ');
@@ -263,49 +266,3 @@ export function initAnalyzeButtons(rangedateset1, rangedateset2) {
     });
   });
 }
-
-// window.rangedateset1 = {
-//   startDate: moment('2025-04-01').format('YYYY-MM-DD'),
-//   endDate: moment('2025-04-15').format('YYYY-MM-DD'),
-// };
-
-// window.rangedateset2 = {
-//   startDate: moment('2025-04-16').format('YYYY-MM-DD'),
-//   endDate: moment('2025-04-30').format('YYYY-MM-DD'),
-// };
-
-// $('input[name="daterange"]').daterangepicker({
-//   autoUpdateInput: true, // <<< ให้มันอัปเดต input อัตโนมัติด้วย
-//   startDate: moment(window.rangedateset1.startDate),
-//   endDate: moment(window.rangedateset1.endDate),
-//   locale: {
-//     format: 'YYYY-MM-DD',
-//     cancelLabel: 'Clear'
-//   },
-//   ranges: {
-//     'Today': [moment(), moment()],
-//     'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-//     'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-//     'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-//     'This Month': [moment().startOf('month'), moment().endOf('month')],
-//     'Last Month': [
-//       moment().subtract(1, 'month').startOf('month'),
-//       moment().subtract(1, 'month').endOf('month')
-//     ]
-//   }
-// }, function(start, end, label) {
-//   // เวลาเลือกจาก predefined หรือเลือกเอง
-//   window.rangedateset1 = {
-//     startDate: start.format('YYYY-MM-DD'),
-//     endDate: end.format('YYYY-MM-DD'),
-//     startDay: start.date(),
-//     endDay: end.date(),
-//     startMonth: start.month() + 1,
-//     endMonth: end.month() + 1,
-//     startYear: start.year(),
-//     endYear: end.year()
-//   };
-
-//   console.log("📆 เลือกช่วงเวลา:", label, window.rangedateset1);
-// });
-
