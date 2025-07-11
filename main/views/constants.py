@@ -1,7 +1,7 @@
 from .inquiry import find_inquiry, get_total_languages_summary
 from .appointment import find_appointment
 from .feedback_package import find_FeedbackAndPackage, FPtotal
-from .Type_email import aggregate_summary_for_plot
+from .Type_email import find_all_type_email
 from .top_center import find_top_clinics_summary_main
 from .Total_Email_of_Language import find_TotalMonth
 from django.http import JsonResponse
@@ -25,7 +25,7 @@ ANALYSIS_ACTIONS = {
     },
     'plot-all': {
         'id': 'plot-all', 'name': 'Type Email', 'color': 'orange', 'icon': '📊',
-        'function': aggregate_summary_for_plot
+        'function': find_all_type_email
     },
     'top-center': {
         'id': 'top-center', 'name': 'Top Center', 'color': 'red', 'icon': '⭐',

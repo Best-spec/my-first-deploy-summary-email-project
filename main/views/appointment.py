@@ -106,9 +106,10 @@ def filter_date_range(filtered_list, start_date, end_date, date_key="Entry Date"
     print(f"✅ Matched entries: {len(result)}")
     return result
 
-def load_date(datetime):
-    start = datetime[0]['startDate']
-    end = datetime[0]['endDate']
+def load_date(datetimes):
+    start = datetimes[0]['startDate']
+    end = datetimes[0]['endDate']
+    print(start, end)
     return start, end
 
 def find_appointment_from_csv_folder(dateset):
@@ -145,13 +146,13 @@ def find_appointment_from_csv_folder(dateset):
             for d in all_data
         ]
 
-        start_date, end_date = load_date(dateset)
+        start_date, end_date = dateset
 
         fil = filter_date_range(filtered_list, start_date, end_date)
 
         # print(json.dumps(filtered_list, indent=2, ensure_ascii=False)) 
         result = calculate_appointment_from_json(fil)
-        return [result]
+        return result
     
 
     except Exception as e:
@@ -162,19 +163,23 @@ def find_appointment(dateset):
     try:
         if len(dateset) <= 1:
             print(dateset)
-            return find_appointment_from_csv_folder(dateset)
+            dateset1 = dateset[0].get('startDate')
+            dateset2 = dateset[0].get('endDate')
+            return [find_appointment_from_csv_folder((dateset1, dateset2))]
         else :
             print('it 2 !!')
-            set1 = dateset[0]
-            set2 = dateset[1]
-            data1 = find_appointment_from_csv_folder(set1)
-            data2 = find_appointment_from_csv_folder(set2)
-            loadSet1(data1)
-            loadSet2(data2)
-            print(Resultcompare())
-            # return Resultcompare()
+            dateset1 = dateset[0].get('startDate')
+            dateset2 = dateset[0].get('endDate')
+            date2set1 = dateset[1].get('startDate')
+            date2set2 = dateset[1].get('endDate')
+            data1 = find_appointment_from_csv_folder((dateset1, dateset2))
+            data2 = find_appointment_from_csv_folder((date2set1, date2set2))
+            return [Resultcompare(data1, data2, dateset)]
+            # print(Resultcompare(data1, data2, dateset))
+
     except Exception as e:
-        print('From appointment', e)    
+        print('From appointment', e)
+        
 def find_appointment_summary(datetime):
     try:
         find_appointment_from_csv_folder(datetime)

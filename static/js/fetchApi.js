@@ -110,6 +110,8 @@ export async function fetchDataAndRender(actionId, datetimeset) {
         console.log("is two var",result.data)
         }
       } else {
+        // realData = result.data[0];
+        // data = realData;
         console.warn("Unknown data format:", result.data);
       }
     }
@@ -132,7 +134,7 @@ export async function fetchDataAndRender(actionId, datetimeset) {
       headers = Object.keys(data[0]).filter(key => !excludeKeys.includes(key));
     } else {
       console.log("4 keys")
-      headers = Object.keys(data[0])
+      headers = Object.keys(data[0])  
     }
 
     const gridClass = `grid grid-cols-${headers.length}`;
@@ -143,12 +145,14 @@ export async function fetchDataAndRender(actionId, datetimeset) {
     document.getElementById('header-row').className = `${gridClass} bg-gradient-to-r from-indigo-500 to-purple-700 text-white p-4`;
     document.getElementById('header-row').innerHTML = headerHtml;
 
+    const primaryKey = headers[0]; // เอาคีย์ตัวแรกมาใช้แทน clinic แบบ dynamic
     const rowsHtml = data.map(row => {
       const cells = headers.map(key => {
         let value = row[key];
         // console.log(value)
         let changeKey;
         let changeVal;
+        let label;
 
         changeVal = `${value}`;  
         // changeVal = key[changeKey];
@@ -164,8 +168,9 @@ export async function fetchDataAndRender(actionId, datetimeset) {
           value = `<span class="${color}">${arrow} ${Math.abs(changeVal)}%</span>`;
         } else {
           value = changeVal;
+          label = 'font-semibold';
         }
-        return `<div class="text-center flex items-center justify-center">${value}</div>`;
+        return `<div class="text-center flex items-center justify-center ${label}">${value}</div>`;
       }).join('');
 
       const subRows = Array.isArray(row.sub) ? row.sub.map(sub => { //{key: v,key: v,key: v,key: v}
@@ -175,18 +180,18 @@ export async function fetchDataAndRender(actionId, datetimeset) {
           let value = sub[key] ?? '-';  // key : value
 
           // 👉 ถ้า key คือ clinic แล้วมี date_range → ใช้แทน clinic
-          if (key === 'clinic' && sub.date_range) {
+          if (key === primaryKey && sub.date_range) {
             value = `<span class="">${sub.date_range}</span>`;
-          } else if (key === 'clinic' && sub.date_range2){
-            value = `<span class="text-gray-400">${sub.date_range2}</span>`;
-          } else if (key === 'appointment_count' && sub.appointment_count){
-            value = `<span class="text-gray-400">${sub.appointment_count}</span>`;
+          } else if (key === primaryKey && sub.date_range2){
+            value = `<span class="">${sub.date_range2}</span>`;
           }
 
           return `<div class="text-center flex items-center justify-center">${value}</div>`;
         }).join('');
+          // 🔥 ใส่ class สีพื้นหลังถ้าเป็น date_range2
+        const bgClass = sub.date_range2 ? 'text-gray-400' : '';
 
-        return `<div class="${gridClass} px-4 py-2 ">${subCells}</div>`;
+        return `<div class="${gridClass} px-4 py-2 ${bgClass}">${subCells}</div>`;
       }).join('') : '';
 
       return `<div>
@@ -245,7 +250,7 @@ export function initAnalyzeButtons() {
           modal.classList.add("hidden");
 
           fetchDataAndRender(actionId, datetimeset);
-        });
+        }, { once: true }); 
 
         closeModal.addEventListener("click", () => {
           modal.classList.remove("flex");

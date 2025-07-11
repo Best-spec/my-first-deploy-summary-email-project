@@ -117,120 +117,6 @@ def load_csv_to_json(start_date=None, end_date=None):
             })
     return all_data
 
-# def calculate_inquiry_summary(json):
-#     try:
-#         print(datetime)
-#         folder_path = Path("media/uploads")
-#         inquiry_json = []
-
-#         files = folder_path.glob("inquiry-form-*.csv")
-
-#         # เก็บผลลัพธ์ summary
-#         summary = defaultdict(lambda: defaultdict(int))
-
-#         # คอลัมน์ที่ใช้ดูประเภท inquiry
-#         for file in files:
-#             try:
-#                 df = pd.read_csv(file)
-#                 df.columns = df.columns.str.replace('\ufeff', '').str.strip('"')
-#                 col_name = df.columns[0]
-#                 # print(col_name)
-#             except Exception as e:
-#                 print(f"Failed to process {file}: {e}")
-#                 continue
-
-#             if "-en" in file.name:
-#                 lang = "English"
-#             elif "-th" in file.name:
-#                 lang = "Thai"
-#             elif "-ru" in file.name:
-#                 lang = "Russia"
-#             elif "-de" in file.name:
-#                 lang = "German"
-#             elif "-ar" in file.name:
-#                 lang = "Arabic"
-#             elif "-zh" in file.name:
-#                 lang = "Chinese"
-#             else:
-#                 continue
-
-#             for cat in categories.get(lang, []):
-#                 count = df[col_name].astype(str).str.strip().eq(cat).sum()
-#                 summary[lang][cat] += count
-#                 # print(cat)
-            
-#         summary_dict = {
-#             lang: {cat: int(count) for cat, count in summary[lang].items()}
-#             for lang in summary
-#         }
-        
-#         # สร้าง reverse mapping เพื่อหาประเภทจากชื่อคำถาม
-#         reverse_mapping = {}
-#         for category, questions in category_mapping.items():
-#             for question in questions:
-#                 reverse_mapping[question] = category
-        
-#         # สร้างตารางใหม่โดยจำแนกตามประเภทคำถาม
-#             category_summary = {}
-#             all_languages = list(summary_dict.keys())
-
-#             # เตรียมข้อมูลสำหรับแต่ละประเภทคำถาม
-#             for category in category_mapping.keys():
-#                 category_summary[category] = {}
-#                 for lang in all_languages:
-#                     category_summary[category][lang] = 0
-
-#             # รวบรวมข้อมูลจากแต่ละภาษา
-#             for lang, questions in summary_dict.items():
-#                 for question, count in questions.items():
-#                     category = reverse_mapping.get(question, 'Other')
-#                     category_summary[category][lang] += count
-
-#             # เตรียม header (สลับแกน: ภาษาเป็นแถว, ประเภทคำถามเป็นคอลัมน์)
-#         all_categories = list(category_mapping.keys())
-
-#         output = []
-
-#         # step 1: รวมข้อมูลต่อแถว (language)
-#         for lang in all_languages:
-#             row = {"language": lang}
-#             row_total = 0
-#             for category in all_categories:
-#                 count = category_summary[category].get(lang, 0)
-#                 row[category] = count
-#                 row_total += count
-#             row["Total Language"] = row_total  # ← total per row
-#             output.append(row)
-
-#         # step 2: รวมข้อมูลแนวตั้ง (total ต่อ category)
-#         total_row = {"language": "Total inquiry"}
-#         grand_total = 0
-#         for category in all_categories:
-#             cat_total = sum(category_summary[category].values())
-#             total_row[category] = cat_total
-#             grand_total += cat_total
-
-#         total_row["Total Language"] = grand_total  # ← total สุดท้าย
-#         output.append(total_row)
-
-#         data_chart = {
-#             "name": "All Language Inquiry",  # ใส่ key แรก
-#             **{
-#                 category: sum(category_summary[category].values())
-#                 for category in category_summary
-#             }
-#         }
-
-
-#         for_table = output
-#         for_chart = [data_chart]
-#         # print(grand_total)
-#         return for_table, for_chart
-    
-#     except Exception as e:
-#         print("🔥 ERROR:", e)
-
-
 def calculate_inquiry_summary(data_json):
     try:
         # เตรียม summary → lang → question → count
@@ -294,12 +180,12 @@ def calculate_inquiry_summary(data_json):
             }
         }
 
-        if missing_questions:
-            print("📌 คำถามที่ไม่เข้า category mapping:")
-            for lang, qs in missing_questions.items():
-                print(f"🔹 {lang}:")
-                for q in qs:
-                    print(f"    - {q}")
+        # if missing_questions:
+        #     print("📌 คำถามที่ไม่เข้า category mapping:")
+        #     for lang, qs in missing_questions.items():
+        #         print(f"🔹 {lang}:")
+        #         for q in qs:
+        #             print(f"    - {q}")
 
         return output, [data_chart]
 
@@ -308,7 +194,7 @@ def calculate_inquiry_summary(data_json):
         return [], []
 
 
-def cal(start, end):
+def cal_inquiry(start, end):
     start_date = datetime.strptime(start, "%Y-%m-%d").strftime("%d/%m/%Y")
     end_date = datetime.strptime(end, "%Y-%m-%d").strftime("%d/%m/%Y")
     json_data = load_csv_to_json(start_date=start_date, end_date=end_date)
@@ -320,10 +206,10 @@ def cal(start, end):
 def find_inquiry(date_param):
     try:
         if len(date_param) <= 1:
-            print(date_param, len(date_param))
+            # print(date_param, len(date_param))
             start = date_param[0]['startDate']
             end = date_param[0]['endDate']
-            for_table, for_chart = cal(start, end)
+            for_table, for_chart = cal_inquiry(start, end)
             return for_table, for_chart
 
         else:
@@ -332,10 +218,10 @@ def find_inquiry(date_param):
             endset1 = date_param[0]['endDate']
             startset2 = date_param[1]['startDate']
             endset2 = date_param[1]['endDate']
-            set1 = cal(startset1, endset1)
-            set2 = cal(startset2, endset2)
-            # print(Resultcompare())
-            # return Resultcompare(set1, set2)
+            table1, chart1 = cal_inquiry(startset1, endset1)
+            table2, chart2 = cal_inquiry(startset2, endset2)
+            return [Resultcompare(table1, table2, date_param)]
+            print(Resultcompare(table1, table2, date_param))
 
 
 
@@ -343,122 +229,10 @@ def find_inquiry(date_param):
         print("🔥 ERROR in find_inquiry():", e)
         return [], []
 
-# def find_inquiry(datetime):
-#     try:
-#         print(datetime)
-#         folder_path = Path("media/uploads")
-#         inquiry_json = []
 
-#         files = folder_path.glob("inquiry-form-*.csv")
-
-#         # เก็บผลลัพธ์ summary
-#         summary = defaultdict(lambda: defaultdict(int))
-
-#         # คอลัมน์ที่ใช้ดูประเภท inquiry
-#         for file in files:
-#             try:
-#                 df = pd.read_csv(file)
-#                 df.columns = df.columns.str.replace('\ufeff', '').str.strip('"')
-#                 col_name = df.columns[0]
-#                 # print(col_name)
-#             except Exception as e:
-#                 print(f"Failed to process {file}: {e}")
-#                 continue
-
-#             if "-en" in file.name:
-#                 lang = "English"
-#             elif "-th" in file.name:
-#                 lang = "Thai"
-#             elif "-ru" in file.name:
-#                 lang = "Russia"
-#             elif "-de" in file.name:
-#                 lang = "German"
-#             elif "-ar" in file.name:
-#                 lang = "Arabic"
-#             elif "-zh" in file.name:
-#                 lang = "Chinese"
-#             else:
-#                 continue
-
-#             for cat in categories.get(lang, []):
-#                 count = df[col_name].astype(str).str.strip().eq(cat).sum()
-#                 summary[lang][cat] += count
-#                 # print(cat)
-            
-#         summary_dict = {
-#             lang: {cat: int(count) for cat, count in summary[lang].items()}
-#             for lang in summary
-#         }
-        
-#         # สร้าง reverse mapping เพื่อหาประเภทจากชื่อคำถาม
-#         reverse_mapping = {}
-#         for category, questions in category_mapping.items():
-#             for question in questions:
-#                 reverse_mapping[question] = category
-        
-#         # สร้างตารางใหม่โดยจำแนกตามประเภทคำถาม
-#             category_summary = {}
-#             all_languages = list(summary_dict.keys())
-
-#             # เตรียมข้อมูลสำหรับแต่ละประเภทคำถาม
-#             for category in category_mapping.keys():
-#                 category_summary[category] = {}
-#                 for lang in all_languages:
-#                     category_summary[category][lang] = 0
-
-#             # รวบรวมข้อมูลจากแต่ละภาษา
-#             for lang, questions in summary_dict.items():
-#                 for question, count in questions.items():
-#                     category = reverse_mapping.get(question, 'Other')
-#                     category_summary[category][lang] += count
-
-#             # เตรียม header (สลับแกน: ภาษาเป็นแถว, ประเภทคำถามเป็นคอลัมน์)
-#         all_categories = list(category_mapping.keys())
-
-#         output = []
-
-#         # step 1: รวมข้อมูลต่อแถว (language)
-#         for lang in all_languages:
-#             row = {"language": lang}
-#             row_total = 0
-#             for category in all_categories:
-#                 count = category_summary[category].get(lang, 0)
-#                 row[category] = count
-#                 row_total += count
-#             row["Total Language"] = row_total  # ← total per row
-#             output.append(row)
-
-#         # step 2: รวมข้อมูลแนวตั้ง (total ต่อ category)
-#         total_row = {"language": "Total inquiry"}
-#         grand_total = 0
-#         for category in all_categories:
-#             cat_total = sum(category_summary[category].values())
-#             total_row[category] = cat_total
-#             grand_total += cat_total
-
-#         total_row["Total Language"] = grand_total  # ← total สุดท้าย
-#         output.append(total_row)
-
-#         data_chart = {
-#             "name": "All Language Inquiry",  # ใส่ key แรก
-#             **{
-#                 category: sum(category_summary[category].values())
-#                 for category in category_summary
-#             }
-#         }
-
-
-#         for_table = output
-#         for_chart = [data_chart]
-#         # print(grand_total)
-#         return for_table, for_chart
-    
-#     except Exception as e:
-#         print("🔥 ERROR:", e)
-
-def get_total_languages_summary(date):
+def get_total_languages_summary(date_param):
     try:
-        table, _ = find_inquiry(date)  # ดึงข้อมูลตารางจาก find_inquiry()
+        table, _ = cal_inquiry(date_param[0]['startDate'], date_param[0]['endDate'])  # ดึงข้อมูลตารางจาก find_inquiry()
 
         result = []
         for row in table:

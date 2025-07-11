@@ -5,6 +5,8 @@ from pathlib import Path
 from django.http import JsonResponse
 from datetime import datetime
 import json
+from .compare.result_compare import Resultcompare
+
 
 def extract_language(filename):
     basename = os.path.basename(filename).lower()
@@ -149,23 +151,42 @@ def process_json_list(data_list, date_col='Entry Date', start_date=None, end_dat
     })
 
     return result
-def find_FeedbackAndPackage(date_param):
+def cal_FeedbackAndPackage(date_param):
     try:
-        start_date = datetime.strptime(date_param[0]["startDate"], "%Y-%m-%d").strftime("%d/%m/%Y")
-        end_date = datetime.strptime(date_param[0]["endDate"], "%Y-%m-%d").strftime("%d/%m/%Y")
+        start_date = datetime.strptime(date_param["startDate"], "%Y-%m-%d").strftime("%d/%m/%Y")
+        end_date = datetime.strptime(date_param["endDate"], "%Y-%m-%d").strftime("%d/%m/%Y")
         # print(start_date)
         data = convert_csv_to_json()
         # print(data[0])
         # print(json.dumps(data, indent=2, ensure_ascii=False))  # พิมพ์ให้ดูสวย อ่านง่าย
         summary = process_json_list(data, start_date=start_date, end_date=end_date)
         # print(summary)
-        return [summary]
+        return summary
     except Exception as e:
         print(f"🔥 Error in find_FeedbackAndPackage: {e}")
         return None
+    
+def find_FeedbackAndPackage(date_param):
+    try:
+        if len(date_param) <= 1:
+            print(date_param, len(date_param))
+            return [cal_FeedbackAndPackage(date_param[0])]
+
+        else:
+            print('มากกว่าสอง')
+            data1 = cal_FeedbackAndPackage(date_param[0])
+            data2 = cal_FeedbackAndPackage(date_param[1])
+            return [Resultcompare(data1, data2, date_param)]
+            # print(Resultcompare(data1, data2, date_param))
+
+
+
+    except Exception as e:
+        print("🔥 ERROR in find_FeedbackAndPackage():", e)
+        return [], []
 
 def FPtotal(date_param):
-    raw_json = find_FeedbackAndPackage(date_param)
+    raw_json = cal_FeedbackAndPackage(date_param)
     result = raw_json[0]
 
     total = [{key: val for key, val in result[-1].items() if key in ("Feedback", "Packages")}]
