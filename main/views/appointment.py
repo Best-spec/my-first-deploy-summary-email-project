@@ -180,11 +180,23 @@ def find_appointment(dateset):
     except Exception as e:
         print('From appointment', e)
         
-def find_appointment_summary(datetime):
+def find_appointment_summary(dateset):
     try:
-        find_appointment_from_csv_folder(datetime)
-        print("📅 Appointment Summary:", appointment_summary_shared)
-        return [appointment_summary_shared]
+        total_dict = []
+        dateset1 = dateset.get('startDate')
+        dateset2 = dateset.get('endDate')
+        # print("ได้ๆ", dateset1, dateset2)
+        data_sum = find_appointment_from_csv_folder((dateset1, dateset2))
+        total_dict = {
+            "Appointment": 0,
+            "Appointment Recommended": 0
+        }
+        for item in data_sum:
+            total_dict["Appointment"] += item.get("Appointment", 0)
+            total_dict["Appointment Recommended"] += item.get("Appointment Recommended", 0)
+
+        # print("📅 Appointment Summary:", total_dict)
+        return [total_dict]
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
     

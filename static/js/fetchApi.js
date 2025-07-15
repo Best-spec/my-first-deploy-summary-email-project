@@ -17,6 +17,7 @@ export async function fetchDataAndRender(actionId, datetimeset) {
       body: JSON.stringify({ 
         action_id: actionId,
         date: datetimeset,
+        Web_Commerce: webcom,
        }),
     });
 
@@ -62,9 +63,10 @@ export async function fetchDataAndRender(actionId, datetimeset) {
         renderAutoChart(data_chart2, 'barChartHorizontal'); // ประเภทเป็นแกน x
         data = realData;
         console.log(data)
+
     } else if (actionId === 'plot-all'){
       realData = result.data[0];
-      realData[0]["Web Commerce"] = webcom;
+      // realData[0]["Web Commerce"] = webcom;
       data = realData;
       renderAutoChart(data);
       renderAutoPieChart(data);
@@ -79,6 +81,7 @@ export async function fetchDataAndRender(actionId, datetimeset) {
       });
       csslist.add(`grid-cols-2`);
       document.getElementById('piechart').classList.remove('hidden');
+
     } else {
       document.getElementById('barHorizontal').classList.add('hidden')
       const csslist = document.getElementById('showchart').classList;
@@ -244,7 +247,7 @@ export function initAnalyzeButtons() {
 
         okbutton.addEventListener("click", () => {
           const str = webdata.value;
-          webcom = parseInt(str);
+          webcom = str;
           console.log(":", webcom ,"type:", typeof webcom);
           modal.classList.remove("flex");
           modal.classList.add("hidden");

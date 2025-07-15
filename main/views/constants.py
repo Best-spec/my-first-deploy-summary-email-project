@@ -45,7 +45,8 @@ def analyze(request):
     try:
         body = json.loads(request.body)
         action_id = body.get('action_id')
-        datetime = body.get('date')
+        date = body.get('date')
+        Web_Commerce = body.get('Web_Commerce')
 
         action = ANALYSIS_ACTIONS.get(action_id)
         if not action:
@@ -55,8 +56,12 @@ def analyze(request):
         func = action.get('function')
         if not func:
             return JsonResponse({'error': f'No function defined for {action_id}'}, status=500)
-
-        data = func(datetime)
+            
+        if action_id == 'plot-all':
+            data = func(date, Web_Commerce)
+            print(Web_Commerce)
+        else :
+            data = func(date)
         return JsonResponse({'data': data})
 
     except Exception as e:

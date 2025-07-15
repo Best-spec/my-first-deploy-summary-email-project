@@ -232,7 +232,7 @@ def find_inquiry(date_param):
 
 def get_total_languages_summary(date_param):
     try:
-        table, _ = cal_inquiry(date_param[0]['startDate'], date_param[0]['endDate'])  # ดึงข้อมูลตารางจาก find_inquiry()
+        table, _ = cal_inquiry(date_param['startDate'], date_param['endDate'])  # ดึงข้อมูลตารางจาก find_inquiry()
 
         result = []
         for row in table:

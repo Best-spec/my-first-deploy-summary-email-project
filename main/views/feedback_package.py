@@ -60,12 +60,6 @@ def convert_csv_to_json(folder_path="media/uploads"):
 
     return all_data
 
-import json
-from datetime import datetime
-
-import json
-from datetime import datetime
-
 def process_json_list(data_list, date_col='Entry Date', start_date=None, end_date=None):
     """
     คำนวณจำนวน Feedback และ Packages จาก JSON list
@@ -186,11 +180,18 @@ def find_FeedbackAndPackage(date_param):
         return [], []
 
 def FPtotal(date_param):
-    raw_json = cal_FeedbackAndPackage(date_param)
-    result = raw_json[0]
+    try:
+        raw_json = cal_FeedbackAndPackage(date_param)
+        total = {
+            "Feedback": 0,
+            "Packages": 0
+        }
 
-    total = [{key: val for key, val in result[-1].items() if key in ("Feedback", "Packages")}]
-    print(total)
+        for item in raw_json:
+            total["Feedback"] += item.get("Feedback", 0)
+            total["Packages"] += item.get("Packages", 0)
 
-    return total
+        return [total]
+    except Exception as e:
+        print("Error FPtotal:",e)
         

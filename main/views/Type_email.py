@@ -19,62 +19,71 @@ json_temp = [
     'Web Commerce',
 ]
 
-def cal_all_type_email(date=None):
+def map_parts(s):
+    parts = list(map(int, s.strip().split()))
+
+    if len(parts) == 1:
+        a = parts[0]
+        return a
+    elif len(parts) >= 2:
+        a, b = parts[0], parts[1]
+        return a, b
+    else:
+        print("ไม่มีตัวเลขเลย")
+
+def cal_all_type_email(date, Web_Commerce):
     try:
-        print('in cal type')
         start = date.get('startDate')
         end = date.get('endDate')
         raw, summary = cal_inquiry(start, end)        # dict ภาษา-> dict category-> count
-        # summaryFeed = FPtotal(date)
-        # summaryAppointment = find_appointment_summary(date)  # dict ภาษา-> count fields
-        print(summary)
+        summaryFeed = FPtotal(date)
+        summaryAppointment = find_appointment_summary(date)  # dict ภาษา-> count fields
+        # print("feed :",summaryAppointment)
 
-        # index1 = summary[0].get('General Inquiry', 0)
-        # index2 = summary[0].get('Estimated Cost', 0)
-        # index3 = summary[0].get('Other', 0)
-        # index4 = summary[0].get('Contact Doctor', 0)
-        # index5 = summaryFeed[0].get('Packages', 0)
-        # index6 = summaryFeed[0].get('Feedback', 0)
-        # index7 = summaryAppointment[0].get('appointment count', 0)
-        # index8 = summaryAppointment[0].get('appointment recommended count', 0)
-        # index9 = summaryFeed[0].get('Web Commerce', 0)
+        index1 = summary[0].get('General Inquiry')
+        index2 = summary[0].get('Estimated Cost')
+        index3 = summary[0].get('Other')
+        index4 = summary[0].get('Contact Doctor')
+        index5 = summaryFeed[0].get('Packages')
+        index6 = summaryFeed[0].get('Feedback')
+        index7 = summaryAppointment[0].get('Appointment')
+        index8 = summaryAppointment[0].get('Appointment Recommended')
+        index9 = Web_Commerce
 
-        # json_temp = [
-        #         {
-        #             'Type Email'                         : 'Total',
-        #             'General Inquiry'                    : index1,
-        #             'Estimated Cost'                     : index2,
-        #             'Other'                              : index3,
-        #             'Contact Doctor': index4,
-        #             'Package Inquiry'                    : index5,
-        #             'Feedback & Suggestion'              : index6,
-        #             'Appointment'                        : index7,
-        #             'Appointment Recommended'            : index8,
-        #             'Web Commerce'                       : index9,
-        #         }
-        # ];
+        json_temp = [
+                {
+                    'Type Email'                         : 'Total',
+                    'General Inquiry'                    : index1,
+                    'Estimated Cost'                     : index2,
+                    'Other'                              : index3,
+                    'Contact Doctor': index4,
+                    'Package Inquiry'                    : index5,
+                    'Feedback & Suggestion'              : index6,
+                    'Appointment'                        : index7,
+                    'Appointment Recommended'            : index8,
+                    'Web Commerce'                       : index9,
+                }
+        ];
 
         
 
-        # print(json_temp)
-        return summary
+        return json_temp
         
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
     
-def find_all_type_email(date_param):
+def find_all_type_email(date_param, Web_Commerce):
     try:
+        parted = map_parts(Web_Commerce)
         if len(date_param) <= 1:
             print('it 1 !!')
-            # return [cal_all_type_email(date_param[0])]
-            # print(cal_all_type_email(date_param[0]))
-            cal_all_type_email(date_param[0])
+            return [cal_all_type_email(date_param[0], parted)]
         else :
             print('it 2 !!')
-            data1 = cal_all_type_email(date_param[0])
-            data2 = cal_all_type_email(date_param[1])
-            # print(data1)
-            print(Resultcompare(data1, data2, date_param))
+            # print(type(parted[0]), parted[0])
+            data1 = cal_all_type_email(date_param[0], parted[0])
+            data2 = cal_all_type_email(date_param[1], parted[1])
+
             return [Resultcompare(data1, data2, date_param)]
 
     except Exception as e:
