@@ -1,5 +1,5 @@
 import { renderAutoChart, renderAutoPieChart } from "./charts.js";
-import { getDateRange1, getDateRange2 } from './datetime.js';
+import { getDateRange1, getDateRange2, set_btn_id } from './datetime.js';
 
 export function getCsrfToken() {
   return document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
@@ -36,14 +36,14 @@ export async function fetchDataAndRender(actionId, datetimeset) {
       document.getElementById('barHorizontal').classList.add('hidden')
       // document.getElementById('barChart').style.height = '600px';
       // document.getElementById('myPieChart').setAttribute('height', '300');
-      console.log('this is top')
+      // console.log('this is top')
       realData = result.data;
       renderAutoChart(realData);
         // renderAutoPieChart(realData);
       data = realData;
-      console.log("is one var", result.data)
+      // console.log("is one var", result.data)
     } else if (actionId === 'total-month') {
-        console.log('this is total')
+        // console.log('this is total')
         const csslist = document.getElementById('showchart').classList;
 
         // ใช้ Array.from() เพื่อ clone ออกมาก่อนลูป
@@ -97,20 +97,20 @@ export async function fetchDataAndRender(actionId, datetimeset) {
       if (Array.isArray(result.data)) {
         // data เป็น array
         const dataLength = result.data.length;
-        console.log("Data is array, length:", dataLength);
+        // console.log("Data is array, length:", dataLength);
         if (dataLength === 1) {
         realData = result.data[0];
         renderAutoChart(realData);
         renderAutoPieChart(realData);
         data = realData;
-        console.log("is one var", result.data)
+        // console.log("is one var", result.data)
         } else if (dataLength === 2) {
         realData = result.data[0];
         data_chart = result.data[1];
         data = realData;
         renderAutoPieChart(realData);
         renderAutoChart(data_chart);
-        console.log("is two var",result.data)
+        // console.log("is two var",result.data)
         }
       } else {
         // realData = result.data[0];
@@ -118,6 +118,8 @@ export async function fetchDataAndRender(actionId, datetimeset) {
         console.warn("Unknown data format:", result.data);
       }
     }
+
+    if (actionId === '')
       
 
     if (!data || data.length === 0) {
@@ -132,7 +134,7 @@ export async function fetchDataAndRender(actionId, datetimeset) {
     let headers;
 
     if (Object.keys(data[0]).length >= 5) {
-      console.log("5 keys");
+      // console.log("5 keys");
       excludeKeys = ['sub'];
       headers = Object.keys(data[0]).filter(key => !excludeKeys.includes(key));
     } else {
@@ -222,55 +224,63 @@ const closeModal = document.getElementById("closeModal");
 const modal = document.getElementById("myModal");
 const webdata = document.getElementById("name");
 const okbutton = document.getElementById("ok");
-// let rangedateset2;
 
-export function initAnalyzeButtons() {
+export function initAnalyzeButtons(id = '') {
   const buttons = document.querySelectorAll('.analyze-btn');
+  console.log('btn_id', id, typeof(id))
 
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const actionId = btn.dataset.actionId;
-      const date1 = getDateRange1();
-      const date2 = getDateRange2();
-
-      const datetimeset = date2 === null  
-        ? [date1]
-        : [date1, date2]; // [{set1},{set2}] fomat
-      // const datetimeset = window.rangedateset1;
-      console.log("from fetch set1",date1)
-      console.log("from fetch set2",date2)
-
-      if (actionId === "plot-all") {
-        console.log('แสดง modal นี้แหละ');
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-
-        okbutton.addEventListener("click", () => {
-          const str = webdata.value;
-          webcom = str;
-          console.log(":", webcom ,"type:", typeof webcom);
-          modal.classList.remove("flex");
-          modal.classList.add("hidden");
-
-          fetchDataAndRender(actionId, datetimeset);
-        }, { once: true }); 
-
-        closeModal.addEventListener("click", () => {
-          modal.classList.remove("flex");
-          modal.classList.add("hidden");
-        });
-
-        modal.addEventListener("click", (e) => {
-          if (e.target === modal) {
-            modal.classList.remove("flex");
-            modal.classList.add("hidden");
-          }
-        });
-
-      } else {
-        // ถ้าไม่ใช่ plot-all ก็เรียกตรงๆ เลย
-        fetchDataAndRender(actionId, datetimeset);
-      }
+  if (id === '1') {
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const actionId = btn.dataset.actionId;
+        console.log('จาก event btn')
+        condition(actionId);
+      });
     });
-  });
+  } else {
+    console.log('จาก apply')
+    condition(id);
+  }
 }
+
+function condition(actionId) {
+    document.getElementById('title').innerHTML = 'Type '+ actionId; 
+    const date1 = getDateRange1();
+    const date2 = getDateRange2();
+    set_btn_id(actionId);
+  
+    const datetimeset = date2 === null  
+      ? [date1]
+      : [date1, date2]; // [{set1},{set2}] fomat
+  
+    if (actionId === "plot-all") {
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+  
+      okbutton.addEventListener("click", () => {
+        const str = webdata.value;
+        webcom = str;
+        console.log(":", webcom ,"type:", typeof webcom);
+        modal.classList.remove("flex");
+        modal.classList.add("hidden");
+  
+        fetchDataAndRender(actionId, datetimeset);
+      }, { once: true }); 
+  
+      closeModal.addEventListener("click", () => {
+        modal.classList.remove("flex");
+        modal.classList.add("hidden");
+      });
+  
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          modal.classList.remove("flex");
+          modal.classList.add("hidden");
+        }
+      });
+  
+    } else {
+      fetchDataAndRender(actionId, datetimeset);
+    }
+  }
+

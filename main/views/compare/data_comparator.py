@@ -30,7 +30,7 @@ def compareData(data1, data2):
             val1 = val1 if val1 and not isinstance(val1, str) else 0
             val2 = val2 if val2 and not isinstance(val2, str) else 0
 
-            percent = explain_percent_change(val2, val1)
+            percent = explain_percent_change(val1, val2)
             compare_result[f"percent_{key}"] = percent
 
             # print(f"{key}: {val1} → {val2} = {percent}")

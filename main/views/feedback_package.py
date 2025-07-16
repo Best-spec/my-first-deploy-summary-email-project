@@ -57,7 +57,7 @@ def convert_csv_to_json(folder_path="media/uploads"):
             all_data.extend(df.to_dict(orient='records'))
         except Exception as e:
             print(f"🔥 Error reading {file}: {e}")
-
+    # print(json.dumps(all_data, indent=2))
     return all_data
 
 def process_json_list(data_list, date_col='Entry Date', start_date=None, end_date=None):
@@ -124,9 +124,25 @@ def process_json_list(data_list, date_col='Entry Date', start_date=None, end_dat
             lang_stats[lang]['Packages'] += 1
 
     # สรุปผลลัพธ์
+    # result = []
+    # total_feedback = total_packages = 0
+    # for lang, data in lang_stats.items():
+    #     total = data['Feedback'] + data['Packages']
+    #     total_feedback += data['Feedback']
+    #     total_packages += data['Packages']
+    #     result.append({
+    #         "Language": lang,
+    #         "Feedback": data['Feedback'],
+    #         "Packages": data['Packages'],
+    #         "Total": total
+    #     })
+
+    all_languages = ["English", "Thai", "Russia", "German", "Chinese", "Arabic"]
+
     result = []
     total_feedback = total_packages = 0
-    for lang, data in lang_stats.items():
+    for lang in all_languages:
+        data = lang_stats.get(lang, {'Feedback': 0, 'Packages': 0})
         total = data['Feedback'] + data['Packages']
         total_feedback += data['Feedback']
         total_packages += data['Packages']

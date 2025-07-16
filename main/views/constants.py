@@ -24,7 +24,7 @@ ANALYSIS_ACTIONS = {
         'function': find_FeedbackAndPackage
     },
     'plot-all': {
-        'id': 'plot-all', 'name': 'Type Email', 'color': 'orange', 'icon': '📊',
+        'id': 'plot-all', 'name': 'Total Email by Type', 'color': 'orange', 'icon': '📊',
         'function': find_all_type_email
     },
     'top-center': {
@@ -32,7 +32,7 @@ ANALYSIS_ACTIONS = {
         'function': find_top_clinics_summary_main
     },
     'total-month': {
-        'id': 'total-month', 'name': 'Total Email of Language', 'color': 'teal', 'icon': '📈',
+        'id': 'total-month', 'name': 'Total Email by Language', 'color': 'teal', 'icon': '📈',
         'function': find_TotalMonth
     },
 }

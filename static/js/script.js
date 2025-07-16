@@ -1,12 +1,12 @@
 import { initAnalyzeButtons } from './fetchApi.js';
-import { setDateRange1, setDateRange2 } from './datetime.js';
+import { setDateRange1, setDateRange2, get_btn_id, btn_id } from './datetime.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadFiles();
   renderFiles();
   updateFileCount();
   initComparePicker();
-  initAnalyzeButtons(rangedateset1, rangedateset2);
+  initAnalyzeButtons('1');
 });
 
 
@@ -378,63 +378,6 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// const toggle = document.getElementById("toggle");
-// const compareDiv = document.getElementById("rangecompare");
-// const compareInput = document.querySelector('input[name="datecompare"]');
-
-// window.rangedateset2 = null;
-
-// toggle.addEventListener("change", () => {
-//   if (toggle.checked) {
-//     // ✅ เปิด compare: แสดง div + bind datepicker
-//     compareDiv.classList.remove("hidden");
-
-//     if (!compareDiv.dataset.inited) {
-//       // ✅ bind datepicker แค่รอบเดียว
-//       $(compareInput).daterangepicker({
-//         autoUpdateInput: true,
-//         startDate: moment(),
-//         endDate: moment(),
-//         locale: {
-//           format: 'YYYY-MM-DD',
-//           cancelLabel: 'Clear'
-//         },
-//         ranges: {
-//           'Today': [moment(), moment()],
-//           'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-//           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-//           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-//           'This Month': [moment().startOf('month'), moment().endOf('month')],
-//           'Last Month': [
-//             moment().subtract(1, 'month').startOf('month'),
-//             moment().subtract(1, 'month').endOf('month')
-//           ]
-//         }
-//       }, 
-//       function(start, end, label) {
-//         window.rangedateset2 = {
-//             startDate: moment().format('YYYY-MM-DD'),
-//             endDate: moment().format('YYYY-MM-DD'),
-//         };
-//         console.log("📆 ตั้ง compare:", label, window.rangedateset2);
-//       });
-//         // 🛠 เพิ่มตรงนี้เพื่อให้ rangedateset2 มีค่าทันทีตอนเปิด toggle
-//         const picker = $(compareInput).data('daterangepicker');
-//         window.rangedateset2 = {
-//             startDate: picker.startDate.format('YYYY-MM-DD'),
-//             endDate: picker.endDate.format('YYYY-MM-DD'),
-//         };
-
-//       compareDiv.dataset.inited = "true";
-//     }
-
-//   } else {
-//     // ❌ ปิด compare: ซ่อน div + ล้างค่า
-//     compareDiv.classList.add("hidden");
-//     compareInput.value = '';
-//     window.rangedateset2 = null;
-//   }
-// });
 let rangedateset1;
 let rangedateset2;
 console.log("let set1",rangedateset1)
@@ -495,7 +438,9 @@ export function initComparePicker() {
         endYear: end.year()
     };
     setDateRange1(rangedateset1);
-
+    const btn_id = get_btn_id();
+    console.log('apply แล้ว', btn_id)
+    initAnalyzeButtons(btn_id);
 
     console.log("📆 เลือกช่วงเวลา:", label, rangedateset1);
     });
@@ -527,18 +472,21 @@ export function initComparePicker() {
             });
 
             $(compareInput).on('apply.daterangepicker', function (ev, picker) {
-            rangedateset2 = {
-                startDate: picker.startDate.format('YYYY-MM-DD'),
-                endDate: picker.endDate.format('YYYY-MM-DD'),
-                startDay: picker.startDate.date(),
-                endDay: picker.endDate.date(),
-                startMonth: picker.startDate.month() + 1,
-                endMonth: picker.endDate.month() + 1,
-                startYear: picker.startDate.year(),
-                endYear: picker.endDate.year()
-            };
-            setDateRange2(rangedateset2);
-            console.log("📆 กำหนด compare ใหม่:", rangedateset2);
+                rangedateset2 = {
+                    startDate: picker.startDate.format('YYYY-MM-DD'),
+                    endDate: picker.endDate.format('YYYY-MM-DD'),
+                    startDay: picker.startDate.date(),
+                    endDay: picker.endDate.date(),
+                    startMonth: picker.startDate.month() + 1,
+                    endMonth: picker.endDate.month() + 1,
+                    startYear: picker.startDate.year(),
+                    endYear: picker.endDate.year()
+                };
+                setDateRange2(rangedateset2);
+                const btn_id = get_btn_id();
+                console.log('apply แล้ว', btn_id)
+                initAnalyzeButtons(btn_id);
+                console.log("📆 กำหนด compare ใหม่:", rangedateset2);
             });
 
             const picker = $(compareInput).data('daterangepicker');

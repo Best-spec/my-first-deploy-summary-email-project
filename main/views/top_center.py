@@ -251,7 +251,7 @@ def process_clinic_data(raw_json_data):
         total = normal_count + recommended_count
         if total > 0:
             processed_data.append({
-                "clinic": k,
+                "Centers & clinics": k,
                 "appointment_count": normal_count,
                 "recommended_count": recommended_count,
                 "total": total

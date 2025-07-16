@@ -37,12 +37,12 @@ def csv_to_json_with_type(filepath, file_type, lang_code):
 def calculate_appointment_from_json(data_list):
     langs = ["ar", "de", "en", "ru", "th", "zh"]
     lang_names = {
-        "ar": "Arabic",
-        "de": "German",
-        "en": "English",
-        "ru": "Russia",
-        "th": "Thai",
-        "zh": "Chinese"
+        "ar": "English",
+        "de": "Thai",
+        "en": "Russia",
+        "ru": "German",
+        "th": "Chinese",
+        "zh": "Arabic"
     }
     lang_summary = {lang: {"appointment count": 0, "appointment recommended count": 0} for lang in langs}
 

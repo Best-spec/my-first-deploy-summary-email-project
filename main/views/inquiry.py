@@ -6,6 +6,7 @@ from pathlib import Path
 from datetime import datetime
 from .compare.data_loader import *
 from .compare.result_compare import Resultcompare
+import json
 
 LANG_MAP = {
     "-th": "Thai",
@@ -115,6 +116,8 @@ def load_csv_to_json(start_date=None, end_date=None):
                 "language": lang,
                 "question": val
             })
+        
+        print(json.dumps(all_data, indent=2, ensure_ascii=False))
     return all_data
 
 def calculate_inquiry_summary(data_json):
@@ -149,7 +152,7 @@ def calculate_inquiry_summary(data_json):
                 category_summary[cat][lang] += count
 
         # เตรียม header
-        all_languages = list(summary.keys())
+        all_languages = ["English", "Thai", "Russia", "German", "Chinese", "Arabic"]
         all_categories = list(category_mapping.keys())
 
         output = []
@@ -179,14 +182,8 @@ def calculate_inquiry_summary(data_json):
                 for category in category_summary
             }
         }
-
-        # if missing_questions:
-        #     print("📌 คำถามที่ไม่เข้า category mapping:")
-        #     for lang, qs in missing_questions.items():
-        #         print(f"🔹 {lang}:")
-        #         for q in qs:
-        #             print(f"    - {q}")
-
+        
+        print(json.dumps(output, indent=2, ensure_ascii=False))
         return output, [data_chart]
 
     except Exception as e:
