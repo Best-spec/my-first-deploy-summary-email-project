@@ -31,7 +31,7 @@ def map_parts(s):
     else:
         print("ไม่มีตัวเลขเลย")
 
-def cal_all_type_email(date, Web_Commerce):
+def cal_all_type_email(date):
     try:
         start = date.get('startDate')
         end = date.get('endDate')
@@ -48,7 +48,6 @@ def cal_all_type_email(date, Web_Commerce):
         index6 = summaryFeed[0].get('Feedback')
         index7 = summaryAppointment[0].get('Appointment')
         index8 = summaryAppointment[0].get('Appointment Recommended')
-        index9 = Web_Commerce
 
         json_temp = [
                 {
@@ -61,7 +60,6 @@ def cal_all_type_email(date, Web_Commerce):
                     'Feedback & Suggestion'              : index6,
                     'Appointment'                        : index7,
                     'Appointment Recommended'            : index8,
-                    'Web Commerce'                       : index9,
                 }
         ];
 
@@ -72,17 +70,16 @@ def cal_all_type_email(date, Web_Commerce):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
     
-def find_all_type_email(date_param, Web_Commerce):
+def find_all_type_email(date_param):
     try:
-        parted = map_parts(Web_Commerce)
         if len(date_param) <= 1:
             print('it 1 !!')
-            return [cal_all_type_email(date_param[0], parted)]
+            return [cal_all_type_email(date_param[0])]
         else :
             print('it 2 !!')
             # print(type(parted[0]), parted[0])
-            data1 = cal_all_type_email(date_param[0], parted[0])
-            data2 = cal_all_type_email(date_param[1], parted[1])
+            data1 = cal_all_type_email(date_param[0])
+            data2 = cal_all_type_email(date_param[1])
 
             return [Resultcompare(data1, data2, date_param)]
 

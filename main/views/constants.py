@@ -57,7 +57,7 @@ def analyze(request):
         if not func:
             return JsonResponse({'error': f'No function defined for {action_id}'}, status=500)
             
-        if action_id == 'plot-all':
+        if action_id == 'total-month':
             data = func(date, Web_Commerce)
             print(Web_Commerce)
         else :

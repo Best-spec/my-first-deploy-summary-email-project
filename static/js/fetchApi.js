@@ -22,26 +22,25 @@ export async function fetchDataAndRender(actionId, datetimeset) {
     });
 
     console.log('datetime',datetimeset)
+    console.log('webcom: ',webcom)
     const result = await res.json();
     let realData;
     let data_chart;
     let data;
     let data_chart2;
-    // document.getElementById('showchart').classList.add('grid-cols-3');
 
     if (actionId === 'top-center') {
       document.getElementById('showchart').classList.remove('grid-cols-3');
       document.getElementById('showchart').classList.add('grid-cols-1');
       document.getElementById('piechart').classList.add('hidden');
       document.getElementById('barHorizontal').classList.add('hidden')
-      // document.getElementById('barChart').style.height = '600px';
-      // document.getElementById('myPieChart').setAttribute('height', '300');
       // console.log('this is top')
       realData = result.data;
       renderAutoChart(realData);
         // renderAutoPieChart(realData);
       data = realData;
       // console.log("is one var", result.data)
+
     } else if (actionId === 'total-month') {
         // console.log('this is total')
         const csslist = document.getElementById('showchart').classList;
@@ -57,10 +56,10 @@ export async function fetchDataAndRender(actionId, datetimeset) {
         document.getElementById('barHorizontal').classList.remove('hidden')
         realData = result.data[0];
         data_chart = result.data[1];
-        data_chart2 = result.data[2];
-        // renderAutoChart(data_chart);
-        renderAutoChart(data_chart, 'barChart');              // ปกติ
-        renderAutoChart(data_chart2, 'barChartHorizontal'); // ประเภทเป็นแกน x
+        // data_chart2 = result.data[2];
+        renderAutoChart(data_chart);
+        // renderAutoChart(data_chart, 'barChart');              // ปกติ
+        // renderAutoChart(data_chart2, 'barChartHorizontal'); // ประเภทเป็นแกน x
         data = realData;
         console.log(data)
 
@@ -233,7 +232,7 @@ export function initAnalyzeButtons(id = '') {
     buttons.forEach(btn => {
       btn.addEventListener('click', () => {
         const actionId = btn.dataset.actionId;
-        console.log('จาก event btn')
+        console.log('จาก event btn', actionId)
         condition(actionId);
       });
     });
@@ -253,7 +252,7 @@ function condition(actionId) {
       ? [date1]
       : [date1, date2]; // [{set1},{set2}] fomat
   
-    if (actionId === "plot-all") {
+    if (actionId === "total-month") {
       modal.classList.remove("hidden");
       modal.classList.add("flex");
   
