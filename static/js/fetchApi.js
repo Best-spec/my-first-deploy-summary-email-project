@@ -1,5 +1,7 @@
 import { renderAutoChart, renderAutoPieChart } from "./charts.js";
 import { getDateRange1, getDateRange2, set_btn_id } from './datetime.js';
+import { renderDataTable } from './table/fetchrender.js';
+
 
 export function getCsrfToken() {
   return document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
@@ -33,12 +35,13 @@ export async function fetchDataAndRender(actionId, datetimeset) {
       document.getElementById('showchart').classList.remove('grid-cols-3');
       document.getElementById('showchart').classList.add('grid-cols-1');
       document.getElementById('piechart').classList.add('hidden');
-      document.getElementById('barHorizontal').classList.add('hidden')
+      document.getElementById('barHorizontal').classList.add('hidden');
       // console.log('this is top')
       realData = result.data;
       renderAutoChart(realData);
         // renderAutoPieChart(realData);
       data = realData;
+      renderDataTable(data);
       // console.log("is one var", result.data)
 
     } else if (actionId === 'total-month') {
@@ -62,6 +65,7 @@ export async function fetchDataAndRender(actionId, datetimeset) {
         // renderAutoChart(data_chart2, 'barChartHorizontal'); // ประเภทเป็นแกน x
         data = realData;
         console.log(data)
+        
 
     } else if (actionId === 'plot-all'){
       realData = result.data[0];
@@ -141,7 +145,8 @@ export async function fetchDataAndRender(actionId, datetimeset) {
       headers = Object.keys(data[0])  
     }
 
-    const gridClass = `grid grid-cols-${headers.length}`;
+    // const gridClass = `grid grid-cols-${headers.length}`;
+    const gridClass = `grid grid-cols-[repeat(${headers.length},minmax(0,1fr))]`;
 
     const headerHtml = headers.map(h => `
       <div class="text-center font-semibold capitalize">${h.replace(/_/g, ' ')}</div>

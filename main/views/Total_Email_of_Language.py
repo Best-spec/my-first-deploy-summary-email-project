@@ -5,6 +5,7 @@ from .feedback_package import cal_FeedbackAndPackage
 from .appointment import find_appointment_from_csv_folder
 from .compare.result_compare import Resultcompare
 from .percentage.cal_percentage import find_percentage
+import json
 
 def cal_TotalMonth(date, Web_Commerce):
     try:
@@ -28,7 +29,7 @@ def cal_TotalMonth(date, Web_Commerce):
         feedback_map = {row["Language"]: row for row in total_feedback_package if row["Language"] != "Total"}
         appointment_map = {row["Language"]: row for row in total_appointment if row["Language"] != "Total"}
         Web_Commerce = int(Web_Commerce)
-
+        
         for row in total_inquiry:
             lang = row.get("language")
             if lang != "Total inquiry":
@@ -47,6 +48,7 @@ def cal_TotalMonth(date, Web_Commerce):
                 packages = feedback_row.get("Packages", 0)
                 appointment = appoint_row.get("Appointment", 0)
                 appointment_recommended = appoint_row.get("Appointment Recommended", 0)
+
                 #Header + row each lang
                 summary.append({
                     "language": lang,
@@ -61,8 +63,8 @@ def cal_TotalMonth(date, Web_Commerce):
                     "Web Commerce": 0,
                     "total all": inquiry_total + feedback + packages + appointment + appointment_recommended,
                     '%_Inquiry': 0, 
-                    # 'Appointment_%': 0, 
-                    # 'webCommerce_percent_%': 0
+                    '%_Appointment': 0, 
+                    '%_webCommerce_percent': 0
                 })  
 
         # custom row
@@ -87,11 +89,14 @@ def cal_TotalMonth(date, Web_Commerce):
             "Other": sum(item.get("Other", 0) for item in summary),
             "feedback": sum(item["feedback"] for item in summary),
             "packages": sum(item["packages"] for item in summary),
+            "language": [item.get('language') for item in summary],
         }
         total_row_appointment = {
             "appointment": sum(item["appointment"] for item in summary),
             "appointment recommended": sum(item["appointment recommended"] for item in summary),
         }
+
+        
 
 
         total_row["total all"] = (
@@ -107,10 +112,10 @@ def cal_TotalMonth(date, Web_Commerce):
         )
 
         for_percentage = [total_row_inquiry, total_row_appointment, Web_Commerce, total_row["total all"]]
-        total_percent = find_percentage(for_percentage)[0]
+        total_percent = find_percentage(for_percentage)
 
-        # total_row.update(total_percent)
-
+        total_row.update(total_percent[0])
+        print(json.dumps(summary, indent=2, ensure_ascii=False))
         summary.append(total_row)
 
         # 📊 เตรียมข้อมูลสำหรับกราฟ

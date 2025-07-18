@@ -1,6 +1,7 @@
 import { initAnalyzeButtons } from './fetchApi.js';
 import { setDateRange1, setDateRange2, get_btn_id, btn_id } from './datetime.js';
 
+
 document.addEventListener('DOMContentLoaded', async () => {
   await loadFiles();
   renderFiles();
@@ -8,7 +9,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   initComparePicker();
   initAnalyzeButtons('1');
 });
-
 
 // Setup CSRF token for AJAX requests
 function getCookie(name) {
