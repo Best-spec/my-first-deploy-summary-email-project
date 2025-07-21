@@ -8,8 +8,16 @@
 <div class="flex">
     <div id="col1" class="">
         <div class="w-80 bg-white border-r border-gray-200 flex flex-col shadow-md">
-            <div class="p-6 border-b border-gray-200 bg-gradient-to-br from-indigo-500 to-purple-700 text-white">
+            <div class="flex justify-between p-6 border-b border-gray-200 bg-gradient-to-br from-indigo-500 to-purple-700 text-white">
                 <h1 class="text-xl font-semibold flex items-center gap-3">📁 File Manager</h1>
+                <div id="btn-side" class="relative flex items-center justify-center cursor-pointer w-[40px] h-[40px]">
+                    <div id="side1" class="absolute transition-opacity duration-300 opacity-100 hover:bg-black hover:rounded-lg">
+                        <svg width="35" height="35" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18.4984 18.004L12.4981 12.0038L18.5019 6" stroke="white" stroke-width="null" stroke-linecap="round" stroke-linejoin="round" class="my-path"></path>
+                            <path d="M11.4984 18.004L5.49811 12.0038L11.5019 6" stroke="white" stroke-width="null" stroke-linecap="round" stroke-linejoin="round" class="my-path"></path>
+                        </svg>
+                    </div>
+                </div>
             </div>
 
             <div class="p-5">
@@ -35,6 +43,16 @@
             </div>
         </div>
     </div>
+
+    <div id="col-off" class="hidden w-12 h-screen bg-white flex items-start justify-center pt-3 relative">
+        <div id="side2" class="transition-opacity duration-300 opacity-100 hover:bg-gray-300 hover:rounded-lg">
+            <svg width="35" height="35" viewBox="0 0 24 24" fill="none">
+            <path d="M5.5 6L11.5 12L5.5 18" stroke="black" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M12.5 6L18.5 12L12.5 18" stroke="black" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </div>
+    </div>
+
 
     <div id="col2" class="bg=[#f7f9fa] w-full h-screen">
         <div id="wealcomeData"

@@ -7,12 +7,6 @@ def find_percentage(data): #input json
     sum_appointment = 0
     grand_total = data[3]
     webCommerce = 0
-    percent_val_each_inquiry = []
-
-    for obj in data:
-        pass
-        # print('--------------------------')
-        # print(json.dumps(obj, indent=3))
 
     for i in range(len(data)):
         # print(data[i])
