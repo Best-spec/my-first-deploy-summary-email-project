@@ -35,14 +35,15 @@ def csv_to_json_with_type(filepath, file_type, lang_code):
 
 
 def calculate_appointment_from_json(data_list):
-    langs = ["ar", "de", "en", "ru", "th", "zh"]
+
+    langs = ["en", "th", "ru", "de", "zh", "ar"]
     lang_names = {
-        "ar": "English",
-        "de": "Thai",
-        "en": "Russia",
-        "ru": "German",
-        "th": "Chinese",
-        "zh": "Arabic"
+        "en": "English",
+        "th": "Thai",
+        "ru": "Russia",
+        "de": "German",
+        "zh": "Chinese",
+        "ar": "Arabic"
     }
     lang_summary = {lang: {"appointment count": 0, "appointment recommended count": 0} for lang in langs}
 
@@ -103,7 +104,7 @@ def filter_date_range(filtered_list, start_date, end_date, date_key="Entry Date"
             print(f"❌ Invalid date format: {entry_str}")
             continue
 
-    print(f"✅ Matched entries: {len(result)}")
+    # print(f"✅ Matched entries: {len(result)}")
     return result
 
 def load_date(datetimes):

@@ -4,7 +4,7 @@ from .inquiry import get_total_languages_summary, cal_inquiry
 from .feedback_package import cal_FeedbackAndPackage
 from .appointment import find_appointment_from_csv_folder
 from .compare.result_compare import Resultcompare
-from .percentage.cal_percentage import find_percentage
+from .percentage.cal_percentage import find_percentage, cal_percent
 import json
 
 def cal_TotalMonth(date, Web_Commerce):
@@ -12,7 +12,7 @@ def cal_TotalMonth(date, Web_Commerce):
         dateset1 = date.get('startDate')
         dateset2 = date.get('endDate')
 
-        print(dateset1, dateset2)
+        # print(dateset1, dateset2)
         # total_inquiry = get_total_languages_summary(date)
         total_inquiry, chart = cal_inquiry(dateset1, dateset2)
         total_feedback_package = cal_FeedbackAndPackage(date)
@@ -25,6 +25,7 @@ def cal_TotalMonth(date, Web_Commerce):
             total_appointment = total_appointment[0]
 
         summary = []
+        percent_dict = []
 
         feedback_map = {row["Language"]: row for row in total_feedback_package if row["Language"] != "Total"}
         appointment_map = {row["Language"]: row for row in total_appointment if row["Language"] != "Total"}
@@ -49,6 +50,16 @@ def cal_TotalMonth(date, Web_Commerce):
                 appointment = appoint_row.get("Appointment", 0)
                 appointment_recommended = appoint_row.get("Appointment Recommended", 0)
 
+                for_inquiry = inquiry_total + feedback + packages
+                for_appointment = appointment + appointment_recommended
+
+
+                percent_dict.append({
+                    "lang": lang,
+                    "percent_inquiry": for_inquiry,
+                    "percent_appointment": for_appointment
+                })
+
                 #Header + row each lang
                 summary.append({
                     "language": lang,
@@ -61,12 +72,13 @@ def cal_TotalMonth(date, Web_Commerce):
                     "appointment": appointment,
                     "appointment recommended": appointment_recommended,
                     "Web Commerce": 0,
-                    "total all": inquiry_total + feedback + packages + appointment + appointment_recommended,
-                    '%_Inquiry': 0, 
-                    '%_Appointment': 0, 
-                    '%_webCommerce_percent': 0
+                    "total Email": inquiry_total + feedback + packages + appointment + appointment_recommended,
+                    '%Total Inquiry': 0, 
+                    '%Total Appointment': 0, 
+                    '%_webCommerce': 0
                 })  
-
+        
+        
         # custom row
         # ✅ รวมแถว Total
         total_row = {
@@ -97,9 +109,7 @@ def cal_TotalMonth(date, Web_Commerce):
         }
 
         
-
-
-        total_row["total all"] = (
+        total_row["total Email"] = (
             total_row["General Inquiry"] +
             total_row["Estimated Cost"] +
             total_row["Contact Doctor"] +
@@ -111,18 +121,24 @@ def cal_TotalMonth(date, Web_Commerce):
             total_row["Web Commerce"]
         )
 
-        for_percentage = [total_row_inquiry, total_row_appointment, Web_Commerce, total_row["total all"]]
+        percent_inquiry = [item for item in cal_percent(percent_dict, total_row["total Email"])]
+
+        for item, percent in zip(summary, percent_inquiry):
+            item['%Total Inquiry'] = str(round(percent.get("inquiry", 0), 2)) + '%' + f' ({percent.get("inquiry_val", 0)})'
+            item['%Total Appointment'] = str(round(percent.get("appointment", 0), 2)) + '%' + f' ({percent.get("appointment_val", 0)})'
+        
+        for_percentage = [total_row_inquiry, total_row_appointment, Web_Commerce, total_row["total Email"]]
         total_percent = find_percentage(for_percentage)
 
         total_row.update(total_percent[0])
-        print(json.dumps(summary, indent=2, ensure_ascii=False))
+        # print(json.dumps(summary, indent=2, ensure_ascii=False))
         summary.append(total_row)
 
         # 📊 เตรียมข้อมูลสำหรับกราฟ
         plot_data = []
         for row in summary:
             if row["language"] != "Total":
-                plot_row = {k: v for k, v in row.items() if k != "total all"}
+                plot_row = {k: v for k, v in row.items() if k != "total Email"}
                 plot_data.append(plot_row)
 
         categories = [
@@ -146,7 +162,7 @@ def cal_TotalMonth(date, Web_Commerce):
             transposed.append(row)
 
         # ✅ เพิ่ม total all ต่อภาษา
-        total_all_row = {"category": "total all"}
+        total_all_row = {"category": "total Email"}
         for entry in plot_data:
             lang = entry["language"]
             total_all_row[lang] = sum(entry.get(cat, 0) for cat in categories)

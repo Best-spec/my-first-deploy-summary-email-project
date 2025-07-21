@@ -117,7 +117,7 @@ def load_csv_to_json(start_date=None, end_date=None):
                 "question": val
             })
         
-        print(json.dumps(all_data, indent=2, ensure_ascii=False))
+        # print(json.dumps(all_data, indent=2, ensure_ascii=False))
     return all_data
 
 def calculate_inquiry_summary(data_json):
@@ -183,7 +183,7 @@ def calculate_inquiry_summary(data_json):
             }
         }
         
-        print(json.dumps(output, indent=2, ensure_ascii=False))
+        # print(json.dumps(output, indent=2, ensure_ascii=False))
         return output, [data_chart]
 
     except Exception as e:

@@ -1,44 +1,52 @@
-
+import re
 
 def compareData(data1, data2):
-    result_compare = []
-    # print('from compareData')
+    try:
+        result_compare = []
 
-    def explain_percent_change(new, old):
-        if old == 0:
-            return "⚠️ เปรียบเทียบไม่ได้ (old = 0)"
-        change = ((new - old) / old) * 100
-        return f"{change:.2f}"
+        keys = list(data1[0].keys())
 
-    # ดึง key list จาก dict ตัวแรกใน data1
-    keys = list(data1[0].keys())
+        for i in range(len(data1)):
+            obj1 = data1[i]
+            obj2 = data2[i] if i < len(data2) else {}
 
-    for i in range(len(data1)):
-        obj1 = data1[i]
-        obj2 = data2[i] if i < len(data2) else {}
+            compare_result = {}
 
-        compare_result = {}
+            for key in keys[1:]:  # ข้าม clinic ไป
+                val1 = map_val_type(obj1, key)
+                val2 = map_val_type(obj2, key)
 
-        for key in keys[1:]:
-            # ข้าม 'clinic' เพราะไม่ต้องเอามาคิด % เปลี่ยนแปลง
+                val1 = str_check(val1)
+                val2 = str_check(val2)
 
+                percent = explain_percent_change(val1, val2)
+                # print(type(percent), percent)
+                compare_result[f"percent_{key}"] = percent
 
-            val1 = obj1.get(key, 0)
-            val2 = obj2.get(key, 0)
+                # print(f"{key}: {val1} → {val2} = {percent}")
 
-            # ถ้าเจอ string หรือ None ให้แทนเป็น 0
-            val1 = val1 if val1 and not isinstance(val1, str) else 0
-            val2 = val2 if val2 and not isinstance(val2, str) else 0
+            result_compare.append(compare_result)
 
-            percent = explain_percent_change(val1, val2)
-            compare_result[f"percent_{key}"] = percent
+        return result_compare
+    except Exception as e:
+        print('from compareData:', e)
 
-            # print(f"{key}: {val1} → {val2} = {percent}")
+def explain_percent_change(new, old):
+    if old == 0:
+        return "⚠️ เปรียบเทียบไม่ได้ (old = 0)"
+    change = ((new - old) / old) * 100
+    return f"{change:.2f}"
 
-        result_compare.append(compare_result)
+def map_val_type(obj, key):
+    return obj.get(key, 0)
 
-    print('-----------------------------------------')
-    return result_compare
-
-    
-
+def str_check(val):
+    if isinstance(val, str):
+        match = re.search(r'\((\d+)\)', val)
+        if match:
+            return int(match.group(1))
+        try:
+            return float(val.replace('%','').strip())
+        except:
+            return 0
+    return val

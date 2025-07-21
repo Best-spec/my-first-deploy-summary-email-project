@@ -41,8 +41,8 @@ export async function fetchDataAndRender(actionId, datetimeset) {
       renderAutoChart(realData);
         // renderAutoPieChart(realData);
       data = realData;
-      renderDataTable(data);
-      // console.log("is one var", result.data)
+      
+      console.log("is one var", result.data)
 
     } else if (actionId === 'total-month') {
         // console.log('this is total')
