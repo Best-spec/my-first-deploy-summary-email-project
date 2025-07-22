@@ -33,7 +33,7 @@ def compareData(data1, data2):
 
 def explain_percent_change(new, old):
     if old == 0:
-        return "⚠️ เปรียบเทียบไม่ได้ (old = 0)"
+        return "N/A"
     change = ((new - old) / old) * 100
     return f"{change:.2f}"
 

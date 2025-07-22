@@ -1,13 +1,14 @@
-import { initAnalyzeButtons } from './fetchApi.js';
-import { setDateRange1, setDateRange2, get_btn_id, btn_id } from './datetime.js';
+import { initAnalyzeButtons } from './unused/fetchApi.js';
+import { setDateRange1, setDateRange2, get_btn_id, getDateRange1 } from './datetime.js';
+import App from './fetchDate/Appfetch.js';
 
-
+let appInstance;
 document.addEventListener('DOMContentLoaded', async () => {
   await loadFiles();
   renderFiles();
   updateFileCount();
-  initComparePicker();
-  initAnalyzeButtons('1');
+  appInstance = new App();
+  appInstance.init();
   sidebar_toggle();
 });
 
@@ -345,46 +346,82 @@ async function deleteFile(fileId) {
 
 window.deleteFile = deleteFile;
 
-
-// ฟังก์ชันแสดงข้อความสำเร็จ
-function showSuccessToast(message) {
-    const toast = document.createElement('div');
-    toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300';
-    toast.textContent = message;
-    
-    document.body.appendChild(toast);
-    
-    // แสดง toast
-    setTimeout(() => {
-        toast.classList.add('translate-x-0', 'opacity-100');
-    }, 100);
-    
-    // ซ่อน toast หลัง 2 วินาที
-    setTimeout(() => {
-        toast.classList.add('translate-x-full', 'opacity-0');
-        setTimeout(() => toast.remove(), 300);
-    }, 2000);
+function ensureToastContainer() {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'fixed top-4 right-4 z-50 flex flex-col items-end space-y-2';
+        document.body.appendChild(container);
+    }
+    return container;
 }
-
-// ฟังก์ชันแสดงข้อความผิดพลาด
-function showErrorToast(message) {
+// ฟังก์ชันแสดงข้อความสำเร็จ
+export function showSuccessToast(message = "ทำรายการสำเร็จ") {
+    const container = ensureToastContainer();
     const toast = document.createElement('div');
-    toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300';
-    toast.textContent = message;
-    
-    document.body.appendChild(toast);
-    
-    // แสดง toast
+    toast.className =
+        'flex items-center p-4 mb-4 rounded-xl text-sm border border-emerald-400 bg-emerald-50 text-emerald-500 z-50 shadow-lg transform transition-all duration-300 opacity-0 translate-x-full';
+
+    toast.innerHTML = `
+        <svg class="w-5 h-5 mr-2 min-w-[20px]" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10.0043 13.3333V9.16663M9.99984 6.66663H10.0073M9.99984 18.3333C5.39746 18.3333 1.6665 14.6023 1.6665 9.99996C1.6665 5.39759 5.39746 1.66663 9.99984 1.66663C14.6022 1.66663 18.3332 5.39759 18.3332 9.99996C18.3332 14.6023 14.6022 18.3333 9.99984 18.3333Z"
+                stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="font-semibold mr-1">สำเร็จ:</span>
+        <span>${message}</span>
+    `;
+
+    container.appendChild(toast);
+
+    // แสดง toast แบบลื่นๆ
     setTimeout(() => {
+        toast.classList.remove('translate-x-full', 'opacity-0');
         toast.classList.add('translate-x-0', 'opacity-100');
     }, 100);
-    
-    // ซ่อน toast หลัง 3 วินาที
+
+    // ซ่อน toast หลัง 3 วิ
     setTimeout(() => {
+        toast.classList.remove('translate-x-0', 'opacity-100');
         toast.classList.add('translate-x-full', 'opacity-0');
         setTimeout(() => toast.remove(), 300);
     }, 3000);
 }
+
+
+// ฟังก์ชันแสดงข้อความผิดพลาด
+export function showErrorToast(message = "เกิดข้อผิดพลาดบางอย่าง") {
+    const container = ensureToastContainer();
+    const toast = document.createElement('div');
+    toast.className =
+        'flex items-center p-4 mb-4 rounded-xl text-sm bg-red-500 text-white z-50 shadow-lg transform transition-all duration-300 opacity-0 translate-x-full';
+
+    toast.innerHTML = `
+        <svg class="w-5 h-5 mr-2 min-w-[20px]" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10.0043 13.3333V9.16663M9.99984 6.66663H10.0073M9.99984 18.3333C5.39746 18.3333 1.6665 14.6023 1.6665 9.99996C1.6665 5.39759 5.39746 1.66663 9.99984 1.66663C14.6022 1.66663 18.3332 5.39759 18.3332 9.99996C18.3332 14.6023 14.6022 18.3333 9.99984 18.3333Z"
+                stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="font-semibold mr-1">เกิดข้อผิดพลาด:</span>
+        <span>${message}</span>
+    `;
+
+    container.appendChild(toast);
+
+    // แสดง toast ด้วย transition
+    setTimeout(() => {
+        toast.classList.remove('translate-x-full', 'opacity-0');
+        toast.classList.add('translate-x-0', 'opacity-100');
+
+    }, 100);
+
+    // ซ่อน toast หลัง 3 วิ
+    setTimeout(() => {
+        toast.classList.remove('translate-x-0', 'opacity-100');
+        toast.classList.add('translate-x-full', 'opacity-0');
+        setTimeout(() => toast.remove(), 300); // ลบจริงหลัง transition จบ
+    }, 3000);
+}
+
 
 // เพิ่ม CSS สำหรับ animation
 const style = document.createElement('style');

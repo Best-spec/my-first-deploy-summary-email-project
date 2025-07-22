@@ -178,12 +178,12 @@ def find_TotalMonth(date, web):
     try:
         if len(date) <= 1:
             print("it 1")
-            total, plot_data, transposed = cal_TotalMonth(date[0], web)
+            total, plot_data, transposed = cal_TotalMonth(date[0], web[0])
             return [total, plot_data, transposed]
         else :
             print("it 2")
-            totalset1, plot_data, transposed = cal_TotalMonth(date[0], web)
-            totalset2, plot_data, transposed = cal_TotalMonth(date[1], web)
+            totalset1, plot_data, transposed = cal_TotalMonth(date[0], web[0])
+            totalset2, plot_data, transposed = cal_TotalMonth(date[1], web[1])
             return [Resultcompare(totalset1, totalset2, date)]
     except Exception as e:
         print("error from cal total",e)
