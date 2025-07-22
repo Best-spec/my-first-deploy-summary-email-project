@@ -16,7 +16,6 @@ class App {
     this.dataFetcher = new DataFetcher();
     this.chartRenderer = new ChartRenderer();
     this.tableRenderer = new TableRenderer();
-    
     this.uiHandler = new UIHandler(); 
     // DatePickerManager จะไม่ส่ง isFromToggle มาแล้ว
     this.datePickerManager = new DatePickerManager(this.handleAnalysis.bind(this));
@@ -49,6 +48,7 @@ class App {
 
     const datetimeset = date2 === null ? [date1] : [date1, date2];
 
+    //ไว้เปิดหน้าต่าง modal เฉยๆ แล้วเรียก performDataFetchAndRender เพื่อดึงข้อมูล และ plot charts
     if (actionId === "total-month") {
         console.log('Action ID is total-month. Opening modal...');
         const isCompareDateSelected = date2 !== null; // ตรวจสอบว่ามีวันที่เปรียบเทียบหรือไม่
@@ -72,7 +72,7 @@ class App {
 
       let dataForTable;
       let dataForCharts;
-
+      //เงื่อนไขไว้ render ตามหัวข้อ
       if (actionId === 'top-center') {
         dataForTable = fetchedData;
         dataForCharts = fetchedData;

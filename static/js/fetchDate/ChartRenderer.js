@@ -1,4 +1,4 @@
-import { renderAutoChart, renderAutoPieChart } from "../charts.js";
+import { renderAutoChart } from "../charts.js";
 
 class ChartRenderer {
   constructor() {
@@ -20,6 +20,9 @@ class ChartRenderer {
   }
 
   renderCharts(actionId, data) {
+    console.log('from rendercharts data: ', data)
+    const dataForChart1 = data[1];
+    const dataForChart2 = data[2];
     this.hideAllCharts();
 
     if (actionId === 'top-center') {
@@ -31,7 +34,8 @@ class ChartRenderer {
       this.showChartElement.classList.add('grid-cols-2');
       this.barHorizontalElement.classList.remove('hidden');
       if (Array.isArray(data) && data.length > 1) {
-        renderAutoChart(data[1]);
+        renderAutoChart(dataForChart1);
+        renderAutoChart(dataForChart2, 'barChartHorizontal');
       } else {
         console.warn("Expected at least two data sets for 'total-month' charts.");
       }
@@ -41,7 +45,6 @@ class ChartRenderer {
       this.pieChartElement.classList.remove('hidden');
       if (Array.isArray(data) && data.length > 0) {
         renderAutoChart(data[0]);
-        renderAutoPieChart(data[0]);
       } else {
         console.warn("Expected data for 'plot-all' charts.");
       }
@@ -52,9 +55,7 @@ class ChartRenderer {
       if (Array.isArray(data)) {
         if (data.length === 1) {
           renderAutoChart(data[0]);
-          renderAutoPieChart(data[0]);
         } else if (data.length === 2) {
-          renderAutoPieChart(data[0]);
           renderAutoChart(data[1]);
         }
       } else {

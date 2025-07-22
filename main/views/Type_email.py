@@ -49,8 +49,8 @@ def cal_all_type_email(date):
         index7 = summaryAppointment[0].get('Appointment')
         index8 = summaryAppointment[0].get('Appointment Recommended')
 
-        json_temp = [
-                {
+        json_temp = [{
+                
                     'Type Email'                         : 'Total',
                     'General Inquiry'                    : index1,
                     'Estimated Cost'                     : index2,
@@ -60,12 +60,11 @@ def cal_all_type_email(date):
                     'Feedback & Suggestion'              : index6,
                     'Appointment'                        : index7,
                     'Appointment Recommended'            : index8,
-                }
-        ];
+                }];
 
         
 
-        return json_temp
+        return [json_temp]
         
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
@@ -74,12 +73,12 @@ def find_all_type_email(date_param):
     try:
         if len(date_param) <= 1:
             print('it 1 !!')
-            return [cal_all_type_email(date_param[0])]
+            return cal_all_type_email(date_param[0])
         else :
             print('it 2 !!')
             # print(type(parted[0]), parted[0])
-            data1 = cal_all_type_email(date_param[0])
-            data2 = cal_all_type_email(date_param[1])
+            data1 = cal_all_type_email(date_param[0])[0]
+            data2 = cal_all_type_email(date_param[1])[0]
 
             return [Resultcompare(data1, data2, date_param)]
 

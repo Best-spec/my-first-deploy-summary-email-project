@@ -41,5 +41,5 @@ def raw_to_json_res(raw, data1, data2, dateParam):
     # print(result)
     json_string = json.dumps(result, indent=2, ensure_ascii=False)
 
-    # print(json_string)
+    print(json_string)
     return result

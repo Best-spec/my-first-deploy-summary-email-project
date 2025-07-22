@@ -1,4 +1,4 @@
-import { initAnalyzeButtons } from './unused/fetchApi.js';
+
 import { setDateRange1, setDateRange2, get_btn_id, getDateRange1 } from './datetime.js';
 import App from './fetchDate/Appfetch.js';
 
