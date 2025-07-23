@@ -315,8 +315,11 @@ def find_top_clinics_summary_main(date_param=None):
             start = date_param[0]['startDate']
             end = date_param[0]['endDate']
             for_table = sumf_top(start, end)
-            return for_table
-
+            print(for_table)
+            return {
+               "dataForTable": for_table,
+               "dataForChart": for_table,
+            }
         else:
             print('มากกว่าสอง')
             startset1 = date_param[0]['startDate']
@@ -325,7 +328,11 @@ def find_top_clinics_summary_main(date_param=None):
             endset2 = date_param[1]['endDate']
             datatop1 = sumf_top(startset1, endset1)
             datatop2 = sumf_top(startset2, endset2)
-            return Resultcompare(datatop1, datatop2, date_param)
+            print(Resultcompare(datatop1, datatop2, date_param))
+            return {
+                "dataForTable": Resultcompare(datatop1, datatop2, date_param),
+                "dataForChart": Resultcompare(datatop1, datatop2, date_param)
+            }
 
 
 

@@ -62,7 +62,30 @@ def analyze(request):
             print(Web_Commerce)
         else :
             data = func(date)
-        return JsonResponse({'data': data})
+        return JsonResponse({
+            'status': 'success',
+            'msg': 'Data fetched successfully',
+            'data': data
+        })
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+
+
+
+
+res = {
+    "status": "success",
+    "msg": "Data fetched successfully",
+    "data": {
+        "dataForTable": [
+            {"Language": "EN", "Appointment": 10, "Recommended": 5, "Total": 15},
+            {"Language": "TH", "Appointment": 7, "Recommended": 3, "Total": 10}
+        ],
+        "dataForChart": {
+            "appointment_count": 17,
+            "appointment_recommended_count": 8
+        }
+    }
+}

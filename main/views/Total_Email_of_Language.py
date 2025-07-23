@@ -181,12 +181,22 @@ def find_TotalMonth(date, web):
             print("it 1")
             total, plot_data, transposed = cal_TotalMonth(date[0], web[0])
             type_email = cal_all_type_email(date[0])
-            return [total, plot_data, type_email[0]]
+            # return [total, plot_data, type_email[0]]
+            return {
+                "dataForTable": total,
+                "dataForChart": plot_data,
+                "dataForChart2": type_email
+            }
         else :
             print("it 2")
             totalset1, plot_data, transposed = cal_TotalMonth(date[0], web[0])
             totalset2, plot_data, transposed = cal_TotalMonth(date[1], web[1])
             type_email = cal_all_type_email(date[0])
-            return [Resultcompare(totalset1, totalset2, date), plot_data, type_email[0]]
+            compare = Resultcompare(totalset1, totalset2, date) 
+            return {
+                "dataForTable": compare,
+                "dataForChart": compare,
+                "dataForChart2": type_email
+            }
     except Exception as e:
         print("error from cal total",e)

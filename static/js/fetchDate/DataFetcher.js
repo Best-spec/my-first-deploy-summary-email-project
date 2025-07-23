@@ -32,8 +32,9 @@ class DataFetcher {
       }
 
       const result = await res.json();
-      console.log('Datetime sent:', datetimeset);
-      console.log('Web Commerce sent:', this.webcom);
+      console.log('api data from backend:',result)
+      // console.log('Datetime sent:', datetimeset);
+      // console.log('Web Commerce sent:', this.webcom);
       return result.data;
     } catch (error) {
       console.error('Error fetching data:', error);

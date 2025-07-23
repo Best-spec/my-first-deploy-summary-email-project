@@ -207,7 +207,10 @@ def find_inquiry(date_param):
             start = date_param[0]['startDate']
             end = date_param[0]['endDate']
             for_table, for_chart = cal_inquiry(start, end)
-            return for_table, for_chart
+            return {
+                "dataForTable": for_table,
+                "dataForChart": for_chart
+            }
 
         else:
             print('มากกว่าสอง')
@@ -217,8 +220,12 @@ def find_inquiry(date_param):
             endset2 = date_param[1]['endDate']
             table1, chart1 = cal_inquiry(startset1, endset1)
             table2, chart2 = cal_inquiry(startset2, endset2)
-            return [Resultcompare(table1, table2, date_param)]
             print(Resultcompare(table1, table2, date_param))
+            # return [Resultcompare(table1, table2, date_param)]
+            return {
+                "dataForTable": Resultcompare(table1, table2, date_param),
+                "dataForChart": chart1
+            }
 
 
 

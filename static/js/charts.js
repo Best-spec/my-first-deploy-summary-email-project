@@ -1,11 +1,12 @@
 let chartInstances = {};  // เก็บ instance ตาม canvas id
 
 
-export function renderAutoChart(data, canvasId = 'barChart') {
+export function renderAutoChart(data, canvasId = 'barChart', type_colors = 'null') {
   if (!data || !Array.isArray(data) || data.length === 0) {
-    console.error('📉 No data provided');
-    return;
+    console.error('📉 No data provided', data);
+    // return;
   }
+  console.log(type_colors)
 
   const canvas = document.getElementById(canvasId);
   if (!canvas) {
@@ -77,3 +78,18 @@ export function renderAutoChart(data, canvasId = 'barChart') {
   });
 }
 
+export function change_colors(type) {
+  const default_colors = [
+          '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#F87171', '#34D399'
+        ];
+  const cat_colors = {
+    // 'inquiry': [];
+  }
+  if (type === 'inquiry') {
+
+  } else if (type === ''){
+
+  } else {
+    return default_colors
+  }
+}

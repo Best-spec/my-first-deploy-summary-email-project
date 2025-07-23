@@ -69,41 +69,45 @@ class App {
   async performDataFetchAndRender(actionId, datetimeset) {
     try {
       const fetchedData = await this.dataFetcher.fetchData(actionId, datetimeset);
+      // console.log(fetchedData.dataForTable)
+      console.log('from app:',fetchedData)
 
       let dataForTable;
       let dataForCharts;
       //เงื่อนไขไว้ render ตามหัวข้อ
       if (actionId === 'top-center') {
-        dataForTable = fetchedData;
-        dataForCharts = fetchedData;
+        dataForTable = fetchedData.dataForTable;
+        dataForCharts = fetchedData.dataForChart;
       } else if (actionId === 'total-month') {
-        dataForTable = fetchedData[0];
-        dataForCharts = fetchedData;
+        dataForTable = fetchedData.dataForTable;
+        dataForCharts = fetchedData.dataForTable;
       } else if (actionId === 'plot-all') {
         dataForTable = fetchedData[0];
         dataForCharts = fetchedData;
       } else {
-        if (Array.isArray(fetchedData)) {
-          if (fetchedData.length === 1) {
-            dataForTable = fetchedData[0];
-            dataForCharts = fetchedData[0];
-          } else if (fetchedData.length === 2) {
-            dataForTable = fetchedData[0];
-            dataForCharts = fetchedData;
-          } else {
-             console.warn("Unexpected data structure for default case:", fetchedData);
-             showErrorToast('รูปแบบข้อมูลไม่ถูกต้องสำหรับการแสดงผล');
-             this.tableRenderer.renderTable([], datetimeset);
-             this.chartRenderer.hideAllCharts();
-             return;
-          }
-        } else {
-          console.warn("Fetched data is not an array:", fetchedData);
-          showErrorToast('ข้อมูลที่ได้รับมีรูปแบบที่ไม่รองรับ');
-          this.tableRenderer.renderTable([], datetimeset);
-          this.chartRenderer.hideAllCharts();
-          return;
-        }
+        dataForTable = fetchedData.dataForTable;
+        dataForCharts = fetchedData.dataForChart;
+        // if (false) {
+        //   if (fetchedData.length === 1) {
+        //     dataForTable = fetchedData[0];
+        //     dataForCharts = fetchedData[0];
+        //   } else if (fetchedData.length === 2) {
+        //     dataForTable = fetchedData.dataForTable;
+        //     dataForCharts = fetchedData;
+        //   } else {
+        //      console.warn("Unexpected data structure for default case:", fetchedData);
+        //      showErrorToast('รูปแบบข้อมูลไม่ถูกต้องสำหรับการแสดงผล');
+        //      this.tableRenderer.renderTable([], datetimeset);
+        //      this.chartRenderer.hideAllCharts();
+        //      return;
+        //   }
+        // } else {
+        //   console.warn("Fetched data is not an array:", fetchedData);
+        //   showErrorToast('ข้อมูลที่ได้รับมีรูปแบบที่ไม่รองรับ');
+        //   this.tableRenderer.renderTable([], datetimeset);
+        //   this.chartRenderer.hideAllCharts();
+        //   return;
+        // }
       }
 
       this.chartRenderer.renderCharts(actionId, dataForCharts);
@@ -119,22 +123,5 @@ class App {
     }
   }
 }
-
-// let appInstance;
-
-// document.addEventListener('DOMContentLoaded', () => {
-//   appInstance = new App();
-//   appInstance.init();
-// });
-
-
-// export function initAnalyzeButtons(actionId) {
-//     if (appInstance) {
-//       console.log('initAnalyzeButtons wrapper called, redirecting to App.handleAnalysis:', actionId);
-//       appInstance.handleAnalysis(actionId);
-//     } else {
-//       console.warn('App instance not initialized yet when initAnalyzeButtons was called.');
-//     }
-//   }
   
 export default App;

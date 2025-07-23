@@ -5,6 +5,7 @@ class TableRenderer {
   }
 
   renderTable(data, datetimeset) {
+    console.log('from rendertable:',data)
     if (!data || data.length === 0) {
       this.headerRowElement.innerHTML = `
         <div class="col-span-full text-center text-gray-300">ไม่มีข้อมูลให้แสดง</div>

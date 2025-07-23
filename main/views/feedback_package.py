@@ -170,7 +170,7 @@ def cal_FeedbackAndPackage(date_param):
         # print(data[0])
         # print(json.dumps(data, indent=2, ensure_ascii=False))  # พิมพ์ให้ดูสวย อ่านง่าย
         summary = process_json_list(data, start_date=start_date, end_date=end_date)
-        # print(summary)
+        print(summary)
         return summary
     except Exception as e:
         print(f"🔥 Error in find_FeedbackAndPackage: {e}")
@@ -180,13 +180,23 @@ def find_FeedbackAndPackage(date_param):
     try:
         if len(date_param) <= 1:
             # print(date_param, len(date_param))
-            return [cal_FeedbackAndPackage(date_param[0])]
+            # return [cal_FeedbackAndPackage(date_param[0])]
+            table =  cal_FeedbackAndPackage(date_param[0])
+            return {
+                "dataForTable": table,
+                "dataForChart": table
+            }
 
         else:
             print('มากกว่าสอง')
             data1 = cal_FeedbackAndPackage(date_param[0])
             data2 = cal_FeedbackAndPackage(date_param[1])
-            return [Resultcompare(data1, data2, date_param)]
+            # return [Resultcompare(data1, data2, date_param)]
+            table = Resultcompare(data1, data2, date_param)
+            return {
+                "dataForTable": table,
+                "dataForChart": table
+            }
             # print(Resultcompare(data1, data2, date_param))
 
 

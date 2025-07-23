@@ -166,7 +166,12 @@ def find_appointment(dateset):
             print(dateset)
             dateset1 = dateset[0].get('startDate')
             dateset2 = dateset[0].get('endDate')
-            return [find_appointment_from_csv_folder((dateset1, dateset2))]
+            table = find_appointment_from_csv_folder((dateset1, dateset2))
+            # return [find_appointment_from_csv_folder((dateset1, dateset2))]
+            return {
+                "dataForTable": table,
+                "dataForChart": table
+            } 
         else :
             print('it 2 !!')
             dateset1 = dateset[0].get('startDate')
@@ -175,7 +180,12 @@ def find_appointment(dateset):
             date2set2 = dateset[1].get('endDate')
             data1 = find_appointment_from_csv_folder((dateset1, dateset2))
             data2 = find_appointment_from_csv_folder((date2set1, date2set2))
-            return [Resultcompare(data1, data2, dateset)]
+            # return [Resultcompare(data1, data2, dateset)]
+            table = Resultcompare(data1, data2, dateset)
+            return {
+                "dataForTable": table,
+                "dataForChart": table
+            } 
             # print(Resultcompare(data1, data2, dateset))
 
     except Exception as e:
