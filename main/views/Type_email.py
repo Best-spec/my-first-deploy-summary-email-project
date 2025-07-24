@@ -64,7 +64,7 @@ def cal_all_type_email(date):
 
         
 
-        return [json_temp]
+        return json_temp
         
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
@@ -73,7 +73,12 @@ def find_all_type_email(date_param):
     try:
         if len(date_param) <= 1:
             print('it 1 !!')
-            return cal_all_type_email(date_param[0])
+            table = cal_all_type_email(date_param[0])
+            # return cal_all_type_email(date_param[0])
+            return {
+                "dataForTable": table,
+                "dataForChart": table,
+            }
         else :
             print('it 2 !!')
             # print(type(parted[0]), parted[0])

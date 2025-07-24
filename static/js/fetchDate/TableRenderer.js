@@ -1,11 +1,13 @@
 class TableRenderer {
   constructor() {
+    this.frameTable = document.getElementById('frame-table');
     this.headerRowElement = document.getElementById('header-row');
     this.dataRowsElement = document.getElementById('data-rows');
   }
 
   renderTable(data, datetimeset) {
-    console.log('from rendertable:',data)
+    this.frameTable.classList.remove('hidden');
+    // console.log('from rendertable:',data)
     if (!data || data.length === 0) {
       this.headerRowElement.innerHTML = `
         <div class="col-span-full text-center text-gray-300">ไม่มีข้อมูลให้แสดง</div>

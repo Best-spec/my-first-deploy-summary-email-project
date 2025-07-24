@@ -1,13 +1,13 @@
 
 import { setDateRange1, setDateRange2, get_btn_id, getDateRange1 } from './datetime.js';
-import App from './fetchDate/Appfetch.js';
+import Appfetch from './fetchDate/Appfetch.js';
 
 let appInstance;
 document.addEventListener('DOMContentLoaded', async () => {
   await loadFiles();
   renderFiles();
   updateFileCount();
-  appInstance = new App();
+  appInstance = new Appfetch();
   appInstance.init();
   sidebar_toggle();
 });
@@ -445,8 +445,6 @@ document.head.appendChild(style);
 
 let rangedateset1;
 let rangedateset2;
-console.log("let set1",rangedateset1)
-console.log("let set2",rangedateset2)
 
 export function initComparePicker() {
     const toggle = document.getElementById("toggle");
@@ -578,3 +576,7 @@ export function initComparePicker() {
         }
     });
 }
+
+window.forceReload = () => {
+  window.location.href = window.location.pathname + '?_=' + Date.now();
+};

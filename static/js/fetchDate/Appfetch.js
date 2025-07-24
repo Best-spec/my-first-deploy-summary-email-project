@@ -11,7 +11,7 @@ import DatePickerManager from './DatePickerManager.js';
 import { getDateRange1, getDateRange2, set_btn_id } from '../datetime.js';
 import { showSuccessToast, showErrorToast } from '../script.js';
 
-class App {
+class Appfetch {
   constructor() {
     this.dataFetcher = new DataFetcher();
     this.chartRenderer = new ChartRenderer();
@@ -70,7 +70,7 @@ class App {
     try {
       const fetchedData = await this.dataFetcher.fetchData(actionId, datetimeset);
       // console.log(fetchedData.dataForTable)
-      console.log('from app:',fetchedData)
+      // console.log('from app:',fetchedData)
 
       let dataForTable;
       let dataForCharts;
@@ -78,36 +78,21 @@ class App {
       if (actionId === 'top-center') {
         dataForTable = fetchedData.dataForTable;
         dataForCharts = fetchedData.dataForChart;
+
       } else if (actionId === 'total-month') {
         dataForTable = fetchedData.dataForTable;
-        dataForCharts = fetchedData.dataForTable;
+        dataForCharts = {
+          "dataForChart": fetchedData.dataForChart,
+          "dataForChart2": fetchedData.dataForChart2
+        };
+
       } else if (actionId === 'plot-all') {
-        dataForTable = fetchedData[0];
-        dataForCharts = fetchedData;
+        dataForTable = fetchedData.dataForTable;
+        dataForCharts = fetchedData.dataForChart;
+
       } else {
         dataForTable = fetchedData.dataForTable;
         dataForCharts = fetchedData.dataForChart;
-        // if (false) {
-        //   if (fetchedData.length === 1) {
-        //     dataForTable = fetchedData[0];
-        //     dataForCharts = fetchedData[0];
-        //   } else if (fetchedData.length === 2) {
-        //     dataForTable = fetchedData.dataForTable;
-        //     dataForCharts = fetchedData;
-        //   } else {
-        //      console.warn("Unexpected data structure for default case:", fetchedData);
-        //      showErrorToast('รูปแบบข้อมูลไม่ถูกต้องสำหรับการแสดงผล');
-        //      this.tableRenderer.renderTable([], datetimeset);
-        //      this.chartRenderer.hideAllCharts();
-        //      return;
-        //   }
-        // } else {
-        //   console.warn("Fetched data is not an array:", fetchedData);
-        //   showErrorToast('ข้อมูลที่ได้รับมีรูปแบบที่ไม่รองรับ');
-        //   this.tableRenderer.renderTable([], datetimeset);
-        //   this.chartRenderer.hideAllCharts();
-        //   return;
-        // }
       }
 
       this.chartRenderer.renderCharts(actionId, dataForCharts);
@@ -124,4 +109,4 @@ class App {
   }
 }
   
-export default App;
+export default Appfetch;

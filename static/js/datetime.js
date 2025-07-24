@@ -22,5 +22,9 @@ export function set_btn_id(val) {
 }
 
 export function get_btn_id() {
-  return btn_id;
+  if (btn_id === null) {
+    return 'inquiry'
+  } else {
+    return btn_id;
+  }
 }

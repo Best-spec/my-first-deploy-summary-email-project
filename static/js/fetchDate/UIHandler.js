@@ -23,7 +23,13 @@ class UIHandler {
   // เมธอดสำหรับอัปเดตหัวข้อของหน้า (ตาม actionId)
   updateTitle(actionId) {
     if (this.titleElement) {
-      this.titleElement.innerHTML = 'ประเภท ' + actionId;
+      if (actionId === 'plot-all') {
+        this.titleElement.innerHTML = 'ประเภท ' + 'Total Email by Type';
+      } else if (actionId === 'total-month') {
+        this.titleElement.innerHTML = 'ประเภท ' + 'Total Email by Language';
+      } else {
+        this.titleElement.innerHTML = 'ประเภท ' + actionId;
+      }
     } else {
       console.warn("Title element with ID 'title' not found.");
     }
