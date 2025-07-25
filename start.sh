@@ -24,15 +24,15 @@ if not username or not password:
     print("❌ Superuser env vars not set properly.")
     exit(1)
 
-try:
-    user = User.objects.get(username=username)
-    user.set_password(password)
-    user.email = email
-    user.save()
-    print(f"✅ Updated password for user {username}")
-except User.DoesNotExist:
-    User.objects.create_superuser(username, email, password)
-    print(f"✅ Created superuser {username}")
+# try:
+#     user = User.objects.get(username=username)
+#     user.set_password(password)
+#     user.email = email
+#     user.save()
+#     print(f"✅ Updated password for user {username}")
+# except User.DoesNotExist:
+#     User.objects.create_superuser(username, email, password)
+#     print(f"✅ Created superuser {username}")
 END
 
 echo "🚀 Starting server..."
