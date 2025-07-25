@@ -6,6 +6,7 @@ python manage.py migrate --noinput
 echo "👤 Creating or updating superuser from .env..."
 python - <<END
 import os
+from dotenv import load_dotenv
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 username = os.getenv('DJANGO_SUPERUSER_USERNAME')
