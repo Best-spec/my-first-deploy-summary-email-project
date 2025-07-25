@@ -6,17 +6,15 @@ python manage.py migrate --noinput
 echo "👤 Creating or updating superuser from .env..."
 python - <<END
 import os
-from dotenv import load_dotenv
-load_dotenv()
+
+username = os.environ.get('DJANGO_SUPERUSER_USERNAME')
+password = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
+email = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'admin@example.com')
 
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-username = os.getenv('DJANGO_SUPERUSER_USERNAME')
-password = os.getenv('DJANGO_SUPERUSER_PASSWORD')
-email = os.getenv('DJANGO_SUPERUSER_EMAIL')
-
-if not username or not password or not email:
+if not username or not password:
     print("❌ Superuser env vars not set properly.")
     exit(1)
 
