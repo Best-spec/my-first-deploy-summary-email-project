@@ -334,8 +334,6 @@ def find_top_clinics_summary_main(date_param=None):
                 "dataForChart": Resultcompare(datatop1, datatop2, date_param)
             }
 
-
-
     except Exception as e:
         print("🔥 ERROR in topCetner():", e)
         return [], [] 
