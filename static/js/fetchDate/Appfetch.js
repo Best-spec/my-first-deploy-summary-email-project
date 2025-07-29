@@ -70,7 +70,7 @@ class Appfetch {
     try {
       const fetchedData = await this.dataFetcher.fetchData(actionId, datetimeset);
       // console.log(fetchedData.dataForTable)
-      // console.log('from app:',fetchedData)
+      console.log('from app:',fetchedData)
 
       let dataForTable;
       let dataForCharts;

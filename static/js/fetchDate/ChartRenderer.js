@@ -1,4 +1,4 @@
-import { renderAutoChart } from "../charts.js";
+import { renderAutoChart, renderLineChart } from "../charts.js";
 
 class ChartRenderer {
   constructor() {
@@ -22,7 +22,7 @@ class ChartRenderer {
   }
 
   renderCharts(actionId, data) {
-    // console.log('from rendercharts data: ', data)
+    console.log('from rendercharts data: ', data)
     let chart2 = 'dataForChart2' in data ? data.dataForChart2 : data.dataForChart;
     this.hideAllCharts();
 
@@ -30,22 +30,23 @@ class ChartRenderer {
       this.showChartElement.classList.remove('grid-cols-2', 'grid-cols-3');
       this.showChartElement.classList.add('grid-cols-1');
       this.titlechart.innerHTML = 'Top 20 Center';
-      renderAutoChart(data, undefined, actionId);
+      renderAutoChart(data, undefined, actionId, 'bar');
 
     } else if (actionId === 'total-month') {
       this.showChartElement.classList.remove('grid-cols-1', 'grid-cols-3');
       this.showChartElement.classList.add('grid-cols-2');
       this.barHorizontalElement.classList.remove('hidden');
       this.titlechart.innerHTML = 'Grand total by language';
-      renderAutoChart(data.dataForChart, undefined, 'plot-all');
-      renderAutoChart(chart2, 'barChartHorizontal', 'top-center');
+      renderAutoChart(data.dataForChart, undefined, 'plot-all', 'bar');
+      renderAutoChart(chart2, 'barChartHorizontal', 'top-center', 'bar');
 
     } else if (actionId === 'plot-all') {
       this.showChartElement.classList.remove('grid-cols-1', 'grid-cols-3');
       this.showChartElement.classList.add('grid-cols-2');
       this.pieChartElement.classList.remove('hidden');
       this.titlechart.innerHTML = 'Total Email by type';
-      renderAutoChart(data, undefined, 'plot-all');
+      renderAutoChart(data, undefined, 'plot-all', 'bar');
+      renderLineChart(data, undefined, 'top-center');
 
       } else {
       this.showChartElement.classList.remove('grid-cols-1', 'grid-cols-3');
@@ -54,15 +55,15 @@ class ChartRenderer {
       
       if (actionId === 'inquiry') {
         this.titlechart.innerHTML = 'Type Inquiry';
-        renderAutoChart(data, undefined, 'inquiry')
+        renderAutoChart(data, undefined, 'inquiry', 'bar')
 
       } else if (actionId === 'appointment') {
         this.titlechart.innerHTML = 'Type Appointment';
-        renderAutoChart(data, undefined, 'inquiry')
+        renderAutoChart(data, undefined, 'inquiry', 'bar')
 
       } else if (actionId === 'feedback') {
         this.titlechart.innerHTML = 'Type Feedback';
-        renderAutoChart(data, undefined, 'inquiry')
+        renderAutoChart(data, undefined, 'inquiry', 'bar')
 
       } else {
         console.warn("Unknown data format for chart rendering:", data);
