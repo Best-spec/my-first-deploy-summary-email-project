@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from collections import defaultdict
+from datetime import datetime, timedelta
 
 from .inquiry import cal_inquiry
 from .appointment import find_appointment_summary
@@ -33,6 +34,7 @@ def map_parts(s):
 
 def cal_all_type_email(date):
     try:
+        print(date)
         start = date.get('startDate')
         end = date.get('endDate')
         raw, summary = cal_inquiry(start, end)        # dict ภาษา-> dict category-> count
@@ -69,12 +71,41 @@ def cal_all_type_email(date):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
     
+def map_spit_date(date):
+    start_date = datetime.strptime(date['startDate'], "%Y-%m-%d")
+    end_date = datetime.strptime(date['endDate'], "%Y-%m-%d")
+
+    current = start_date
+    date_list = [];
+    while current <= end_date:
+        # print(current.strftime("%Y-%m-%d"))
+        current += timedelta(days=1)
+        date_list.append({
+            'startDate': current.strftime("%Y-%m-%d"),
+            'endDate': current.strftime("%Y-%m-%d")
+        })
+    return date_list
+
+def forlineChart(date):
+    list_date = map_spit_date(date)
+    data_line = []
+    cal_all_type_email(date)
+    for date_i in list_date:
+        data_line = {
+            'startDate': date_i.get['startDate'],
+            'endDate': date_i.get['endDate']
+        }
+        data_line = cal_all_type_email(date)
+        return data_line
+
+
 def find_all_type_email(date_param):
     try:
         if len(date_param) <= 1:
             print('it 1 !!')
             table = cal_all_type_email(date_param[0])
-            # return cal_all_type_email(date_param[0])
+            line = forlineChart(date_param[0])
+            print(line)
             return {
                 "dataForTable": table,
                 "dataForChart": table,
@@ -93,6 +124,4 @@ def find_all_type_email(date_param):
 
     except Exception as e:
         print('From find_all_type_email', e)
-    
 
-    
