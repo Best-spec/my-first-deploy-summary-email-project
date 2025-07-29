@@ -82,10 +82,14 @@ def find_all_type_email(date_param):
         else :
             print('it 2 !!')
             # print(type(parted[0]), parted[0])
-            data1 = cal_all_type_email(date_param[0])[0]
-            data2 = cal_all_type_email(date_param[1])[0]
+            data1 = cal_all_type_email(date_param[0])
+            data2 = cal_all_type_email(date_param[1])
 
-            return [Resultcompare(data1, data2, date_param)]
+            table = Resultcompare(data1, data2, date_param)
+            return {
+                "dataForTable": table,
+                "dataForChart": table
+            }
 
     except Exception as e:
         print('From find_all_type_email', e)
