@@ -154,7 +154,7 @@ export function renderLineChart(
 ) {
   if (!data || !Array.isArray(data) || data.length === 0) {
     console.error('📉 No data provided', data);
-    return;
+    // return;
   }
   console.log("from chart:", data);
 

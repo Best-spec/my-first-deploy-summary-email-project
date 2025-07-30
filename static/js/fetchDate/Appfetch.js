@@ -69,7 +69,7 @@ class Appfetch {
   async performDataFetchAndRender(actionId, datetimeset) {
     try {
       const fetchedData = await this.dataFetcher.fetchData(actionId, datetimeset);
-      // console.log(fetchedData.dataForTable)
+      // console.log(fetchedData.dataForTable )
       console.log('from app:',fetchedData)
 
       let dataForTable;
@@ -88,8 +88,11 @@ class Appfetch {
 
       } else if (actionId === 'plot-all') {
         dataForTable = fetchedData.dataForTable;
-        dataForCharts = fetchedData.dataForChart;
-
+        dataForCharts = {
+          "dataForChart": fetchedData.dataForChart,
+          "dataForChart2": fetchedData.dataForChart2
+        };
+        
       } else {
         dataForTable = fetchedData.dataForTable;
         dataForCharts = fetchedData.dataForChart;

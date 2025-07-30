@@ -8,7 +8,8 @@ from .feedback_package import FPtotal
 from .compare.result_compare import Resultcompare
 
 
-json_temp = [
+json_temp = [{
+    'Date',
     'General Inquiry',                 
     'Estimated Cost',
     'Other',
@@ -18,7 +19,7 @@ json_temp = [
     'Appointment',
     'Appointment Recommended',
     'Web Commerce',
-]
+}]
 
 def map_parts(s):
     parts = list(map(int, s.strip().split()))
@@ -34,7 +35,7 @@ def map_parts(s):
 
 def cal_all_type_email(date):
     try:
-        print(date)
+        # print(date)
         start = date.get('startDate')
         end = date.get('endDate')
         raw, summary = cal_inquiry(start, end)        # dict ภาษา-> dict category-> count
@@ -51,8 +52,7 @@ def cal_all_type_email(date):
         index7 = summaryAppointment[0].get('Appointment')
         index8 = summaryAppointment[0].get('Appointment Recommended')
 
-        json_temp = [{
-                
+        json_temp = {
                     'Type Email'                         : 'Total',
                     'General Inquiry'                    : index1,
                     'Estimated Cost'                     : index2,
@@ -62,7 +62,7 @@ def cal_all_type_email(date):
                     'Feedback & Suggestion'              : index6,
                     'Appointment'                        : index7,
                     'Appointment Recommended'            : index8,
-                }];
+                };
 
         
 
@@ -76,27 +76,21 @@ def map_spit_date(date):
     end_date = datetime.strptime(date['endDate'], "%Y-%m-%d")
 
     current = start_date
-    date_list = [];
+    list_data_by_date = [];
+    new_item = {}
     while current <= end_date:
         # print(current.strftime("%Y-%m-%d"))
-        current += timedelta(days=1)
-        date_list.append({
+        date_list = {
             'startDate': current.strftime("%Y-%m-%d"),
             'endDate': current.strftime("%Y-%m-%d")
-        })
-    return date_list
-
-def forlineChart(date):
-    list_date = map_spit_date(date)
-    data_line = []
-    cal_all_type_email(date)
-    for date_i in list_date:
-        data_line = {
-            'startDate': date_i.get['startDate'],
-            'endDate': date_i.get['endDate']
         }
-        data_line = cal_all_type_email(date)
-        return data_line
+        data_per_day = cal_all_type_email(date_list)
+        new_item = {'Date': date_list['startDate']}
+        new_item.update(data_per_day)
+        list_data_by_date.append(new_item)
+        current += timedelta(days=1)
+    
+    return list_data_by_date
 
 
 def find_all_type_email(date_param):
@@ -104,11 +98,12 @@ def find_all_type_email(date_param):
         if len(date_param) <= 1:
             print('it 1 !!')
             table = cal_all_type_email(date_param[0])
-            line = forlineChart(date_param[0])
-            print(line)
+            line = map_spit_date(date_param[0])
+            # print(line)
             return {
-                "dataForTable": table,
-                "dataForChart": table,
+                "dataForTable": [table],
+                "dataForChart": [table],
+                "dataForChart2": line
             }
         else :
             print('it 2 !!')
