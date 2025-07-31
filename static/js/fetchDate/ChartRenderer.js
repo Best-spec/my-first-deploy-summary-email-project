@@ -33,7 +33,7 @@ class ChartRenderer {
       renderAutoChart(data, undefined, actionId, 'bar');
 
     } else if (actionId === 'total-month') {
-      this.showChartElement.classList.remove('grid-cols-1', 'grid-cols-3');
+      this.showChartElement.classList.remove('grid-cols-2', 'grid-cols-3');
       this.showChartElement.classList.add('grid-cols-2');
       this.barHorizontalElement.classList.remove('hidden');
       this.titlechart.innerHTML = 'Grand total by language';
@@ -42,12 +42,12 @@ class ChartRenderer {
 
     } else if (actionId === 'plot-all') {
       this.showChartElement.classList.remove('grid-cols-1', 'grid-cols-3');
-      this.showChartElement.classList.add('grid-cols-2');
+      this.showChartElement.classList.add('grid-cols-1');
       this.pieChartElement.classList.remove('hidden');
       this.titlechart.innerHTML = 'Total Email by type';
       console.log('from plot-all:',data.dataForChart, data.dataForChart2)
       renderAutoChart(data.dataForChart, undefined, 'plot-all', 'bar');
-      renderLineChart(data.dataForChart2, undefined, 'top-center');
+      renderLineChart(data.dataForChart2, undefined, 'default_colors');
 
       } else {
       this.showChartElement.classList.remove('grid-cols-1', 'grid-cols-3');

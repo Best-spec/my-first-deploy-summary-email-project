@@ -60,7 +60,7 @@ export function renderAutoChart(data, canvasId = 'barChart', type_colors = 'null
     },
     options: {
       responsive: true,
-      // maintainAspectRatio: false,  // เปิดให้ canvas ยืดตาม container
+      maintainAspectRatio: false,  // เปิดให้ canvas ยืดตาม container
       plugins: {
         // legend: { position: 'top' },
         // title: {
@@ -152,19 +152,7 @@ export function renderLineChart(
   type_colors = 'null',
   chartType = 'line' // 👈 ส่ง 'line' มาได้
 ) {
-  // for (let i=0; i < 10; i++) {
-  //   data.push({
-  //     "Type Email": "Total",
-  //     "General Inquiry": 61,
-  //     "Estimated Cost": 60,
-  //     "Other": 12,
-  //     "Contact Doctor": 8,
-  //     "Package Inquiry": 4,
-  //     "Feedback & Suggestion": 6,
-  //     "Appointment": 236,
-  //     "Appointment Recommended": 228
-  // });
-  // }
+
   if (
     !data ||
     !Array.isArray(data) ||
@@ -232,6 +220,7 @@ export function renderLineChart(
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: { display: true, position: 'top' }
       },
@@ -249,10 +238,9 @@ export function renderLineChart(
 
 
 export function change_colors(type) {
-  const default_colors = [
-          '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#F87171', '#34D399'
-        ];
+
   const cat_colors = {
+    'default_colors': ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#F87171', '#34D399'],
     'inquiry': ['#1976d2','#1e88e5','#2196f3','#64b5f6','#bbdefb','#e3f2fd'],
     'top-center': ['#48c9b0','#1abc9c','#17a589','#148f77','#117864','#0e6251'],
     'plot-all': ['#512e5f','#76448a','#9b59b6','#c39bd3','#ebdef0','#f5eef8']
@@ -268,6 +256,6 @@ export function change_colors(type) {
     return cat_colors['plot-all']
 
   } else {
-    return default_colors
+    return cat_colors['default_colors']
   }
 }

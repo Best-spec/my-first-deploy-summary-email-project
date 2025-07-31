@@ -79,7 +79,6 @@ def map_spit_date(date):
     list_data_by_date = [];
     new_item = {}
     while current <= end_date:
-        # print(current.strftime("%Y-%m-%d"))
         date_list = {
             'startDate': current.strftime("%Y-%m-%d"),
             'endDate': current.strftime("%Y-%m-%d")
@@ -91,7 +90,6 @@ def map_spit_date(date):
         current += timedelta(days=1)
     
     return list_data_by_date
-
 
 def find_all_type_email(date_param):
     try:
@@ -109,14 +107,13 @@ def find_all_type_email(date_param):
             print('it 2 !!')
             data1 = cal_all_type_email(date_param[0])
             data2 = cal_all_type_email(date_param[1])
-            # line = map_spit_date(date_param[0])
+            line = map_spit_date(date_param[0])
             table = Resultcompare([data1], [data2], date_param)
             return {
                 "dataForTable": table,
                 "dataForChart": table,
-                # "dataForChart2": line
+                "dataForChart2": line
             }
 
     except Exception as e:
         print('From find_all_type_email', e)
-
