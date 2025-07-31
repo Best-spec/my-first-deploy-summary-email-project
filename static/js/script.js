@@ -422,6 +422,39 @@ export function showErrorToast(message = "เกิดข้อผิดพล�
     }, 3000);
 }
 
+export function showLoadingToast(message = "⏳ กำลังโหลดข้อมูล...") {
+    const container = ensureToastContainer();
+    const toast = document.createElement('div');
+    toast.className =
+        'flex items-center p-4 mb-4 rounded-xl text-sm border border-blue-400 bg-blue-50 text-blue-500 z-50 shadow-lg transform transition-all duration-300 opacity-0 translate-x-full';
+
+    toast.innerHTML = `
+        <svg class="w-5 h-5 mr-2 min-w-[20px] animate-spin" viewBox="0 0 24 24" fill="none">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"></path>
+        </svg>
+        <span>${message}</span>
+    `;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.remove('translate-x-full', 'opacity-0');
+        toast.classList.add('translate-x-0', 'opacity-100');
+    }, 100);
+
+    // return element ไว้ให้ hideToast() เรียกปิด
+    return toast;
+}
+
+export function hideToast(toastElement) {
+    if (!toastElement) return;
+    toastElement.classList.remove('translate-x-0', 'opacity-100');
+    toastElement.classList.add('translate-x-full', 'opacity-0');
+    setTimeout(() => toastElement.remove(), 300);
+}
+
 
 // เพิ่ม CSS สำหรับ animation
 const style = document.createElement('style');
