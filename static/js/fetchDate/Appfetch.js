@@ -90,7 +90,7 @@ class Appfetch {
         dataForTable = fetchedData.dataForTable;
         dataForCharts = {
           "dataForChart": fetchedData.dataForChart,
-          "dataForChart2": fetchedData.dataForChart2
+          "dataForChart2": fetchedData.dataForChart2 ? fetchedData.dataForChart2 : fetchedData.dataForChart,
         };
         
       } else {

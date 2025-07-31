@@ -107,14 +107,14 @@ def find_all_type_email(date_param):
             }
         else :
             print('it 2 !!')
-            # print(type(parted[0]), parted[0])
             data1 = cal_all_type_email(date_param[0])
             data2 = cal_all_type_email(date_param[1])
-
-            table = Resultcompare(data1, data2, date_param)
+            # line = map_spit_date(date_param[0])
+            table = Resultcompare([data1], [data2], date_param)
             return {
                 "dataForTable": table,
-                "dataForChart": table
+                "dataForChart": table,
+                # "dataForChart2": line
             }
 
     except Exception as e:

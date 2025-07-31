@@ -2,11 +2,11 @@ let chartInstances = {};  // เก็บ instance ตาม canvas id
 
 
 export function renderAutoChart(data, canvasId = 'barChart', type_colors = 'null', chartType = 'bar') {
-  if (!data || !Array.isArray(data) || data.length === 0) {
+  if (!data || !Array.isArray(data) || data.length === 0) { 
     console.error('📉 No data provided', data);
     return;
   }
-  console.log("from chart:",data)
+  console.log("from bar:",data)
 
   const canvas = document.getElementById(canvasId);
   if (!canvas) {
@@ -152,11 +152,30 @@ export function renderLineChart(
   type_colors = 'null',
   chartType = 'line' // 👈 ส่ง 'line' มาได้
 ) {
-  if (!data || !Array.isArray(data) || data.length === 0) {
-    console.error('📉 No data provided', data);
-    // return;
+  // for (let i=0; i < 10; i++) {
+  //   data.push({
+  //     "Type Email": "Total",
+  //     "General Inquiry": 61,
+  //     "Estimated Cost": 60,
+  //     "Other": 12,
+  //     "Contact Doctor": 8,
+  //     "Package Inquiry": 4,
+  //     "Feedback & Suggestion": 6,
+  //     "Appointment": 236,
+  //     "Appointment Recommended": 228
+  // });
+  // }
+  if (
+    !data ||
+    !Array.isArray(data) ||
+    data.length === 0 ||
+    data.every(item => Object.keys(item).length === 0)
+  ) {
+    console.error("📉 No data provided", data);
+    return;
   }
-  console.log("from chart:", data);
+
+  console.log("from line:", data);
 
   const canvas = document.getElementById(canvasId);
   if (!canvas) {

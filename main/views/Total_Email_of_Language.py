@@ -185,7 +185,7 @@ def find_TotalMonth(date, web):
             return {
                 "dataForTable": total,
                 "dataForChart": plot_data,
-                "dataForChart2": type_email
+                "dataForChart2": [type_email]
             }
         else :
             print("it 2")

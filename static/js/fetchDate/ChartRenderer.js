@@ -38,15 +38,16 @@ class ChartRenderer {
       this.barHorizontalElement.classList.remove('hidden');
       this.titlechart.innerHTML = 'Grand total by language';
       renderAutoChart(data.dataForChart, undefined, 'plot-all', 'bar');
-      renderAutoChart(chart2, 'barChartHorizontal', 'top-center', 'bar');
+      renderAutoChart(data.dataForChart2, 'barChartHorizontal', 'top-center', 'bar');
 
     } else if (actionId === 'plot-all') {
       this.showChartElement.classList.remove('grid-cols-1', 'grid-cols-3');
       this.showChartElement.classList.add('grid-cols-2');
       this.pieChartElement.classList.remove('hidden');
       this.titlechart.innerHTML = 'Total Email by type';
-      renderAutoChart(data, undefined, 'plot-all', 'bar');
-      renderLineChart(data, undefined, 'top-center');
+      console.log('from plot-all:',data.dataForChart, data.dataForChart2)
+      renderAutoChart(data.dataForChart, undefined, 'plot-all', 'bar');
+      renderLineChart(data.dataForChart2, undefined, 'top-center');
 
       } else {
       this.showChartElement.classList.remove('grid-cols-1', 'grid-cols-3');
