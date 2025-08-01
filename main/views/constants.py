@@ -11,18 +11,18 @@ from django.http import JsonResponse
 import json
 
 ANALYSIS_ACTIONS = {
-    'inquiry': {
-        'id': 'inquiry', 'name': 'Type Inquiry', 'color': 'blue', 'icon': '💬',
-        'function': find_inquiry
-    },
-    'appointment': {
-        'id': 'appointment', 'name': 'Type Appointment', 'color': 'green', 'icon': '📅',
-        'function': find_appointment
-    },
-    'feedback': {
-        'id': 'feedback', 'name': 'Type Feedback', 'color': 'purple', 'icon': '❤️',
-        'function': find_FeedbackAndPackage
-    },
+    # 'inquiry': {
+    #     'id': 'inquiry', 'name': 'Type Inquiry', 'color': 'blue', 'icon': '💬',
+    #     'function': find_inquiry
+    # },
+    # 'appointment': {
+    #     'id': 'appointment', 'name': 'Type Appointment', 'color': 'green', 'icon': '📅',
+    #     'function': find_appointment
+    # },
+    # 'feedback': {
+    #     'id': 'feedback', 'name': 'Type Feedback', 'color': 'purple', 'icon': '❤️',
+    #     'function': find_FeedbackAndPackage
+    # },
     'plot-all': {
         'id': 'plot-all', 'name': 'Total Email by Type', 'color': 'orange', 'icon': '📊',
         'function': find_all_type_email

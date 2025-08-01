@@ -9,7 +9,7 @@ import UIHandler from './UIHandler.js';
 import DatePickerManager from './DatePickerManager.js';
 
 import { getDateRange1, getDateRange2, set_btn_id } from '../datetime.js';
-import { showSuccessToast, showErrorToast } from '../script.js';
+import { showSuccessToast, showErrorToast, showLoadingToast, hideToast } from '../script.js';
 
 class Appfetch {
   constructor() {
@@ -67,7 +67,10 @@ class Appfetch {
   }
 
   async performDataFetchAndRender(actionId, datetimeset) {
+    let loadingToast = null;
     try {
+
+      loadingToast = showLoadingToast();
       const fetchedData = await this.dataFetcher.fetchData(actionId, datetimeset);
       // console.log(fetchedData.dataForTable )
       console.log('from app:',fetchedData)
@@ -76,8 +79,12 @@ class Appfetch {
       let dataForCharts;
       //เงื่อนไขไว้ render ตามหัวข้อ
       if (actionId === 'top-center') {
-        dataForTable = fetchedData.dataForTable;
-        dataForCharts = fetchedData.dataForChart;
+        dataForTable = fetchedData.table;
+        dataForCharts = {
+          "table": fetchedData.table,
+          "topcenter": fetchedData.topcenter,
+          "total": fetchedData.total
+        };
 
       } else if (actionId === 'total-month') {
         dataForTable = fetchedData.dataForTable;
@@ -101,10 +108,12 @@ class Appfetch {
       this.chartRenderer.renderCharts(actionId, dataForCharts);
       this.tableRenderer.renderTable(dataForTable, datetimeset);
 
+      hideToast(loadingToast);
       showSuccessToast('โหลดข้อมูลสำเร็จ!');
 
     } catch (error) {
       console.error("การวิเคราะห์ล้มเหลว:", error);
+      hideToast(loadingToast);
       showErrorToast('เกิดข้อผิดพลาดในการโหลดข้อมูล: ' + error.message);
       this.tableRenderer.renderTable([], datetimeset);
       this.chartRenderer.hideAllCharts();
