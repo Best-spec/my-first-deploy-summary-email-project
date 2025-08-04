@@ -35,9 +35,9 @@ class ChartRenderer {
 
       renderAutoChart(data.topcenter, {
         canvasId: 'bar-chart-canvas',
-        typeColors: 'inquiry',
+        typeColors: 'top-center-first',
         chartType: 'bar',
-        colorMode: 'dataset',   // แต่ละจุดสีไม่เหมือนกัน
+        colorMode: 'dataset',   // แต่ละจุดสีไม่เหมือนกัน                                 
         yScale: 'logarithmic' // หรือ linear ได้เลย
       });
       renderAutoChart(data.total, {

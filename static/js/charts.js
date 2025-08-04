@@ -264,7 +264,7 @@ export function renderLineChart(
 export function change_colors(type) {
   const cat_colors = {
     'default_colors': ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#F87171', '#34D399'],
-    'inquiry': ['#1976d2','#1e88e5','#2196f3','#64b5f6','#bbdefb','#e3f2fd'],
+    'top-center-first': ['#1C69A8','#5C9DFF'],
     'top-center': generatePurpleShades(20), 
     'plot-all': ['#512e5f','#76448a','#9b59b6','#c39bd3','#ebdef0','#f5eef8']
   }
