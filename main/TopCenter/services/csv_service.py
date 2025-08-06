@@ -1,7 +1,7 @@
 # app/services/csv_service.py
 import pandas as pd
 import os, glob
-from TopCenter.utils.date_parser import parse_date
+from main.TopCenter.utils.date_parser import parse_date
 from datetime import datetime
 
 def load_csv_appointments(folder_path, langs, start_date, end_date, file_type="appointment"):

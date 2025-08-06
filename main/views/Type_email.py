@@ -99,9 +99,9 @@ def find_all_type_email(date_param):
             line = map_spit_date(date_param[0])
             # print(line)
             return {
-                "dataForTable": [table],
-                "dataForChart": [table],
-                "dataForChart2": line
+               "table": [table],
+               "chart1": [table],
+               "chart2": line
             }
         else :
             print('it 2 !!')
@@ -110,9 +110,9 @@ def find_all_type_email(date_param):
             line = map_spit_date(date_param[0])
             table = Resultcompare([data1], [data2], date_param)
             return {
-                "dataForTable": table,
-                "dataForChart": table,
-                "dataForChart2": line
+               "table": table,
+               "chart1": table,
+               "chart2": line
             }
 
     except Exception as e:

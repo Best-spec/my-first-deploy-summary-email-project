@@ -23,7 +23,7 @@ class ChartRenderer {
   }
 
   renderCharts(actionId, data) {
-    console.log('from rendercharts data: ', data)
+    console.log('from rendercharts data: ', data) //{'table': [{}], 'chart1': [{}], 'chart2': [{}]}
     this.hideAllCharts();
 
     if (actionId === 'top-center') {
@@ -33,14 +33,14 @@ class ChartRenderer {
       this.titlechart2.innerHTML = 'Top Total 20 Center';
       this.barChartBox2.classList.remove('hidden');
 
-      renderAutoChart(data.topcenter, {
+      renderAutoChart(data.chart1, {
         canvasId: 'bar-chart-canvas',
         typeColors: 'top-center-first',
         chartType: 'bar',
         colorMode: 'dataset',   // แต่ละจุดสีไม่เหมือนกัน                                 
         yScale: 'logarithmic' // หรือ linear ได้เลย
       });
-      renderAutoChart(data.total, {
+      renderAutoChart(data.chart2, {
         canvasId: 'bar-chart-canvas2',
         typeColors: 'top-center',
         chartType: 'bar',
@@ -51,19 +51,42 @@ class ChartRenderer {
     } else if (actionId === 'total-month') {
       this.showChartElement.classList.remove('grid-cols-2', 'grid-cols-3');
       this.showChartElement.classList.add('grid-cols-2');
-      this.barHorizontalElement.classList.remove('hidden');
+      this.barChartBox.classList.remove('hidden');
+      this.barChartBox2.classList.remove('hidden');
       this.titlechart.innerHTML = 'Grand total by language';
-      renderAutoChart(data.dataForChart, 'bar-chart-box', 'plot-all', 'bar');
-      renderAutoChart(data.dataForChart2, 'bar-chart-box2', 'top-center', 'bar');
+      // renderAutoChart(data.dataForChart, 'bar-chart-box', 'plot-all', 'bar');
+      // renderAutoChart(data.dataForChart2, 'bar-chart-box2', 'top-center', 'bar');
+
+      renderAutoChart(data.chart1, {
+        canvasId: 'bar-chart-canvas',
+        typeColors: 'top-center-first',
+        chartType: 'bar',
+        colorMode: 'dataset',   // แต่ละจุดสีไม่เหมือนกัน                                 
+        yScale: 'logarithmic' // หรือ linear ได้เลย
+      });
+      renderAutoChart(data.chart2, {
+        canvasId: 'bar-chart-canvas2',
+        typeColors: 'top-center',
+        chartType: 'bar',
+        colorMode: 'point',   // แต่ละจุดสีไม่เหมือนกัน
+        yScale: 'logarithmic' // หรือ linear ได้เลย
+      });
 
     } else if (actionId === 'plot-all') {
       this.showChartElement.classList.remove('grid-cols-1', 'grid-cols-3');
       this.showChartElement.classList.add('grid-cols-1');
-      this.pieChartElement.classList.remove('hidden');
+      this.barChartBox.classList.remove('hidden');
       this.titlechart.innerHTML = 'Total Email by type';
       console.log('from plot-all:',data.dataForChart, data.dataForChart2)
-      renderAutoChart(data.dataForChart, 'bar-chart-box', 'plot-all', 'bar');
-      renderLineChart(data.dataForChart2, 'line-chart-box', 'default_colors');
+
+      renderAutoChart(data.chart1, {
+        canvasId: 'bar-chart-canvas',
+        typeColors: 'by-type',
+        chartType: 'bar',
+        colorMode: 'dataset',   // แต่ละจุดสีไม่เหมือนกัน                                 
+        yScale: 'logarithmic' // หรือ linear ได้เลย
+      });
+      
 
       }
        else {

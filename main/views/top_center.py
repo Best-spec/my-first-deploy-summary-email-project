@@ -304,18 +304,7 @@ def sumf_top(start, end):
     return processed_clinic_info, pop_total, total_info
 
 def find_top_clinics_summary_main(date_param=None):
-    """
-    ฟังก์ชันหลักเพื่อควบคุมการทำงานในการค้นหาคลินิกยอดนิยม.
 
-    อาร์กิวเมนต์:
-        folder_path (str): พาธไปยังโฟลเดอร์ที่มีไฟล์ CSV.
-        output_file (str): ชื่อไฟล์ JSON เอาต์พุต.
-        start_date (str, optional): วันที่เริ่มต้นการกรอง (รูปแบบ 'DD/MM/YYYY').
-        end_date (str, optional): วันที่สิ้นสุดการกรอง (รูปแบบ 'DD/MM/YYYY').
-
-    ส่งคืน:
-        list: รายการคลินิกยอดนิยมที่จัดเรียงแล้ว.
-    """ 
     try:
         if len(date_param) <= 1:
             print(date_param, len(date_param))
@@ -324,8 +313,8 @@ def find_top_clinics_summary_main(date_param=None):
             for_table, pop_total, total = sumf_top(start, end)
             return {
                "table": for_table,
-               "topcenter": pop_total,
-               "total": total
+               "chart1": pop_total,
+               "chart2": total
             }
         else:
             print('มากกว่าสอง')
@@ -337,8 +326,8 @@ def find_top_clinics_summary_main(date_param=None):
             for_table2, pop_total2, total2 = sumf_top(startset2, endset2)
             return {
                 "table": Resultcompare(for_table, for_table2, date_param),
-                "topcenter": pop_total,
-                "total": total
+                "chart1": pop_total,
+                "chart2": total
             }
 
 

@@ -1,6 +1,6 @@
 # app/services/clinic_summary_service.py
 from collections import defaultdict
-from TopCenter.models.clinic_model import CLINIC_LIST, CLINIC_NAME_MAP
+from main.TopCenter.models.clinic_model import CLINIC_LIST, CLINIC_NAME_MAP
 
 def summarize_clinic_data(raw_data):
     normal = defaultdict(int)
@@ -24,5 +24,15 @@ def summarize_clinic_data(raw_data):
                 "recommended_count": r,
                 "total": n + r
             })
-    result.sort(key=lambda x: x["total"], reverse=True)
-    return result[:20]
+    # result.sort(key=lambda x: x["total"], reverse=True)
+    # return result[:20]
+
+    processed_data = sorted(processed_data, key=lambda x: x["total"], reverse=True)[:20]
+    # ถ้าต้องการแยก pop_total และ spit_total
+    pop_total = [{"Centers & clinics": d["Centers & clinics"],
+                "appointment_count": d["appointment_count"],
+                "recommended_count": d["recommended_count"]} for d in processed_data]
+
+    spit_total = [{"Centers & clinics": d["Centers & clinics"],"total": d["total"]} for d in processed_data]
+    
+    return processed_data, pop_total, spit_total

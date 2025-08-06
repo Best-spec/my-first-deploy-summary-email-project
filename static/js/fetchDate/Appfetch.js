@@ -75,34 +75,28 @@ class Appfetch {
       // console.log(fetchedData.dataForTable )
       console.log('from app:',fetchedData)
 
+      // fetchedData = { 
+      //   'table': [{...}, ..., {...}]
+      //   'chart1': [{...}, ..., {...}]
+      //   'chart2': [{...}, ..., {...}]
+      // ตามโครงสร้างที่ backend ส่งมา 
+      // }
+
       let dataForTable;
       let dataForCharts;
       //เงื่อนไขไว้ render ตามหัวข้อ
       if (actionId === 'top-center') {
         dataForTable = fetchedData.table;
-        dataForCharts = {
-          "table": fetchedData.table,
-          "topcenter": fetchedData.topcenter,
-          "total": fetchedData.total
-        };
+        dataForCharts = fetchedData
 
       } else if (actionId === 'total-month') {
-        dataForTable = fetchedData.dataForTable;
-        dataForCharts = {
-          "dataForChart": fetchedData.dataForChart,
-          "dataForChart2": fetchedData.dataForChart2
-        };
+        dataForTable = fetchedData.table;
+        dataForCharts = fetchedData
 
       } else if (actionId === 'plot-all') {
-        dataForTable = fetchedData.dataForTable;
-        dataForCharts = {
-          "dataForChart": fetchedData.dataForChart,
-          "dataForChart2": fetchedData.dataForChart2 ? fetchedData.dataForChart2 : fetchedData.dataForChart,
-        };
+        dataForTable = fetchedData.table;
+        dataForCharts = fetchedData
         
-      } else {
-        dataForTable = fetchedData.dataForTable;
-        dataForCharts = fetchedData.dataForChart;
       }
 
       this.chartRenderer.renderCharts(actionId, dataForCharts);
