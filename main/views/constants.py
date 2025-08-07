@@ -2,9 +2,9 @@ from .inquiry import find_inquiry, get_total_languages_summary
 from .appointment import find_appointment
 from .feedback_package import find_FeedbackAndPackage, FPtotal
 from .Type_email import find_all_type_email
-from main.TopCenter.controllers.top_clinic_controller import find_top_clinics_summary
+from main.views.TopCenter.controllers.top_clinic_controller import find_top_clinics_summary
 from .top_center import find_top_clinics_summary_main
-from .Total_Email_of_Language import find_TotalMonth
+from main.views.Total_Email_of_Language.controllers import find_TotalMonth
 from django.http import JsonResponse
 
 from django.views.decorators.csrf import csrf_exempt
