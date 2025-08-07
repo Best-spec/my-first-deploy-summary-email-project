@@ -1,85 +1,6 @@
 let chartInstances = {};  // เก็บ instance ตาม canvas id
 import { change_colors } from './color_chart.js';
 
-
-// export function renderAutoChart(data, canvasId = 'bar-chart-box', type_colors = 'null', chartType = 'bar') {
-//   if (!data || !Array.isArray(data) || data.length === 0) { 
-//     console.error('📉 No data provided', data);
-//     return;
-//   }
-//   console.log("from bar:",data)
-
-//   const canvas = document.getElementById(canvasId);
-//   if (!canvas) {
-//     console.error(`🛑 Canvas with id "${canvasId}" not found`);
-//     return;
-//   }
-
-//   // ล้างกราฟเก่า+reset canvas style เพื่อไม่ให้มันยืดยาว
-//   if (chartInstances[canvasId]) {
-//     chartInstances[canvasId].destroy();
-//     chartInstances[canvasId] = null;
-
-//     canvas.style.width = null;
-//     canvas.style.height = null;
-//   }
-
-//   const ctx = canvas.getContext('2d');
-
-//   // กำหนดข้อมูลและ labels
-//   const keys = Object.keys(data[0]);
-//   if (keys.length < 2) {
-//     console.error('❗ Data must have at least 2 fields');
-//     return;
-//   }
-
-//   const xKey = keys[0];
-//   const yKeys = keys.slice(1);
-
-//   const labels = data.map(d => d[xKey]);
-
-//   // สีชุดข้อมูลสวยๆ
-//   const colors = change_colors(type_colors)
-
-//   // สร้าง dataset สำหรับแต่ละ key
-//   const datasets = yKeys.map((key, i) => ({
-//     label: key.replace(/_/g, ' ').toUpperCase(),
-//     data: data.map(d => d[key]),
-//     // backgroundColor: colors[i % colors.length],
-//     backgroundColor: data.map((_, idx) => colors[idx % colors.length]),
-//     borderColor: colors[i % colors.length],
-//     borderWidth: 1,
-//   }));
-//   data.map(d => console.log(d))
-//   // console.log(data)
-
-//   // สร้างกราฟใหม่
-//   chartInstances[canvasId] = new Chart(ctx, {
-//     type: chartType,
-//     data: {
-//       labels,
-//       datasets
-//     },
-//     options: {
-//       responsive: true,
-//       maintainAspectRatio: false,  // เปิดให้ canvas ยืดตาม container
-//       plugins: {
-//         // legend: { position: 'top' },
-//         // title: {
-//         //   display: true,
-//         //   text: `Chart: ${yKeys.join(', ')} by ${xKey}`
-//         // }
-//       },
-//       scales: {
-//         y: {
-//           type: 'logarithmic',
-//           min: 1
-//         }
-//       }
-//     }
-//   });
-// }
-
 export function renderAutoChart(data, config = {}) {
   // Default config
   const {
@@ -146,7 +67,6 @@ function buildDatasets(data, yKeys, colors, colorMode) {
       label: key.replace(/_/g, ' ').toUpperCase(),
       data: data.map(d => d[key]),
       backgroundColor: colorMode === 'point' ? pointColors : color,
-      borderColor: color,
       borderWidth: 1,
       fill: false,
       tension: 0.3

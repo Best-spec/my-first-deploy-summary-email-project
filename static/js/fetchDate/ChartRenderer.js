@@ -2,97 +2,140 @@ import { renderAutoChart, renderLineChart } from "../charts.js";
 
 class ChartRenderer {
   constructor() {
-    this.showChartElement = document.getElementById('showchart');
+    this.showChart1Element = document.getElementById('row-1col');
+    this.showChart2Element = document.getElementById('row-2col');
     this.barChartBox = document.getElementById('bar-chart-box');
     this.barChartBox2 = document.getElementById('bar-chart-box2');
+    this.barChartBox3 = document.getElementById('bar-chart-box3');
+    this.barChartBox4 = document.getElementById('bar-chart-box4');
+    this.barChartBox5 = document.getElementById('bar-chart-box5');
     this.lineChartBox = document.getElementById('line-chart-box');
     this.titlechart = document.getElementById('titlechart');
     this.titlechart2 = document.getElementById('titlechart2');
+    this.titlechart3 = document.getElementById('titlechart3');
+    this.titlechart4 = document.getElementById('titlechart4');
+    this.titlechart5 = document.getElementById('titlechart5');
   }
 
-  hideAllCharts() {
-    this.lineChartBox.classList.add('hidden');
-    this.barChartBox2.classList.add('hidden');
-    Array.from(this.showChartElement.classList).forEach(cls => {
-      if (cls.startsWith('grid-cols-')) {
-        this.showChartElement.classList.remove(cls);
+  clearCharts() {
+    // ลบ canvas chart เดิม
+    const canvasIds = [
+      'bar-chart-canvas', 'bar-chart-canvas2', 'bar-chart-canvas3',
+      'bar-chart-canvas4', 'bar-chart-canvas5', 'line-chart-canvas'
+    ];
+
+    canvasIds.forEach(id => {
+      const canvas = document.getElementById(id);
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
     });
-    this.showChartElement.classList.add('grid-cols-2');
-    this.showChartElement.classList.remove('hidden');
+
+    // ซ่อน chart box ทุกตัว
+    [
+      this.barChartBox, this.barChartBox2, this.barChartBox3,
+      this.barChartBox4, this.barChartBox5, this.lineChartBox
+    ].forEach(box => {
+      if (box) box.classList.add('hidden');
+    });
+
+    // ล้าง title ทุกตัว
+    [
+      this.titlechart, this.titlechart2, this.titlechart3,
+      this.titlechart4, this.titlechart5,
+      document.getElementById('titleline')
+    ].forEach(title => {
+      if (title) title.innerHTML = '';
+    });
+
+    // ซ่อน container rows ด้วย
+    this.showChart1Element.classList.add('hidden');
+    this.showChart2Element.classList.add('hidden');
   }
 
+
   renderCharts(actionId, data) {
-    console.log('from rendercharts data: ', data) //{'table': [{}], 'chart1': [{}], 'chart2': [{}]}
-    this.hideAllCharts();
+    this.clearCharts();  // ล้างก่อนทุกครั้ง
+
+    console.log('from rendercharts data: ', data);
 
     if (actionId === 'top-center') {
-      this.showChartElement.classList.remove('grid-cols-2', 'grid-cols-3');
-      this.showChartElement.classList.add('grid-cols-1');
-      this.titlechart.innerHTML = 'Top Appointment & Appointment Recommended 20 Center';
-      this.titlechart2.innerHTML = 'Top Total 20 Center';
-      this.barChartBox2.classList.remove('hidden');
+      this.showChart1Element.classList.remove('hidden');
+      this.titlechart3.innerHTML = 'Top Appointment & Appointment Recommended 20 Center';
+      this.titlechart4.innerHTML = 'Top Total 20 Center';
+      this.barChartBox3.classList.remove('hidden');
+      this.barChartBox4.classList.remove('hidden');
 
       renderAutoChart(data.chart1, {
-        canvasId: 'bar-chart-canvas',
+        canvasId: 'bar-chart-canvas3',
         typeColors: 'top-center-first',
         chartType: 'bar',
-        colorMode: 'dataset',   // แต่ละจุดสีไม่เหมือนกัน                                 
-        yScale: 'logarithmic' // หรือ linear ได้เลย
+        colorMode: 'dataset',
+        yScale: 'logarithmic'
       });
+
       renderAutoChart(data.chart2, {
-        canvasId: 'bar-chart-canvas2',
+        canvasId: 'bar-chart-canvas4',
         typeColors: 'top-center',
         chartType: 'bar',
-        colorMode: 'point',   // แต่ละจุดสีไม่เหมือนกัน
-        yScale: 'logarithmic' // หรือ linear ได้เลย
+        colorMode: 'point',
+        yScale: 'logarithmic'
       });
 
     } else if (actionId === 'total-month') {
-      this.showChartElement.classList.remove('grid-cols-2', 'grid-cols-3');
-      this.showChartElement.classList.add('grid-cols-2');
+      this.showChart1Element.classList.remove('hidden');
+      this.showChart2Element.classList.remove('hidden');
       this.barChartBox.classList.remove('hidden');
       this.barChartBox2.classList.remove('hidden');
-      this.titlechart.innerHTML = 'Grand total by language';
-      // renderAutoChart(data.dataForChart, 'bar-chart-box', 'plot-all', 'bar');
-      // renderAutoChart(data.dataForChart2, 'bar-chart-box2', 'top-center', 'bar');
+      this.barChartBox3.classList.remove('hidden');
+
+      this.titlechart.innerHTML = 'Grand Total By Language';
+      this.titlechart2.innerHTML = 'Grand Total By Email Type';
+      this.titlechart3.innerHTML = 'Total Email Type By Language';
 
       renderAutoChart(data.chart1, {
         canvasId: 'bar-chart-canvas',
-        typeColors: 'top-center-first',
+        typeColors: 'colorByCountry',
         chartType: 'bar',
-        colorMode: 'dataset',   // แต่ละจุดสีไม่เหมือนกัน                                 
-        yScale: 'logarithmic' // หรือ linear ได้เลย
+        colorMode: 'point',
+        yScale: 'logarithmic'
       });
+
       renderAutoChart(data.chart2, {
         canvasId: 'bar-chart-canvas2',
-        typeColors: 'top-center',
+        typeColors: 'by-type',
         chartType: 'bar',
-        colorMode: 'point',   // แต่ละจุดสีไม่เหมือนกัน
-        yScale: 'logarithmic' // หรือ linear ได้เลย
+        colorMode: 'dataset',
+        yScale: 'logarithmic'
+      });
+
+      renderAutoChart(data.chart3, {
+        canvasId: 'bar-chart-canvas3',
+        typeColors: 'colorByCountry',
+        chartType: 'bar',
+        colorMode: 'dataset',
+        yScale: 'logarithmic'
       });
 
     } else if (actionId === 'plot-all') {
-      this.showChartElement.classList.remove('grid-cols-1', 'grid-cols-3');
-      this.showChartElement.classList.add('grid-cols-1');
+      this.showChart1Element.classList.remove('hidden');
       this.barChartBox.classList.remove('hidden');
       this.titlechart.innerHTML = 'Total Email by type';
-      console.log('from plot-all:',data.dataForChart, data.dataForChart2)
 
       renderAutoChart(data.chart1, {
         canvasId: 'bar-chart-canvas',
         typeColors: 'by-type',
         chartType: 'bar',
-        colorMode: 'dataset',   // แต่ละจุดสีไม่เหมือนกัน                                 
-        yScale: 'logarithmic' // หรือ linear ได้เลย
+        colorMode: 'dataset',
+        yScale: 'logarithmic'
       });
-      
 
-      }
-       else {
-        console.warn("Unknown data format for chart rendering:", data);
-      }
+    } else {
+      console.warn("Unknown data format for chart rendering:", data);
     }
+  }
+
 }
 
 
