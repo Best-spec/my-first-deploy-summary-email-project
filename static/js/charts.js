@@ -1,5 +1,13 @@
 let chartInstances = {};  // เก็บ instance ตาม canvas id
 import { change_colors } from './color_chart.js';
+import { 
+  generateEnglishShades,
+  generateThaiShades,
+  generateRussianShades,
+  generateGermanShades,
+  generateChineseShades,
+  generateArabicShades
+} from './flagColor.js';
 
 export function renderAutoChart(data, config = {}) {
   // Default config
@@ -89,6 +97,75 @@ function buildChartOptions(chartType, yScale) {
     }
   };
 }
+
+function createPieChartBox(lang) {
+    const box = document.createElement('div');
+    box.className = "bg-white rounded-xl p-6 h-120";
+
+    const title = document.createElement('h3');
+    title.className = "text-xl font-bold text-gray-800 mb-4";
+    title.textContent = `Pie Chart - ${lang}`;
+
+    const canvas = document.createElement('canvas');
+    canvas.id = `pie-chart-canvas-${lang}`;
+
+    box.appendChild(title);
+    box.appendChild(canvas);
+
+    return box;
+}
+
+export function renderPieChartBoxes(langs, pieData, typeColors) {
+    const container = document.getElementById('pie-charts-container');
+    container.innerHTML = ''; // เคลียร์เก่าก่อน
+    langs.forEach(lang => {
+        const box = createPieChartBox(lang);
+        container.appendChild(box);
+    });
+
+    Object.entries(pieData).forEach(([lang, chartData]) => {
+        const ctx = document.getElementById(`pie-chart-canvas-${lang}`).getContext('2d');
+        const labels = Object.keys(chartData);
+        const values = Object.values(chartData);
+
+        let countryColors;
+        const cat_colors = {
+          'English': generateEnglishShades(8),
+          'Thai': generateThaiShades(8),
+          'Russia': generateRussianShades(8),
+          'German': generateGermanShades(8),
+          'Chinese': generateChineseShades(8),
+          'Arabic': generateArabicShades(8)
+        }
+        
+        if (lang && cat_colors[lang]) {
+          countryColors = cat_colors[lang];
+        }
+    
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: cat_colors[lang]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: {
+                        display: false
+                    }
+                }
+            }
+        });
+    });
+
+}
+
+
 
 
 export function renderLineChart(
