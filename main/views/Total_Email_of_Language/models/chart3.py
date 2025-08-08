@@ -1,12 +1,6 @@
 
 
 def Total_Email_Type_By_Language(summary):
-    inor_plot_row = [
-        'language',
-        'appointment',
-        'appointment recommended',
-        'total Email',
-    ]
 
     plot_data = []
 
@@ -58,4 +52,4 @@ def Total_Email_Type_By_Language(summary):
         'Chinese': 30,
         'Arabic': 40,
     }]
-    return test
+    return plot_data

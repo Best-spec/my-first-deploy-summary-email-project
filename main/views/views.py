@@ -85,17 +85,4 @@ def delete_uploaded_file(request):
         return JsonResponse({'success': True})
     except UploadedFile.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'File not found'})
-
-# def showtest(request):
-#     return render(request, 'main/test.html')
-
-# def showDF_file(request):
-#     try:
-#         results = "จาก back"
-#         return JsonResponse({'success': True, 'results': results})
-
-#     except UploadedFile.DoesNotExist:
-#         return JsonResponse({'success': False, 'error': 'ไม่เจอไฟล์'})
-#     except Exception as e:
-#         return JsonResponse({'success': False, 'error': str(e)})
     

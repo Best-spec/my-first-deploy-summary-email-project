@@ -24,10 +24,8 @@ def summarize_clinic_data(raw_data):
                 "recommended_count": r,
                 "total": n + r
             })
-    # result.sort(key=lambda x: x["total"], reverse=True)
-    # return result[:20]
 
-    processed_data = sorted(processed_data, key=lambda x: x["total"], reverse=True)[:20]
+    processed_data = sorted(result, key=lambda x: x["total"], reverse=True)[:20]
     # ถ้าต้องการแยก pop_total และ spit_total
     pop_total = [{"Centers & clinics": d["Centers & clinics"],
                 "appointment_count": d["appointment_count"],
