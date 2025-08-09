@@ -1,5 +1,4 @@
 import json
-import json
 import logging
 
 logger = logging.getLogger(__name__)
@@ -43,8 +42,5 @@ def raw_to_json_res(raw, data1, data2, dateParam):
         # ใส่ sub ลง entry
         entry["sub"] = sub
         result.append(entry)
-    # print(result)
-    json_string = json.dumps(result, indent=2, ensure_ascii=False)
-
-    logger.debug(json_string)
+    logger.debug(json.dumps(result, indent=2, ensure_ascii=False))
     return result

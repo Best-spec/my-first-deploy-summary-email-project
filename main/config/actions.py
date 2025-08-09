@@ -1,5 +1,5 @@
 from main.views.TopCenter.controllers.top_clinic_controller import find_top_clinics_summary
-from main.views.Total_Email_of_Language.services.total_services import find_TotalMonth
+from main.views.Total_Email_of_Language import find_TotalMonth
 
 ANALYSIS_ACTIONS = {
     'top-center': {
