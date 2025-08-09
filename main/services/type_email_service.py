@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from datetime import datetime, timedelta
 
-from main.views.inquiry import cal_inquiry
+from main.views.inquiry import find_inquiry
 from main.views.appointment import find_appointment_summary
 from main.views.feedback_package import FPtotal
 from main.views.compare.result_compare import Resultcompare
@@ -13,7 +13,7 @@ class TypeEmailService:
         try:
             start = date.get('startDate')
             end = date.get('endDate')
-            raw, summary = cal_inquiry(start, end)
+            raw, summary = find_inquiry(start, end)
             summaryFeed = FPtotal(date)
             summaryAppointment = find_appointment_summary(date)
 

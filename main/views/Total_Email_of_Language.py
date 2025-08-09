@@ -169,11 +169,9 @@ def cal_TotalMonth(date, Web_Commerce):
             lang = entry["language"]
             total_all_row[lang] = sum(entry.get(cat, 0) for cat in categories)
         transposed.append(total_all_row)
-        logger.debug(plot_data)
         return summary, plot_data, transposed
 
     except Exception:
-        logger.exception("🔥 ERROR:")
         return [[], []]
 
 def find_TotalMonth(date, web):
@@ -181,12 +179,12 @@ def find_TotalMonth(date, web):
         if len(date) <= 1:
             print("it 1")
             total, plot_data, transposed = cal_TotalMonth(date[0], web[0])
-            type_email = TypeEmailService.cal_all_type_email(date[0])
+            # type_email = TypeEmailService.cal_all_type_email(date[0])
             # return [total, plot_data, type_email[0]]
             return {
                 "table": total,
                 "chart1": plot_data,
-                "chart2": [type_email]
+                # "chart2": [type_email]
             }
         else :
             print("it 2")
@@ -200,4 +198,4 @@ def find_TotalMonth(date, web):
                 "chart2": type_email
             }
     except Exception:
-        logger.exception("error from cal total")
+        return [], []

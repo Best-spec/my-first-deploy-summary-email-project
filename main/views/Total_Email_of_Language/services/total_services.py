@@ -17,7 +17,7 @@ def find_TotalMonth(date, web):
     try:
         if len(date) <= 1:
             data_json = {}
-            logger.debug("it 1")
+            logger.debug("it 1111")
             summary, plot_data, transposed = cal_TotalMonth(date[0], web[0])
             data_json['table'] = summary
             data_json['chart1'] = Grand_Total_By_Language(summary)
