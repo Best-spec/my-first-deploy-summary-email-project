@@ -26,12 +26,13 @@ def find_top_clinics_summary(date_ranges): # data_ranges = [{'startDate': 0,'end
             summary, pop_total, spit_total = date_to_cal(date_ranges[0])
 
             data = {
-                'table': summary,
-                'chart1': pop_total,
-                'chart2': spit_total
+                'table': mock,
+                'chart1': mock,
+                'chart2': mock
             }
             json = TopCenterSerializer(data)
-            # print(json.dumps(processed_data, indent=2))
+            # print(json.dumps(json.data, indent=2))
+            print(json.data, 'json')
             return json.data
         
         else :
