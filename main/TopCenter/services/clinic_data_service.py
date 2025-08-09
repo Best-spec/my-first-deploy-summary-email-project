@@ -1,9 +1,15 @@
-import pandas as pd
+"""บริการสำหรับประมวลผลข้อมูลคลินิกยอดนิยม"""
+
 import os
 import glob
-from collections import defaultdict
 import json
-import re # สำหรับใช้ regular expression ในการดึงวันที่
+import re  # สำหรับใช้ regular expression ในการดึงวันที่
+from collections import defaultdict
+
+try:  # ป้องกันกรณีที่ยังไม่มี pandas ในสภาพแวดล้อม
+    import pandas as pd  # type: ignore
+except Exception:  # pragma: no cover - ใช้เมื่อไม่มี pandas
+    pd = None  # type: ignore
 
 def csv_to_json(folder_path="media/uploads", langs=None):
     """
@@ -18,6 +24,9 @@ def csv_to_json(folder_path="media/uploads", langs=None):
         dict: พจนานุกรมที่มีสองคีย์คือ 'normal_appointments' และ 'recommended_appointments',
               แต่ละคีย์เก็บรายการของพจนานุกรมที่มี "Centers & Clinics", "Entry Date" และ "Type"
     """
+    if pd is None:
+        raise ImportError("pandas is required for csv_to_json")
+
     if langs is None:
         langs = ["ar", "de", "en", "ru", "th", "zh-hans"]
 
@@ -225,9 +234,3 @@ def find_top_clinics_summary_main(folder_path=None, output_file="top_clinics_sum
 
     print("--- การประมวลผลข้อมูลคลินิกเสร็จสมบูรณ์แล้ว ---")
     return processed_clinic_info
-
-if __name__ == "__main__":
-    folder = "C:/Users/bphdigital/Desktop/Coding/my-first-deploy-summary-email-project-master/media/uploads"
-    res = find_top_clinics_summary_main(folder)
-    print(folder)
-    print(res)

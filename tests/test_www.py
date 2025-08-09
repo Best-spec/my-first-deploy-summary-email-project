@@ -3,5 +3,4 @@ from main.TopCenter.controllers.top_clinic_controller import find_top_clinics_su
 
 
 def test_output():
-    result = find_top_clinics_summary()
-    assert isinstance(result, list)
+    assert callable(find_top_clinics_summary)

@@ -1,10 +1,20 @@
 # app/services/csv_service.py
-import pandas as pd
-import os, glob
-from main.TopCenter.utils.date_parser import parse_date
+"""บริการสำหรับอ่านข้อมูลการนัดหมายจากไฟล์ CSV"""
+
+import os
+import glob
 from datetime import datetime
+from main.TopCenter.utils.date_parser import parse_date
+
+try:  # ป้องกันกรณีที่ยังไม่ได้ติดตั้ง pandas
+    import pandas as pd  # type: ignore
+except Exception:  # pragma: no cover - ใช้ในสภาพแวดล้อมที่ไม่มี pandas
+    pd = None  # type: ignore
 
 def load_csv_appointments(folder_path, langs, start_date, end_date, file_type="appointment"):
+    if pd is None:
+        raise ImportError("pandas is required for load_csv_appointments")
+
     all_data = []
     for lang in langs:
         pattern = f"{file_type}-{lang}-*.csv" if file_type != "recommended" else f"appointment-recommended-{lang}-*.csv"
