@@ -6,6 +6,9 @@ from .inquiry import cal_inquiry
 from .appointment import find_appointment_summary
 from .feedback_package import FPtotal
 from .compare.result_compare import Resultcompare
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 json_temp = [{
@@ -31,7 +34,7 @@ def map_parts(s):
         a, b = parts[0], parts[1]
         return a, b
     else:
-        print("ไม่มีตัวเลขเลย")
+        logger.debug("ไม่มีตัวเลขเลย")
 
 def cal_all_type_email(date):
     try:
@@ -94,7 +97,7 @@ def map_spit_date(date):
 def find_all_type_email(date_param):
     try:
         if len(date_param) <= 1:
-            print('it 1 !!')
+            logger.debug('it 1 !!')
             table = cal_all_type_email(date_param[0])
             line = map_spit_date(date_param[0])
             # print(line)
@@ -104,7 +107,7 @@ def find_all_type_email(date_param):
                "chart2": line
             }
         else :
-            print('it 2 !!')
+            logger.debug('it 2 !!')
             data1 = cal_all_type_email(date_param[0])
             data2 = cal_all_type_email(date_param[1])
             line = map_spit_date(date_param[0])
@@ -115,5 +118,5 @@ def find_all_type_email(date_param):
                "chart2": line
             }
 
-    except Exception as e:
-        print('From find_all_type_email', e)
+    except Exception:
+        logger.exception('From find_all_type_email')

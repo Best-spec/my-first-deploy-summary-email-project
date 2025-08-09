@@ -1,4 +1,9 @@
 import json
+import json
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 def raw_to_json_res(raw, data1, data2, dateParam):
     result = []
@@ -41,5 +46,5 @@ def raw_to_json_res(raw, data1, data2, dateParam):
     # print(result)
     json_string = json.dumps(result, indent=2, ensure_ascii=False)
 
-    print(json_string)
+    logger.debug(json_string)
     return result

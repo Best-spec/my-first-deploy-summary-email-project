@@ -1,4 +1,7 @@
 import re
+import logging
+
+logger = logging.getLogger(__name__)
 
 def compareData(data1, data2):
     try:
@@ -28,8 +31,8 @@ def compareData(data1, data2):
             result_compare.append(compare_result)
 
         return result_compare
-    except Exception as e:
-        print('from compareData:', e)
+    except Exception:
+        logger.exception('from compareData:')
 
 def explain_percent_change(new, old):
     if old == 0:

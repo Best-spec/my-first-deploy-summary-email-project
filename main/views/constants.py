@@ -6,10 +6,12 @@ from main.views.TopCenter.controllers.top_clinic_controller import find_top_clin
 from .top_center import find_top_clinics_summary_main
 from main.views.Total_Email_of_Language.services.total_services import find_TotalMonth
 from django.http import JsonResponse
+import logging
 
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
+logger = logging.getLogger(__name__)
 
 ANALYSIS_ACTIONS = {
     # 'inquiry': {
@@ -61,7 +63,7 @@ def analyze(request):
             
         if action_id == 'total-month':
             data = func(date, Web_Commerce)
-            print(Web_Commerce)
+            logger.debug("%s", Web_Commerce)
         else :
             data = func(date)
         return JsonResponse({

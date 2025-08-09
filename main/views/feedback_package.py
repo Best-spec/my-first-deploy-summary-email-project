@@ -6,6 +6,9 @@ from django.http import JsonResponse
 from datetime import datetime
 import json
 from .compare.result_compare import Resultcompare
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def extract_language(filename):
@@ -44,7 +47,7 @@ def convert_csv_to_json(folder_path="media/uploads"):
             df['Type'] = 'Feedback'
             all_data.extend(df.to_dict(orient='records'))
         except Exception as e:
-            print(f"🔥 Error reading {file}: {e}")
+            logger.warning("🔥 Error reading %s: %s", file, e)
 
     # อ่าน packages
     for file in packages_files:
@@ -56,7 +59,7 @@ def convert_csv_to_json(folder_path="media/uploads"):
             df['Type'] = 'Packages'
             all_data.extend(df.to_dict(orient='records'))
         except Exception as e:
-            print(f"🔥 Error reading {file}: {e}")
+            logger.warning("🔥 Error reading %s: %s", file, e)
     # print(json.dumps(all_data, indent=2))
     return all_data
 
@@ -75,13 +78,13 @@ def process_json_list(data_list, date_col='Entry Date', start_date=None, end_dat
         try:
             dt_start = datetime.strptime(start_date, "%d/%m/%Y").date()
         except ValueError:
-            print(f"คำเตือน: รูปแบบวันที่เริ่มต้น '{start_date}' ไม่ถูกต้อง. ควรเป็น DD/MM/YYYY")
+            logger.warning("คำเตือน: รูปแบบวันที่เริ่มต้น '%s' ไม่ถูกต้อง. ควรเป็น DD/MM/YYYY", start_date)
             return [] # อาจจะต้องการจัดการข้อผิดพลาดในรูปแบบอื่น
     if end_date:
         try:
             dt_end = datetime.strptime(end_date, "%d/%m/%Y").date()
         except ValueError:
-            print(f"คำเตือน: รูปแบบวันที่สิ้นสุด '{end_date}' ไม่ถูกต้อง. ควรเป็น DD/MM/YYYY")
+            logger.warning("คำเตือน: รูปแบบวันที่สิ้นสุด '%s' ไม่ถูกต้อง. ควรเป็น DD/MM/YYYY", end_date)
             return [] # อาจจะต้องการจัดการข้อผิดพลาดในรูปแบบอื่น
 
     for record in data_list:
@@ -102,7 +105,7 @@ def process_json_list(data_list, date_col='Entry Date', start_date=None, end_dat
                 continue # ลองรูปแบบถัดไป
 
         if not record_date:
-            print(f"คำเตือน: ไม่สามารถแยกวิเคราะห์วันที่ '{entry_date_str}' ได้. ข้ามรายการนี้.")
+            logger.warning("คำเตือน: ไม่สามารถแยกวิเคราะห์วันที่ '%s' ได้. ข้ามรายการนี้.", entry_date_str)
             continue # ข้ามรายการที่ไม่สามารถแปลงวันที่ได้
 
         # --- ส่วนของการกรองข้อมูลตามวันที่ ---
@@ -170,10 +173,10 @@ def cal_FeedbackAndPackage(date_param):
         # print(data[0])
         # print(json.dumps(data, indent=2, ensure_ascii=False))  # พิมพ์ให้ดูสวย อ่านง่าย
         summary = process_json_list(data, start_date=start_date, end_date=end_date)
-        print(summary)
+        logger.debug(summary)
         return summary
-    except Exception as e:
-        print(f"🔥 Error in find_FeedbackAndPackage: {e}")
+    except Exception:
+        logger.exception("🔥 Error in find_FeedbackAndPackage:")
         return None
     
 def find_FeedbackAndPackage(date_param):
@@ -188,7 +191,7 @@ def find_FeedbackAndPackage(date_param):
             }
 
         else:
-            print('มากกว่าสอง')
+            logger.debug('มากกว่าสอง')
             data1 = cal_FeedbackAndPackage(date_param[0])
             data2 = cal_FeedbackAndPackage(date_param[1])
             # return [Resultcompare(data1, data2, date_param)]
@@ -201,8 +204,8 @@ def find_FeedbackAndPackage(date_param):
 
 
 
-    except Exception as e:
-        print("🔥 ERROR in find_FeedbackAndPackage():", e)
+    except Exception:
+        logger.exception("🔥 ERROR in find_FeedbackAndPackage():")
         return [], []
 
 def FPtotal(date_param):
@@ -218,6 +221,6 @@ def FPtotal(date_param):
             total["Packages"] += item.get("Packages", 0)
 
         return [total]
-    except Exception as e:
-        print("Error FPtotal:",e)
+    except Exception:
+        logger.exception("Error FPtotal:")
         

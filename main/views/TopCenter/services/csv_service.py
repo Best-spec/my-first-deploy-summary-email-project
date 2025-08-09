@@ -1,8 +1,11 @@
-# app/services/csv_service.py
 import pandas as pd
 import os, glob
 from main.views.TopCenter.utils.date_parser import parse_date
 from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 def load_csv_appointments(folder_path, langs, start_date, end_date, file_type="appointment"):
     all_data = []
@@ -30,5 +33,6 @@ def load_csv_appointments(folder_path, langs, start_date, end_date, file_type="a
                         "Type": file_type
                     })
             except Exception as e:
-                print(f"❌ Error reading {file}: {e}")
+                logger.warning("❌ Error reading %s: %s", file, e)
     return all_data
+

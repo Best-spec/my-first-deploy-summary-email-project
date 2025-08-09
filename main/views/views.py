@@ -10,6 +10,9 @@ import os
 import mimetypes
 import pandas as pd
 from . import constants
+import logging
+
+logger = logging.getLogger(__name__)
 
 @login_required
 @ensure_csrf_cookie
@@ -24,7 +27,7 @@ def index(request):
 def upload_file(request):
     if request.method == 'POST':
         files = request.FILES.getlist('files')
-        print("ไฟล์ที่รับมา:", request.FILES)
+        logger.debug("ไฟล์ที่รับมา: %s", request.FILES)
         uploaded_files = []
         # files_count = UploadedFile.objects.count()
         allowed_extensions = ['.csv', '.xls', '.xlsx']

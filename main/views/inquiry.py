@@ -7,6 +7,9 @@ from datetime import datetime
 from .compare.data_loader import *
 from .compare.result_compare import Resultcompare
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 LANG_MAP = {
     "-th": "Thai",
@@ -88,7 +91,7 @@ def load_csv_to_json(start_date=None, end_date=None):
             date_col = "Entry Date"
             count = df[col_name].astype(str).str.strip().str.lower().eq("general inquiry").sum()
         except Exception as e:
-            print(f"❌ Failed to read {file}: {e}")
+            logger.warning("❌ Failed to read %s: %s", file, e)
             continue
 
         # ✅ หาภาษา
@@ -100,7 +103,7 @@ def load_csv_to_json(start_date=None, end_date=None):
             df[date_col] = pd.to_datetime(df[date_col], errors='coerce') #total all
             # print(df[date_col])
         except Exception as e:
-            print(f"⚠️ Date parse error in {file}: {e}")
+            logger.warning("⚠️ Date parse error in %s: %s", file, e)
             continue
 
         if start_date:
@@ -186,8 +189,8 @@ def calculate_inquiry_summary(data_json):
         # print(json.dumps(output, indent=2, ensure_ascii=False))
         return output, [data_chart]
 
-    except Exception as e:
-        print("🔥 ERROR:", e)
+    except Exception:
+        logger.exception("🔥 ERROR:")
         return [], []
 
 
@@ -213,14 +216,14 @@ def find_inquiry(date_param):
             }
 
         else:
-            print('มากกว่าสอง')
+            logger.debug('มากกว่าสอง')
             startset1 = date_param[0]['startDate']
             endset1 = date_param[0]['endDate']
             startset2 = date_param[1]['startDate']
             endset2 = date_param[1]['endDate']
             table1, chart1 = cal_inquiry(startset1, endset1)
             table2, chart2 = cal_inquiry(startset2, endset2)
-            print(Resultcompare(table1, table2, date_param))
+            logger.debug(Resultcompare(table1, table2, date_param))
             # return [Resultcompare(table1, table2, date_param)]
             return {
                 "dataForTable": Resultcompare(table1, table2, date_param),
@@ -229,8 +232,8 @@ def find_inquiry(date_param):
 
 
 
-    except Exception as e:
-        print("🔥 ERROR in find_inquiry():", e)
+    except Exception:
+        logger.exception("🔥 ERROR in find_inquiry():")
         return [], []
 
 
@@ -250,6 +253,6 @@ def get_total_languages_summary(date_param):
         # print(result)
         return result
 
-    except Exception as e:
-        print("🔥 ERROR (get_total_languages_summary):", e)
+    except Exception:
+        logger.exception("🔥 ERROR (get_total_languages_summary):")
         return []

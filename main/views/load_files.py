@@ -1,6 +1,9 @@
 # views.py
 from django.http import JsonResponse
 from main.models import UploadedFile
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def list_uploaded_files(request):
@@ -18,7 +21,7 @@ def list_uploaded_files(request):
                 'size': file_size,
             })
         except Exception as e:
-            print('Error processing file:', f.id, e)
+            logger.warning('Error processing file: %s %s', f.id, e)
             
     return JsonResponse({'success': True,
                          'files': data,

@@ -6,8 +6,11 @@ import pandas as pd
 import glob
 import os
 from datetime import datetime
+import logging
 from .compare.data_loader import *
 from .compare.result_compare import Resultcompare
+
+logger = logging.getLogger(__name__)
 
 
 appointment_summary_shared = {
@@ -93,7 +96,7 @@ def filter_date_range(filtered_list, start_date, end_date, date_key="Entry Date"
     # start & end ต้องเป็น datetime object ด้วย pattern เดียวกับ entry
     start = datetime.strptime(start_date, "%Y-%m-%d")
     end = datetime.strptime(end_date, "%Y-%m-%d")
-    print(f"🔍 Filtering entries from {start.strftime('%d/%m/%Y')} to {end.strftime('%d/%m/%Y')}")
+    logger.info("🔍 Filtering entries from %s to %s", start.strftime('%d/%m/%Y'), end.strftime('%d/%m/%Y'))
 
     for item in filtered_list:
         entry_str = item.get(date_key, "")
@@ -101,10 +104,10 @@ def filter_date_range(filtered_list, start_date, end_date, date_key="Entry Date"
             # ใช้ pattern "%d/%m/%Y" แทน
             entry = datetime.strptime(entry_str.split(" ")[0], "%d/%m/%Y")
             if start <= entry <= end:
-                print(item["Entry Date"], item.get("lang_code", ''))
+                logger.debug("%s %s", item["Entry Date"], item.get("lang_code", ''))
                 result.append(item)
         except ValueError:
-            print(f"❌ Invalid date format: {entry_str}")
+            logger.warning("❌ Invalid date format: %s", entry_str)
             continue
 
     # print(f"✅ Matched entries: {len(result)}")
@@ -113,7 +116,7 @@ def filter_date_range(filtered_list, start_date, end_date, date_key="Entry Date"
 def load_date(datetimes):
     start = datetimes[0]['startDate']
     end = datetimes[0]['endDate']
-    print(start, end)
+    logger.debug("%s %s", start, end)
     return start, end
 
 def find_appointment_from_csv_folder(dateset):
@@ -160,13 +163,13 @@ def find_appointment_from_csv_folder(dateset):
     
 
     except Exception as e:
-        print("🔥 ERROR:", e)
+        logger.exception("🔥 ERROR:")
         return []
     
 def find_appointment(dateset):
     try:
         if len(dateset) <= 1:
-            print(dateset)
+            logger.debug("%s", dateset)
             dateset1 = dateset[0].get('startDate')
             dateset2 = dateset[0].get('endDate')
             table = find_appointment_from_csv_folder((dateset1, dateset2))
@@ -176,7 +179,7 @@ def find_appointment(dateset):
                 "dataForChart": table
             } 
         else :
-            print('it 2 !!')
+            logger.debug('it 2 !!')
             dateset1 = dateset[0].get('startDate')
             dateset2 = dateset[0].get('endDate')
             date2set1 = dateset[1].get('startDate')
@@ -192,7 +195,7 @@ def find_appointment(dateset):
             # print(Resultcompare(data1, data2, dateset))
 
     except Exception as e:
-        print('From appointment', e)
+        logger.exception('From appointment')
         
 def find_appointment_summary(dateset):
     try:
