@@ -5,4 +5,8 @@ whitenoise
 pandas
 dj_database_url
 pytest
+<<<<<<< HEAD
 dotenv
+=======
+dotenv
+>>>>>>> c86bc2ea57817d9378f6b316121221c4c9025907
