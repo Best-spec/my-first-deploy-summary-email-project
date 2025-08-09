@@ -3,6 +3,9 @@ from main.TopCenter.services.csv_service import load_csv_appointments
 from main.TopCenter.services.clinic_summary_service import summarize_clinic_data
 from datetime import datetime
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 def find_top_clinics_summary(date_ranges, folder_path="media/uploads"):
     langs = ["ar", "de", "en", "ru", "th", "zh-hans"]
@@ -17,22 +20,10 @@ def find_top_clinics_summary(date_ranges, folder_path="media/uploads"):
         summary = summarize_clinic_data(all_data)
         results.append(summary)
     
-    print(json.dumps(results, indent=2))
-    print(date_ranges)
+    logger.debug(json.dumps(results, indent=2))
+    logger.debug("date ranges: %s", date_ranges)
     return {
         "table": results[0],
         "topcenter": results[0],
         "total": results[0]
     }
-
-    results = [
-                [
-                    {
-                        'Centers & clinics': 'Dental Cosmetic and Implant Center', 
-                        'appointment_count': 8, 
-                        'recommended_count': 17, 
-                        'total': 25
-                    },
-                    ...
-                ]
-            ]
