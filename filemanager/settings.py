@@ -83,14 +83,19 @@ WSGI_APPLICATION = 'filemanager.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
     # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'HOST': os.getenv('DB_HOST', 'db.xxxxx.supabase.co'),
+    #     'PORT': os.getenv('DB_PORT', '5432'),
+    #     'NAME': os.getenv('DB_NAME', 'postgres'),
+    #     'USER': os.getenv('DB_USER', 'postgres'),
+    #     'PASSWORD': os.getenv('DB_PASSWORD', 'your-db-password'),
     # }
-    'default': dj_database_url.config(
-        default=os.getenv("DATABASE_URL")
-    )    
-}
+}    
 
 
 # Password validation
