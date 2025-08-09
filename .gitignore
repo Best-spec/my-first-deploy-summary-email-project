@@ -13,7 +13,6 @@ env/
 # Django stuff:
 *.log
 *.pot
-*.pyc
 *.pyo
 *.db
 *.sqlite3
