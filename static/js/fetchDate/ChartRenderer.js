@@ -1,74 +1,178 @@
-import { renderAutoChart } from "../charts.js";
+import { renderAutoChart, renderLineChart } from "../charts.js";
+import { renderPieChartBoxes } from "../charts.js";
 
 class ChartRenderer {
   constructor() {
-    this.showChartElement = document.getElementById('showchart');
-    this.pieChartElement = document.getElementById('piechart');
-    this.barHorizontalElement = document.getElementById('barHorizontal');
+    this.showChart1Element = document.getElementById('row-1col');
+    this.showChart2Element = document.getElementById('row-2col');
+    this.barChartBox = document.getElementById('bar-chart-box');
+    this.barChartBox2 = document.getElementById('bar-chart-box2');
+    this.barChartBox3 = document.getElementById('bar-chart-box3');
+    this.barChartBox4 = document.getElementById('bar-chart-box4');
+    this.barChartBox5 = document.getElementById('bar-chart-box5');
+    this.lineChartBox = document.getElementById('line-chart-box');
     this.titlechart = document.getElementById('titlechart');
     this.titlechart2 = document.getElementById('titlechart2');
+    this.titlechart3 = document.getElementById('titlechart3');
+    this.titlechart4 = document.getElementById('titlechart4');
+    this.titlechart5 = document.getElementById('titlechart5');
   }
 
-  hideAllCharts() {
-    this.pieChartElement.classList.add('hidden');
-    this.barHorizontalElement.classList.add('hidden');
-    Array.from(this.showChartElement.classList).forEach(cls => {
-      if (cls.startsWith('grid-cols-')) {
-        this.showChartElement.classList.remove(cls);
+  clearCharts() {
+    // 1. ล้าง canvas chart เดิม (bar / line)
+    const canvasIds = [
+      'bar-chart-canvas', 'bar-chart-canvas2', 'bar-chart-canvas3',
+      'bar-chart-canvas4', 'bar-chart-canvas5', 'line-chart-canvas'
+    ];
+
+    canvasIds.forEach(id => {
+      const canvas = document.getElementById(id);
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
     });
-    this.showChartElement.classList.add('grid-cols-2');
-    this.showChartElement.classList.remove('hidden');
+
+    // 2. ซ่อน box ที่ fix ไว้
+    [
+      this.barChartBox, this.barChartBox2, this.barChartBox3,
+      this.barChartBox4, this.barChartBox5, this.lineChartBox
+    ].forEach(box => {
+      if (box) box.classList.add('hidden');
+    });
+
+    // 3. ล้าง title ที่ fix ไว้
+    [
+      this.titlechart, this.titlechart2, this.titlechart3,
+      this.titlechart4, this.titlechart5,
+      document.getElementById('titleline')
+    ].forEach(title => {
+      if (title) title.innerHTML = '';
+    });
+
+    // 4. ซ่อน container rows ด้วย
+    this.showChart1Element.classList.add('hidden');
+    this.showChart2Element.classList.add('hidden');
+
+    // 5. ✅ ลบ pie chart ที่สร้างแบบ dynamic (พวก pie-chart-canvas-*)
+    const pieCanvases = document.querySelectorAll('[id^="pie-chart-canvas-"]');
+    pieCanvases.forEach(canvas => {
+      const box = canvas.closest('div'); // สมมุติ canvas ถูก wrap ด้วย <div class="box"> ที่สร้างไว้
+      if (box && box.parentNode) {
+        box.parentNode.removeChild(box); // ลบทั้งกล่องออกจาก DOM
+      } else {
+        // fallback: ลบ canvas เดี่ยว ๆ
+        canvas.remove();
+      }
+    });
   }
+
+
 
   renderCharts(actionId, data) {
-    // console.log('from rendercharts data: ', data)
-    let chart2 = 'dataForChart2' in data ? data.dataForChart2 : data.dataForChart;
-    this.hideAllCharts();
+    this.clearCharts();  // ล้างก่อนทุกครั้ง
+
+    console.log('from rendercharts data: ', data);
 
     if (actionId === 'top-center') {
-      this.showChartElement.classList.remove('grid-cols-2', 'grid-cols-3');
-      this.showChartElement.classList.add('grid-cols-1');
-      this.titlechart.innerHTML = 'Top 20 Center';
-      renderAutoChart(data, undefined, actionId);
+      this.showChart1Element.classList.remove('hidden');
+      this.titlechart3.innerHTML = 'Top Appointment & Appointment Recommended 20 Center';
+      this.titlechart4.innerHTML = 'Top Total 20 Center';
+      this.barChartBox3.classList.remove('hidden');
+      this.barChartBox4.classList.remove('hidden');
+
+      renderAutoChart(data.chart1, {
+        canvasId: 'bar-chart-canvas3',
+        typeColors: 'top-center-first',
+        chartType: 'bar',
+        colorMode: 'dataset',
+        yScale: 'logarithmic'
+      });
+
+      renderAutoChart(data.chart2, {
+        canvasId: 'bar-chart-canvas4',
+        typeColors: 'top-center',
+        chartType: 'bar',
+        colorMode: 'point',
+        yScale: 'logarithmic'
+      });
 
     } else if (actionId === 'total-month') {
-      this.showChartElement.classList.remove('grid-cols-1', 'grid-cols-3');
-      this.showChartElement.classList.add('grid-cols-2');
-      this.barHorizontalElement.classList.remove('hidden');
-      this.titlechart.innerHTML = 'Grand total by language';
-      renderAutoChart(data.dataForChart, undefined, 'plot-all');
-      renderAutoChart(chart2, 'barChartHorizontal', 'top-center');
+      this.showChart1Element.classList.remove('hidden');
+      this.showChart2Element.classList.remove('hidden');
+      this.barChartBox.classList.remove('hidden');
+      this.barChartBox2.classList.remove('hidden');
+      this.barChartBox3.classList.remove('hidden');
+      this.barChartBox4.classList.remove('hidden');
+      this.barChartBox5.classList.remove('hidden');
+
+      this.titlechart.innerHTML = 'Grand Total By Language';
+      this.titlechart2.innerHTML = 'Grand Total By Email Type';
+      this.titlechart3.innerHTML = 'Total Email Type By Language';
+      this.titlechart4.innerHTML = 'Inquiry Type By Language';
+      this.titlechart5.innerHTML = 'Appointment Type By Language';
+
+      renderAutoChart(data.chart1, {
+        canvasId: 'bar-chart-canvas',
+        typeColors: 'group-country',
+        chartType: 'bar',
+        colorMode: 'point',
+        yScale: 'logarithmic'
+      });
+
+      renderAutoChart(data.chart2, {
+        canvasId: 'bar-chart-canvas2',
+        typeColors: 'by-type',
+        chartType: 'bar',
+        colorMode: 'dataset',
+        yScale: 'logarithmic'
+      });
+
+      renderAutoChart(data.chart3, {
+        canvasId: 'bar-chart-canvas3',
+        typeColors: 'group-country',
+        chartType: 'bar',
+        colorMode: 'dataset',
+        yScale: 'logarithmic'
+      });
+
+      renderAutoChart(data.chart4, {
+        canvasId: 'bar-chart-canvas4',
+        typeColors: 'group-country',
+        chartType: 'bar',
+        colorMode: 'dataset',
+        yScale: 'logarithmic'
+      });
+
+      renderAutoChart(data.chart5, {
+        canvasId: 'bar-chart-canvas5',
+        typeColors: 'group-country',
+        chartType: 'bar',
+        colorMode: 'dataset',
+        yScale: 'logarithmic'
+      });
+
+      renderPieChartBoxes(Object.keys(data.chart6), data.chart6, 'colorByCountry');
 
     } else if (actionId === 'plot-all') {
-      this.showChartElement.classList.remove('grid-cols-1', 'grid-cols-3');
-      this.showChartElement.classList.add('grid-cols-2');
-      this.pieChartElement.classList.remove('hidden');
+      this.showChart1Element.classList.remove('hidden');
+      this.barChartBox.classList.remove('hidden');
       this.titlechart.innerHTML = 'Total Email by type';
-      renderAutoChart(data, undefined, 'plot-all');
 
-      } else {
-      this.showChartElement.classList.remove('grid-cols-1', 'grid-cols-3');
-      this.showChartElement.classList.add('grid-cols-1');
-      // this.pieChartElement.classList.remove('hidden');
-      
-      if (actionId === 'inquiry') {
-        this.titlechart.innerHTML = 'Type Inquiry';
-        renderAutoChart(data, undefined, 'inquiry')
+      renderAutoChart(data.chart1, {
+        canvasId: 'bar-chart-canvas',
+        typeColors: 'by-type',
+        chartType: 'bar',
+        colorMode: 'dataset',
+        yScale: 'logarithmic'
+      });
 
-      } else if (actionId === 'appointment') {
-        this.titlechart.innerHTML = 'Type Appointment';
-        renderAutoChart(data, undefined, 'inquiry')
-
-      } else if (actionId === 'feedback') {
-        this.titlechart.innerHTML = 'Type Feedback';
-        renderAutoChart(data, undefined, 'inquiry')
-
-      } else {
-        console.warn("Unknown data format for chart rendering:", data);
-      }
+    } else {
+      console.warn("Unknown data format for chart rendering:", data);
     }
   }
+
 }
+
 
 export default ChartRenderer;

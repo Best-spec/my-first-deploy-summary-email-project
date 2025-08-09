@@ -256,10 +256,17 @@ def process_clinic_data(raw_json_data):
                 "recommended_count": recommended_count,
                 "total": total
             })
+            
 
     processed_data = sorted(processed_data, key=lambda x: x["total"], reverse=True)[:20]
-    # print([obj.get('normal_appointments') for i, obj in enumerate(raw_json_data)])
-    return processed_data
+    # ถ้าต้องการแยก pop_total และ spit_total
+    pop_total = [{"Centers & clinics": d["Centers & clinics"],
+                "appointment_count": d["appointment_count"],
+                "recommended_count": d["recommended_count"]} for d in processed_data]
+
+    spit_total = [{"Centers & clinics": d["Centers & clinics"],"total": d["total"]} for d in processed_data]
+    
+    return processed_data, pop_total, spit_total
 
 def output_to_json(processed_data, output_file_name="top_clinics_summary.json"):
     """
@@ -291,34 +298,23 @@ def sumf_top(start, end):
                            start_date=start_date, end_date=end_date)
 
     print("ขั้นตอนที่ 2: กำลังประมวลผลข้อมูลดิบเพื่อนับจำนวนการนัดหมายของคลินิก...")
-    processed_clinic_info = process_clinic_data(raw_data)
+    processed_clinic_info, pop_total, total_info = process_clinic_data(raw_data)
 
     print("--- การประมวลผลข้อมูลคลินิกเสร็จสมบูรณ์แล้ว ---")
-    return processed_clinic_info
+    return processed_clinic_info, pop_total, total_info
 
 def find_top_clinics_summary_main(date_param=None):
-    """
-    ฟังก์ชันหลักเพื่อควบคุมการทำงานในการค้นหาคลินิกยอดนิยม.
 
-    อาร์กิวเมนต์:
-        folder_path (str): พาธไปยังโฟลเดอร์ที่มีไฟล์ CSV.
-        output_file (str): ชื่อไฟล์ JSON เอาต์พุต.
-        start_date (str, optional): วันที่เริ่มต้นการกรอง (รูปแบบ 'DD/MM/YYYY').
-        end_date (str, optional): วันที่สิ้นสุดการกรอง (รูปแบบ 'DD/MM/YYYY').
-
-    ส่งคืน:
-        list: รายการคลินิกยอดนิยมที่จัดเรียงแล้ว.
-    """ 
     try:
         if len(date_param) <= 1:
             print(date_param, len(date_param))
             start = date_param[0]['startDate']
             end = date_param[0]['endDate']
-            for_table = sumf_top(start, end)
-            print(for_table)
+            for_table, pop_total, total = sumf_top(start, end)
             return {
-               "dataForTable": for_table,
-               "dataForChart": for_table,
+               "table": for_table,
+               "chart1": pop_total,
+               "chart2": total
             }
         else:
             print('มากกว่าสอง')
@@ -326,12 +322,12 @@ def find_top_clinics_summary_main(date_param=None):
             endset1 = date_param[0]['endDate']
             startset2 = date_param[1]['startDate']
             endset2 = date_param[1]['endDate']
-            datatop1 = sumf_top(startset1, endset1)
-            datatop2 = sumf_top(startset2, endset2)
-            print(Resultcompare(datatop1, datatop2, date_param))
+            for_table, pop_total, total = sumf_top(startset1, endset1)
+            for_table2, pop_total2, total2 = sumf_top(startset2, endset2)
             return {
-                "dataForTable": Resultcompare(datatop1, datatop2, date_param),
-                "dataForChart": Resultcompare(datatop1, datatop2, date_param)
+                "table": Resultcompare(for_table, for_table2, date_param),
+                "chart1": pop_total,
+                "chart2": total
             }
 
     except Exception as e:

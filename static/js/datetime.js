@@ -23,7 +23,7 @@ export function set_btn_id(val) {
 
 export function get_btn_id() {
   if (btn_id === null) {
-    return 'inquiry'
+    return 'total-month'
   } else {
     return btn_id;
   }

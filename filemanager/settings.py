@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -87,6 +88,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+<<<<<<< HEAD
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
     #     'HOST': os.getenv('DB_HOST', 'db.xxxxx.supabase.co'),
@@ -96,6 +98,12 @@ DATABASES = {
     #     'PASSWORD': os.getenv('DB_PASSWORD', 'your-db-password'),
     # }
 }    
+=======
+    # 'default': dj_database_url.config(
+    #     default=os.getenv("DATABASE_URL")
+    # )    
+}
+>>>>>>> f0a63b6bed74f99214be01c289cf37633c564221
 
 
 # Password validation
