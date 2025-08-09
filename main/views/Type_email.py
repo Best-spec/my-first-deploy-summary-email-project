@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from collections import defaultdict
 from datetime import datetime, timedelta
 
-from .inquiry import cal_inquiry
+from main.services.inquiry_service import InquiryService
 from .appointment import find_appointment_summary
 from .feedback_package import FPtotal
 from .compare.result_compare import Resultcompare
@@ -38,7 +38,7 @@ def cal_all_type_email(date):
         # print(date)
         start = date.get('startDate')
         end = date.get('endDate')
-        raw, summary = cal_inquiry(start, end)        # dict ภาษา-> dict category-> count
+        raw, summary = InquiryService.cal_inquiry(start, end)        # dict ภาษา-> dict category-> count
         summaryFeed = FPtotal(date)
         summaryAppointment = find_appointment_summary(date)  # dict ภาษา-> count fields
         # print("feed :",summaryAppointment)
