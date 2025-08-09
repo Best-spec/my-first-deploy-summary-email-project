@@ -25,6 +25,7 @@ def analyze(request):
             
         if action_id == 'total-month':
             data = func(date, Web_Commerce)
+            print("data", data)
         else:
             data = func(date)
         return JsonResponse({

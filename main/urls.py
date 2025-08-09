@@ -7,13 +7,10 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
 from django.conf import settings
 from django.conf.urls.static import static
-from . import debug
 
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path("debug/db/", debug.db_summary),
-    path("debug/db/<str:model_name>/", debug.list_model_data),
     path('login/', auth_views.LoginView.as_view(template_name='auth/login.html'), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('upload/', views.upload_file, name='upload_file'),
