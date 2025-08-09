@@ -5,7 +5,7 @@ from .feedback_package import cal_FeedbackAndPackage
 from .appointment import find_appointment_from_csv_folder
 from .compare.result_compare import Resultcompare
 from .percentage.cal_percentage import find_percentage, cal_percent
-from .Type_email import cal_all_type_email
+from main.services.type_email_service import TypeEmailService
 import json
 
 def cal_TotalMonth(date, Web_Commerce):
@@ -180,7 +180,7 @@ def find_TotalMonth(date, web):
         if len(date) <= 1:
             print("it 1")
             total, plot_data, transposed = cal_TotalMonth(date[0], web[0])
-            type_email = cal_all_type_email(date[0])
+            type_email = TypeEmailService.cal_all_type_email(date[0])
             # return [total, plot_data, type_email[0]]
             return {
                 "table": total,
@@ -191,7 +191,7 @@ def find_TotalMonth(date, web):
             print("it 2")
             totalset1, plot_data, transposed = cal_TotalMonth(date[0], web[0])
             totalset2, plot_data, transposed = cal_TotalMonth(date[1], web[1])
-            type_email = cal_all_type_email(date[0])
+            type_email = TypeEmailService.cal_all_type_email(date[0])
             compare = Resultcompare(totalset1, totalset2, date) 
             return {
                 "table": compare,
