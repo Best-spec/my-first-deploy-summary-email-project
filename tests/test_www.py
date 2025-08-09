@@ -1,4 +1,3 @@
-import pytest
 from main.TopCenter.controllers.top_clinic_controller import find_top_clinics_summary
 
 
