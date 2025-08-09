@@ -1,14 +1,17 @@
+import logging
 from main.views.TopCenter.controllers.top_clinic_controller import find_top_clinics_summary
 
-def find_top_clinics_summary_main(date_param=None):
+logger = logging.getLogger(__name__)
 
+
+def find_top_clinics_summary_main(date_param=None):
     try:
         if len(date_param) <= 1:
             for_table, pop_total, total = find_top_clinics_summary(date_param)
             return {
-               "table": for_table,
-               "topcenter": pop_total,
-               "total": total
+                "table": for_table,
+                "topcenter": pop_total,
+                "total": total,
             }
         else:
             for_table, pop_total, total = sumf_top(startset1, endset1)
@@ -16,11 +19,9 @@ def find_top_clinics_summary_main(date_param=None):
             return {
                 "table": Resultcompare(for_table, for_table2, date_param),
                 "topcenter": pop_total,
-                "total": total
+                "total": total,
             }
+    except Exception:
+        logger.exception("🔥 ERROR in topCetner():")
+        return [], []
 
-
-
-    except Exception as e:
-        print("🔥 ERROR in topCetner():", e)
-        return [], [] 

@@ -6,6 +6,9 @@ from main.views.compare.result_compare import Resultcompare
 from .model import mock
 from datetime import datetime
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 def date_to_cal(date_ranges, folder_path="media/uploads"):
     langs = ["ar", "de", "en", "ru", "th", "zh-hans"]
@@ -22,7 +25,7 @@ def date_to_cal(date_ranges, folder_path="media/uploads"):
 def find_top_clinics_summary(date_ranges): # data_ranges = [{'startDate': 0,'endDate': 0},{...}]
     try :
         if len(date_ranges) < 2 and date_ranges != None:
-            print(date_ranges, 'one')
+            logger.debug('%s %s', date_ranges, 'one')
             summary, pop_total, spit_total = date_to_cal(date_ranges[0])
 
             data = {
@@ -36,7 +39,7 @@ def find_top_clinics_summary(date_ranges): # data_ranges = [{'startDate': 0,'end
             return json.data
         
         else :
-            print(date_ranges, 'two')
+            logger.debug('%s %s', date_ranges, 'two')
             summary1, pop_total, spit_total = date_to_cal(date_ranges[0])
             summary2, pop_total2, spit_total2 = date_to_cal(date_ranges[1])
 
@@ -50,19 +53,11 @@ def find_top_clinics_summary(date_ranges): # data_ranges = [{'startDate': 0,'end
             return json.data
 
     
-    except Exception as e:
-        print('topcenter:', e)
+    except Exception:
+        logger.exception('topcenter:')
 
 
 
         
 #====================== mock ===========================================================================
-        results = [
-                    {
-                        'Centers & clinics': 'Dental Cosmetic and Implant Center', 
-                        'appointment_count': 8, 
-                        'recommended_count': 17, 
-                        'total': 25
-                    },
-                    ...
-                ]
+# mock data omitted

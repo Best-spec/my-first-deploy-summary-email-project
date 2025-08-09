@@ -6,6 +6,9 @@ import json
 from datetime import datetime
 from .compare.data_loader import *
 from .compare.result_compare import Resultcompare
+import logging
+
+logger = logging.getLogger(__name__)
 
 def csv_to_json(folder_path="media/uploads", langs=None, start_date=None, end_date=None):
     """
@@ -37,13 +40,13 @@ def csv_to_json(folder_path="media/uploads", langs=None, start_date=None, end_da
         try:
             filter_start_dt = datetime.strptime(start_date, '%d/%m/%Y')
         except ValueError:
-            print(f"Warning: รูปแบบ start_date '{start_date}' ไม่ถูกต้อง. คาดหวัง DD/MM/YYYY.")
+            logger.warning("Warning: รูปแบบ start_date '%s' ไม่ถูกต้อง. คาดหวัง DD/MM/YYYY.", start_date)
             start_date = None
     if end_date:
         try:
             filter_end_dt = datetime.strptime(end_date, '%d/%m/%Y')
         except ValueError:
-            print(f"Warning: รูปแบบ end_date '{end_date}' ไม่ถูกต้อง. คาดหวัง DD/MM/YYYY.")
+            logger.warning("Warning: รูปแบบ end_date '%s' ไม่ถูกต้อง. คาดหวัง DD/MM/YYYY.", end_date)
             end_date = None
 
     for lang in langs:
@@ -57,7 +60,7 @@ def csv_to_json(folder_path="media/uploads", langs=None, start_date=None, end_da
                 if len(df.columns) < 2 or 'Entry Date' not in df.columns:
                     # ไม่จำเป็นต้องมีวันที่ในชื่อไฟล์อีกต่อไป ดังนั้น glob.glob จะหาไฟล์ที่ชื่อตรงกับ appointment-{lang}-*.csv
                     # โดยไม่สนใจวันที่ในชื่อไฟล์ หากคุณมีไฟล์ที่ไม่มีวันที่ในชื่อและต้องการให้มันถูกรวมด้วย
-                    print(f"Warning: ไฟล์ '{file}' ไม่มีคอลัมน์ที่ 2 หรือ 'Entry Date'. ข้ามไฟล์นี้.")
+                    logger.warning("Warning: ไฟล์ '%s' ไม่มีคอลัมน์ที่ 2 หรือ 'Entry Date'. ข้ามไฟล์นี้.", file)
                     continue
 
                 clinic_column_name = df.columns[1]
@@ -101,7 +104,7 @@ def csv_to_json(folder_path="media/uploads", langs=None, start_date=None, end_da
                                 continue # ข้ามแถวนี้หากวันที่ไม่อยู่ในช่วง
 
                     except ValueError:
-                        print(f"Warning: รูปแบบวันที่ในคอลัมน์ 'Entry Date' ของไฟล์ '{file}' แถวที่ {index+1} ('{entry_date_full_str}') ไม่ถูกต้อง หรือไม่สามารถ parse ได้. ข้ามการกรองวันที่สำหรับแถวนี้.")
+                        logger.warning("Warning: รูปแบบวันที่ในคอลัมน์ 'Entry Date' ของไฟล์ '%s' แถวที่ %s ('%s') ไม่ถูกต้อง หรือไม่สามารถ parse ได้. ข้ามการกรองวันที่สำหรับแถวนี้.", file, index+1, entry_date_full_str)
                         # ถ้าไม่สามารถ parse วันที่ได้ จะไม่กรองแถวนี้ด้วยเงื่อนไขวันที่
                         # และจะใช้ entry_date_full_str เป็นค่า Entry Date ใน JSON Output
 
@@ -111,7 +114,7 @@ def csv_to_json(folder_path="media/uploads", langs=None, start_date=None, end_da
                         "Type": file_type
                     })
             except Exception as e:
-                print(f"เกิดข้อผิดพลาดในการอ่านไฟล์ {file}: {e}")
+                logger.exception("เกิดข้อผิดพลาดในการอ่านไฟล์ %s:", file)
 
         # ประมวลผลการนัดหมายที่แนะนำ
         recommended_files = glob.glob(os.path.join(folder_path, f"appointment-recommended-{lang}-*.csv"))
@@ -121,7 +124,7 @@ def csv_to_json(folder_path="media/uploads", langs=None, start_date=None, end_da
                 df.columns = df.columns.str.strip().str.replace('\ufeff', '')
 
                 if len(df.columns) < 2 or 'Entry Date' not in df.columns:
-                    print(f"Warning: ไฟล์ '{file}' ไม่มีคอลัมน์ที่ 2 หรือ 'Entry Date'. ข้ามไฟล์นี้.")
+                    logger.warning("Warning: ไฟล์ '%s' ไม่มีคอลัมน์ที่ 2 หรือ 'Entry Date'. ข้ามไฟล์นี้.", file)
                     continue
 
                 clinic_column_name = df.columns[1]
@@ -155,7 +158,7 @@ def csv_to_json(folder_path="media/uploads", langs=None, start_date=None, end_da
                                 continue
 
                     except ValueError:
-                        print(f"Warning: รูปแบบวันที่ในคอลัมน์ 'Entry Date' ของไฟล์ '{file}' แถวที่ {index+1} ('{entry_date_full_str}') ไม่ถูกต้อง หรือไม่สามารถ parse ได้. ข้ามการกรองวันที่สำหรับแถวนี้.")
+                        logger.warning("Warning: รูปแบบวันที่ในคอลัมน์ 'Entry Date' ของไฟล์ '%s' แถวที่ %s ('%s') ไม่ถูกต้อง หรือไม่สามารถ parse ได้. ข้ามการกรองวันที่สำหรับแถวนี้.", file, index+1, entry_date_full_str)
 
                     all_data["recommended_appointments"].append({
                         "Centers & Clinics": clinic_name,
@@ -163,7 +166,7 @@ def csv_to_json(folder_path="media/uploads", langs=None, start_date=None, end_da
                         "Type": file_type
                     })
             except Exception as e:
-                print(f"เกิดข้อผิดพลาดในการอ่านไฟล์ {file}: {e}")
+                logger.exception("เกิดข้อผิดพลาดในการอ่านไฟล์ %s:", file)
     return all_data
 
 def process_clinic_data(raw_json_data):
@@ -274,7 +277,7 @@ def output_to_json(processed_data, output_file_name="top_clinics_summary.json"):
     """
     with open(output_file_name, 'w', encoding='utf-8') as f:
         json.dump(processed_data, f, ensure_ascii=False, indent=4)
-    print(f"สรุปคลินิกยอดนิยมถูกบันทึกที่ {output_file_name}")
+    logger.info("สรุปคลินิกยอดนิยมถูกบันทึกที่ %s", output_file_name)
 
 def sumf_top(start, end):
     folder_path="media/uploads"
@@ -290,24 +293,24 @@ def sumf_top(start, end):
     else:
         date_range_str = "ทุกวันที่ที่มีอยู่"
 
-    print(f"--- กำลังเริ่มต้นการประมวลผลข้อมูลคลินิก {date_range_str} ---")
+    logger.info("--- กำลังเริ่มต้นการประมวลผลข้อมูลคลินิก %s ---", date_range_str)
 
-    print("ขั้นตอนที่ 1: กำลังอ่าน CSV และแปลงเป็นข้อมูลคล้าย JSON ดิบ (พร้อมกรองวันที่ในคอลัมน์ 'Entry Date' และตัดเวลา)...")
+    logger.info("ขั้นตอนที่ 1: กำลังอ่าน CSV และแปลงเป็นข้อมูลคล้าย JSON ดิบ (พร้อมกรองวันที่ในคอลัมน์ 'Entry Date' และตัดเวลา)...")
     langs = ["ar", "de", "en", "ru", "th", "zh-hans"]
     raw_data = csv_to_json(folder_path=folder_path, langs=langs,
                            start_date=start_date, end_date=end_date)
 
-    print("ขั้นตอนที่ 2: กำลังประมวลผลข้อมูลดิบเพื่อนับจำนวนการนัดหมายของคลินิก...")
+    logger.info("ขั้นตอนที่ 2: กำลังประมวลผลข้อมูลดิบเพื่อนับจำนวนการนัดหมายของคลินิก...")
     processed_clinic_info, pop_total, total_info = process_clinic_data(raw_data)
 
-    print("--- การประมวลผลข้อมูลคลินิกเสร็จสมบูรณ์แล้ว ---")
+    logger.info("--- การประมวลผลข้อมูลคลินิกเสร็จสมบูรณ์แล้ว ---")
     return processed_clinic_info, pop_total, total_info
 
 def find_top_clinics_summary_main(date_param=None):
 
     try:
         if len(date_param) <= 1:
-            print(date_param, len(date_param))
+            logger.debug("%s %s", date_param, len(date_param))
             start = date_param[0]['startDate']
             end = date_param[0]['endDate']
             for_table, pop_total, total = sumf_top(start, end)
@@ -317,7 +320,7 @@ def find_top_clinics_summary_main(date_param=None):
                "chart2": total
             }
         else:
-            print('มากกว่าสอง')
+            logger.debug('มากกว่าสอง')
             startset1 = date_param[0]['startDate']
             endset1 = date_param[0]['endDate']
             startset2 = date_param[1]['startDate']
@@ -331,7 +334,7 @@ def find_top_clinics_summary_main(date_param=None):
             }
 
     except Exception as e:
-        print("🔥 ERROR in topCetner():", e)
+        logger.exception("🔥 ERROR in topCetner():")
         return [], [] 
     
     

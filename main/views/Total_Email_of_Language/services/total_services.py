@@ -1,20 +1,23 @@
 from .Total_Email_of_Language import cal_TotalMonth
 from main.services.type_email_service import TypeEmailService
 from main.views.compare.result_compare import Resultcompare
-from ..models.chart1 import Grand_Total_By_Language 
+from ..models.chart1 import Grand_Total_By_Language
 from ..models.chart3 import Total_Email_Type_By_Language
-from ..models.chart4 import inquiry_by_lang 
-from ..models.chart5 import appointment_by_lang 
+from ..models.chart4 import inquiry_by_lang
+from ..models.chart5 import appointment_by_lang
 from ..models.chart6 import group_by_country_type
 # from ..models.main_json import data_json
 from ..serializers.total_serializer import TotalSerializer
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def find_TotalMonth(date, web):
     try:
         if len(date) <= 1:
             data_json = {}
-            print("it 1")
+            logger.debug("it 1")
             summary, plot_data, transposed = cal_TotalMonth(date[0], web[0])
             data_json['table'] = summary
             data_json['chart1'] = Grand_Total_By_Language(summary)
@@ -28,7 +31,7 @@ def find_TotalMonth(date, web):
 
             return json.data
         else :
-            print("it 2")
+            logger.debug("it 2")
             totalset1, plot_data, transposed = cal_TotalMonth(date[0], web[0])
             totalset2, plot_data, transposed = cal_TotalMonth(date[1], web[1])
             type_email = TypeEmailService.cal_all_type_email(date[0])
@@ -38,5 +41,5 @@ def find_TotalMonth(date, web):
                 "chart1": compare,
                 "chart2": type_email
             }
-    except Exception as e:
-        print("error from cal total",e)
+    except Exception:
+        logger.exception("error from cal total")

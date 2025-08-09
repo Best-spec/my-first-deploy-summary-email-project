@@ -6,6 +6,9 @@ from main.views.feedback_package import cal_FeedbackAndPackage
 from main.views.appointment import find_appointment_from_csv_folder
 from main.views.percentage.cal_percentage import find_percentage, cal_percent
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 def cal_TotalMonth(date, Web_Commerce):
     try:
@@ -167,9 +170,9 @@ def cal_TotalMonth(date, Web_Commerce):
             lang = entry["language"]
             total_all_row[lang] = sum(entry.get(cat, 0) for cat in categories)
         transposed.append(total_all_row)
-        print(plot_data)
+        logger.debug(plot_data)
         return summary, plot_data, transposed
 
-    except Exception as e:
-        print("🔥 ERROR:", e)
+    except Exception:
+        logger.exception("🔥 ERROR:")
         return [[], []]

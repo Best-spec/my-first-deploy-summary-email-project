@@ -6,6 +6,9 @@ from django.views.decorators.http import require_POST
 from main.services.file_service import FileService
 from main.models import UploadedFile
 from . import constants
+import logging
+
+logger = logging.getLogger(__name__)
 
 file_service = FileService()
 
