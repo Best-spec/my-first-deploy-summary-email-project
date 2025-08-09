@@ -8,7 +8,7 @@ from unittest.mock import patch
 sys.modules.setdefault("pandas", types.ModuleType("pandas"))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from main.TopCenter.controllers.top_clinic_controller import find_top_clinics_summary
+from main.views.TopCenter.controllers.top_clinic_controller import find_top_clinics_summary
 
 
 def test_find_top_clinics_summary(caplog):
@@ -26,10 +26,10 @@ def test_find_top_clinics_summary(caplog):
         return fake_summary
 
     with patch(
-        "main.TopCenter.controllers.top_clinic_controller.load_csv_appointments",
+        "main.views.TopCenter.controllers.top_clinic_controller.load_csv_appointments",
         side_effect=fake_load,
     ) as mock_load, patch(
-        "main.TopCenter.controllers.top_clinic_controller.summarize_clinic_data",
+        "main.views.TopCenter.controllers.top_clinic_controller.summarize_clinic_data",
         side_effect=fake_summarize,
     ) as mock_summary:
         date_ranges = [{"startDate": "2024-01-01", "endDate": "2024-01-31"}]
