@@ -1,11 +1,7 @@
-from django.http import JsonResponse
-from main.models import UploadedFile
-from main.views.inquiry import get_total_languages_summary
 from main.services.inquiry_service import InquiryService
-from main.views.feedback_package import cal_FeedbackAndPackage
-from main.views.appointment import find_appointment_from_csv_folder
+from main.services.feedback_package_service import FeedbackPackageService
+from main.services.appointment_service import AppointmentService
 from main.views.percentage.cal_percentage import find_percentage, cal_percent
-import json
 import logging
 
 logger = logging.getLogger(__name__)
@@ -16,10 +12,13 @@ def cal_TotalMonth(date, Web_Commerce):
         dateset2 = date.get('endDate')
 
         # print(dateset1, dateset2)
-        # total_inquiry = get_total_languages_summary(date)
         total_inquiry, chart = InquiryService.cal_inquiry(dateset1, dateset2)
-        total_feedback_package = cal_FeedbackAndPackage(date)
-        total_appointment = find_appointment_from_csv_folder((dateset1, dateset2))
+
+        feedback_service = FeedbackPackageService()
+        total_feedback_package = feedback_service.cal_FeedbackAndPackage(date)
+
+        appointment_service = AppointmentService()
+        total_appointment = appointment_service.find_appointment_from_csv_folder((dateset1, dateset2))
 
         # flatten ถ้า list ซ้อน
         if isinstance(total_feedback_package, list) and isinstance(total_feedback_package[0], dict) is False:

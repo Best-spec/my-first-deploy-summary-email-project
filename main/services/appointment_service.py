@@ -80,14 +80,20 @@ class AppointmentService:
         result = []
         start = datetime.strptime(start_date, "%Y-%m-%d")
         end = datetime.strptime(end_date, "%Y-%m-%d")
+        date_formats = ["%d/%m/%Y", "%Y-%m-%d", "%d-%m-%Y", "%Y/%m/%d"]
         for item in filtered_list:
-            entry_str = item.get(date_key, "")
-            try:
-                entry = datetime.strptime(entry_str.split(" ")[0], "%d/%m/%Y")
-                if start <= entry <= end:
-                    result.append(item)
-            except ValueError:
+            entry_str = item.get(date_key, "").split(" ")[0]
+            entry = None
+            for fmt in date_formats:
+                try:
+                    entry = datetime.strptime(entry_str, fmt)
+                    break
+                except ValueError:
+                    continue
+            if not entry:
                 continue
+            if start <= entry <= end:
+                result.append(item)
         return result
 
     def load_date(self, datetimes):
