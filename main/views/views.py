@@ -54,3 +54,22 @@ def delete_uploaded_file(request):
         return JsonResponse({'success': True})
     except UploadedFile.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'File not found'})
+
+
+@login_required
+@require_POST
+@ensure_csrf_cookie
+def delete_uploaded_files(request):
+    """
+    ลบไฟล์ทั้งหมด (DB + storage)
+    """
+    try:
+        deleted = file_service.delete_all_files()
+        return JsonResponse({
+            "success": True,
+            "deleted": deleted,
+            "message": f"Deleted {deleted} files successfully."
+        })
+    except Exception as e:
+        logger.exception("Delete all files failed")
+        return JsonResponse({"success": False, "message": str(e)}, status=500)

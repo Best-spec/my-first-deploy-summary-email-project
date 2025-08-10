@@ -40,3 +40,24 @@ class FileService:
 
     def _is_allowed(self, filename: str) -> bool:
         return any(filename.endswith(ext) for ext in self.allowed_extensions)
+    
+    @transaction.atomic
+    def delete_all_files(self) -> int:
+        """
+        ลบไฟล์ทั้งหมดทั้งใน storage และใน DB
+        return: จำนวนไฟล์ที่ถูกลบ
+        """
+        count = 0
+        # ใช้ iterator ให้กินแรมน้อย และเรียก delete ของ instance เพื่อให้ FileField ลบไฟล์จริง
+        for obj in UploadedFile.objects.all().iterator():
+            # ถ้ามี field ชื่อ file / path ปรับตามจริง
+            if hasattr(obj, "file") and obj.file:
+                try:
+                    # ลบไฟล์ออกจาก storage ก่อน
+                    obj.file.delete(save=False)
+                except Exception:
+                    # ไม่ให้พังทั้งล็อต; จะถูก rollback ถ้าอยากให้พังรวมค่อยยก Exception ขึ้น
+                    pass
+            obj.delete()   # ลบ row
+            count += 1
+        return count
