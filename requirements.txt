@@ -6,3 +6,4 @@ pandas
 dj_database_url
 pytest
 dotenv
+djangorestframework
