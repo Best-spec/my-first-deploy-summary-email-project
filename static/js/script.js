@@ -264,7 +264,7 @@ setTimeout(() => {
     });
 }, 1000);
 
-function analyzeAll() {
+function analysisOpen() {
     const showdata = document.getElementById('contentAnalysis');
     const wealcomeData = document.getElementById('wealcomeData');
     wealcomeData.classList.add('hidden');
@@ -281,7 +281,7 @@ function analyzeAll() {
     })
 }
 
-window.analyzeAll = analyzeAll;
+window.analysisOpen = analysisOpen;
 
 
 
