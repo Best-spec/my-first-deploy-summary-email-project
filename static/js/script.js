@@ -346,6 +346,63 @@ async function deleteFile(fileId) {
 
 window.deleteFile = deleteFile;
 
+
+async function deleteAllFiles() {
+    const fileListContainer = document.querySelector('.file-item'); // ปรับ selector ให้ตรงกับ container ของไฟล์
+    if (!fileListContainer) {
+        alert("ไม่พบรายการไฟล์");
+        return;
+    }
+
+    // backup content
+    const originalContent = fileListContainer.innerHTML;
+
+    // แสดง loading state
+    fileListContainer.innerHTML = `
+        <div class="flex items-center justify-center py-4">
+            <span class="text-gray-500 mr-2">กำลังลบไฟล์ทั้งหมด...</span>
+            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></div>
+        </div>
+    `;
+
+    try {
+        const response = await fetch('/delete_all_files/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: '' // ไม่มีพารามิเตอร์
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showSuccessToast('ลบไฟล์ทั้งหมดสำเร็จ');
+
+            // รอให้ user เห็นข้อความก่อน reload
+            setTimeout(async () => {
+                await loadFiles();
+                renderFiles();
+                updateFileCount();
+            }, 300);
+
+        } else {
+            // คืนค่าเดิมถ้าไม่สำเร็จ
+            fileListContainer.innerHTML = originalContent;
+            showErrorToast(data.message || 'ลบไฟล์ทั้งหมดไม่สำเร็จ');
+        }
+
+    } catch (err) {
+        console.error('ลบไฟล์ทั้งหมดผิดพลาด:', err);
+        fileListContainer.innerHTML = originalContent;
+        showErrorToast('เกิดข้อผิดพลาดขณะลบไฟล์ทั้งหมด');
+    }
+}
+
+window.deleteAllFiles = deleteAllFiles;
+
+
 function ensureToastContainer() {
     let container = document.getElementById('toast-container');
     if (!container) {
