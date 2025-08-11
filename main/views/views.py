@@ -71,6 +71,7 @@ def upload_file(request):
         'error': 'Invalid request method'
     })
 
+
 @require_POST
 def delete_uploaded_file(request):
     file_id = request.POST.get('file_id')
@@ -85,4 +86,18 @@ def delete_uploaded_file(request):
         return JsonResponse({'success': True})
     except UploadedFile.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'File not found'})
+
+
+@login_required
+@require_POST
+def delete_all_files(request):
+    try:
+        # ถ้ามี FileField ให้ลบไฟล์จาก storage ด้วย
+        for obj in UploadedFile.objects.all():
+            if hasattr(obj, "file") and obj.file:
+                obj.file.delete(save=False)
+            obj.delete()
+        return JsonResponse({"success": True, "message": "ลบไฟล์ทั้งหมดสำเร็จ"})
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)})
     
