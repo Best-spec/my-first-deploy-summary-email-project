@@ -19,6 +19,7 @@ urlpatterns = [
     path('upload/', views.upload_file, name='upload_file'),
     path('load_files/', load_files.list_uploaded_files, name='load_file'),
     path('delete_file/', views.delete_uploaded_file, name='delete_file'),
+    path('delete_all_files/', views.delete_all_files, name='delete_all_files'),
     path('plot_all/', Type_email.find_all_type_email, name='plot_all'),
     path('analyze/', constants.analyze, name='analyze'),
 ]   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
