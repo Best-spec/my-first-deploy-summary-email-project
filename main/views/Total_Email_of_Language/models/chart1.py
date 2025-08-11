@@ -96,11 +96,11 @@ def Grand_Total_By_Language(data):
 
     result = []
     for d in data:
-        lang = d['language']
-        total = sum(
-            v for k, v in d.items()
-            if isinstance(v, int) and k != '%_webCommerce'
-        )
-        result.append({'language': lang, 'total': total})
-        # print({'language': lang, lang: total})
+        if d['language'] != 'Total':
+            lang = d['language']
+            total = sum(
+                v for k, v in d.items()
+                if isinstance(v, int) and k != '%_webCommerce'
+            )
+            result.append({'language': lang, 'total': total})
     return result
