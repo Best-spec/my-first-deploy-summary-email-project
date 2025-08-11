@@ -1,4 +1,4 @@
-import { renderAutoChart, renderLineChart } from "../charts.js";
+import { renderAutoChart } from "../charts.js";
 import { renderPieChartBoxes } from "../charts.js";
 
 class ChartRenderer {
@@ -101,7 +101,7 @@ class ChartRenderer {
       this.showChart1Element.classList.remove('hidden');
       this.showChart2Element.classList.remove('hidden');
       this.barChartBox.classList.remove('hidden');
-      this.barChartBox2.classList.remove('hidden');
+      this.barChartBox2.classList.remove('hidden'); 
       this.barChartBox3.classList.remove('hidden');
       this.barChartBox4.classList.remove('hidden');
       this.barChartBox5.classList.remove('hidden');

@@ -36,7 +36,8 @@ class DataFetcher {
       return result.data;
     } catch (error) {
       console.error('Error fetching data:', error);
-      showErrorToast(`ไม่สามารถดึงข้อมูลได้: ${error.message || 'เกิดข้อผิดพลาดไม่ทราบสาเหตุ'}`);
+      // showErrorToast(`ไม่สามารถดึงข้อมูลได้: ${error.message || 'เกิดข้อผิดพลาดไม่ทราบสาเหตุ'}`);
+      showErrorToast(`ไม่สามารถดึงข้อมูลได้: ยังไม่ได้อัพโหลดไฟล์ หรือข้อมูลจากหลังบ้านว่าง`);
       throw error;
     }
   }

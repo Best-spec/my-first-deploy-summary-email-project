@@ -1,107 +1,73 @@
-// อังกฤษ (แดง-ขาว-น้ำเงิน)
+// helper: สร้างเฉดจากสีเดียว (คุม H,S คงที่ ไล่ L)
+function generateSingleHueShades({
+  hue,        // 0–360
+  saturation, // 0–100
+  lightStart = 35, // เริ่มที่เข้ม
+  lightEnd = 70,   // ไปทางสว่างขึ้นนิด
+  count = 20
+}) {
+  const n = Math.max(1, count);
+  const shades = [];
+  for (let i = 0; i < n; i++) {
+    const t = n === 1 ? 0 : i / (n - 1);
+    const L = lightStart + (lightEnd - lightStart) * t;
+    shades.push(`hsl(${hue}, ${saturation}%, ${L}%)`);
+  }
+  return shades;
+}
+
+/**
+ * โทนที่เลือก (เข้มแบบ professional + จำง่าย):
+ * - UK: Royal Blue (h≈220°, s≈70%)
+ * - TH: Siam Crimson (แดงเข้ม h≈350°, s≈70%)  ← ไม่ชนกับจีน
+ * - RU: Cobalt/Azure (h≈205°, s≈65%)          ← ต่างจาก UK ชัด
+ * - DE: Imperial Gold (h≈45°, s≈85%)
+ * - CN: China Red (h≈2°, s≈75%)
+ * - AR: Pan-Arab Green (h≈122°, s≈65%)
+ */
+
+// อังกฤษ (สีเดียว: Royal Blue)
 export function generateEnglishShades(count = 20) {
-  const shades = [];
-  for (let i = 0; i < count; i++) {
-    if (i < count / 3) {
-      const lightness = 50 + (i * (30 / (count / 3 - 1)));
-      shades.push(`hsl(0, 60%, ${lightness}%)`);
-    } else if (i < (count * 2) / 3) {
-      const lightness = 90 + ((i - count / 3) * (8 / (count / 3 - 1)));
-      shades.push(`hsl(0, 0%, ${lightness}%)`);
-    } else {
-      const lightness = 45 + ((i - (count * 2) / 3) * (25 / (count / 3 - 1)));
-      shades.push(`hsl(220, 60%, ${lightness}%)`);
-    }
-  }
-  return shades;
+  return generateSingleHueShades({
+    hue: 220, saturation: 70, lightStart: 35, lightEnd: 68, count
+  });
 }
 
-// ไทย (แดง-ขาว-น้ำเงินเข้ม)
+// ไทย (สีเดียว: Siam Crimson – แดงเข้ม)
 export function generateThaiShades(count = 20) {
-  const shades = [];
-  for (let i = 0; i < count; i++) {
-    if (i < count / 3) {
-      const lightness = 50 + (i * (25 / (count / 3 - 1)));
-      shades.push(`hsl(0, 60%, ${lightness}%)`);
-    } else if (i < (count * 2) / 3) {
-      const lightness = 92 + ((i - count / 3) * (5 / (count / 3 - 1)));
-      shades.push(`hsl(0, 0%, ${lightness}%)`);
-    } else {
-      const lightness = 30 + ((i - (count * 2) / 3) * (25 / (count / 3 - 1)));
-      shades.push(`hsl(240, 60%, ${lightness}%)`);
-    }
-  }
-  return shades;
+  return generateSingleHueShades({
+    hue: 350, saturation: 70, lightStart: 33, lightEnd: 65, count
+  });
 }
 
-// รัสเซีย (ขาว-น้ำเงิน-แดง)
+// รัสเซีย (สีเดียว: Azure/Cobalt Blue)
 export function generateRussianShades(count = 20) {
-  const shades = [];
-  for (let i = 0; i < count; i++) {
-    if (i < count / 3) {
-      const lightness = 90 + (i * (5 / (count / 3 - 1)));
-      shades.push(`hsl(0, 0%, ${lightness}%)`);
-    } else if (i < (count * 2) / 3) {
-      const lightness = 50 + ((i - count / 3) * (20 / (count / 3 - 1)));
-      shades.push(`hsl(220, 60%, ${lightness}%)`);
-    } else {
-      const lightness = 50 + ((i - (count * 2) / 3) * (25 / (count / 3 - 1)));
-      shades.push(`hsl(0, 60%, ${lightness}%)`);
-    }
-  }
-  return shades;
+  return generateSingleHueShades({
+    hue: 205, saturation: 65, lightStart: 35, lightEnd: 68, count
+  });
 }
 
-// เยอรมัน (ดำ-แดง-เหลือง)
+// เยอรมัน (สีเดียว: Imperial Gold / Golden Yellow)
 export function generateGermanShades(count = 20) {
-  const shades = [];
-  for (let i = 0; i < count; i++) {
-    if (i < count / 3) {
-      const lightness = 20 + (i * (15 / (count / 3 - 1)));
-      shades.push(`hsl(0, 0%, ${lightness}%)`);
-    } else if (i < (count * 2) / 3) {
-      const lightness = 50 + ((i - count / 3) * (20 / (count / 3 - 1)));
-      shades.push(`hsl(0, 60%, ${lightness}%)`);
-    } else {
-      const lightness = 60 + ((i - (count * 2) / 3) * (20 / (count / 3 - 1)));
-      shades.push(`hsl(45, 80%, ${lightness}%)`);
-    }
-  }
-  return shades;
+  return generateSingleHueShades({
+    hue: 45, saturation: 85, lightStart: 40, lightEnd: 70, count
+  });
 }
 
-// จีน (แดง-เหลือง)
+// จีน (สีเดียว: China Red สด)
 export function generateChineseShades(count = 20) {
-  const shades = [];
-  for (let i = 0; i < count; i++) {
-    if (i < count / 2) {
-      const lightness = 50 + (i * (25 / (count / 2 - 1)));
-      shades.push(`hsl(0, 65%, ${lightness}%)`);
-    } else {
-      const lightness = 65 + ((i - count / 2) * (20 / (count / 2 - 1)));
-      shades.push(`hsl(45, 80%, ${lightness}%)`);
-    }
-  }
-  return shades;
+  return generateSingleHueShades({
+    hue: 2,           // แดงสดออกส้มเล็กน้อย
+    saturation: 85,   // เพิ่มความสด
+    lightStart: 28,   // เริ่มเข้มขึ้น
+    lightEnd: 60,     // สว่างขึ้นแต่ยังสด
+    count
+  });
 }
 
-// อาหรับ (แดง-ขาว-ดำ-เขียว)
+// อาหรับ (สีเดียว: Pan-Arab Green)
 export function generateArabicShades(count = 20) {
-  const shades = [];
-  for (let i = 0; i < count; i++) {
-    if (i < count / 4) {
-      const lightness = 50 + (i * (20 / (count / 4 - 1)));
-      shades.push(`hsl(0, 60%, ${lightness}%)`);
-    } else if (i < count / 2) {
-      const lightness = 90 + ((i - count / 4) * (5 / (count / 4 - 1)));
-      shades.push(`hsl(0, 0%, ${lightness}%)`);
-    } else if (i < (count * 3) / 4) {
-      const lightness = 20 + ((i - count / 2) * (15 / (count / 4 - 1)));
-      shades.push(`hsl(0, 0%, ${lightness}%)`);
-    } else {
-      const lightness = 50 + ((i - (count * 3) / 4) * (20 / (count / 4 - 1)));
-      shades.push(`hsl(120, 60%, ${lightness}%)`);
-    }
-  }
-  return shades;
+  return generateSingleHueShades({
+    hue: 122, saturation: 65, lightStart: 30, lightEnd: 60, count
+  });
 }
