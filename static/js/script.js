@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   appInstance = new Appfetch();
   appInstance.init();
   sidebar_toggle();
+  analysisOpen();
 });
 
 // Setup CSRF token for AJAX requests
@@ -267,8 +268,11 @@ setTimeout(() => {
 function analysisOpen() {
     const showdata = document.getElementById('contentAnalysis');
     const wealcomeData = document.getElementById('wealcomeData');
-    wealcomeData.classList.add('hidden');
-    showdata.classList.remove('hidden');
+
+    document.getElementById('startButton').addEventListener('click', () => {
+        wealcomeData.classList.add('hidden');
+        showdata.classList.remove('hidden');
+    });
   fetch('/analyze-all/')
     .then(res => res.json())
     .then(data => {
@@ -280,8 +284,6 @@ function analysisOpen() {
       }
     })
 }
-
-window.analysisOpen = analysisOpen;
 
 
 

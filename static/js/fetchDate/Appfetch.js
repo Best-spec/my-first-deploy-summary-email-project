@@ -106,11 +106,10 @@ class Appfetch {
       showSuccessToast('โหลดข้อมูลสำเร็จ!');
 
     } catch (error) {
-      console.error("การวิเคราะห์ล้มเหลว:", error);
+      // console.error("การวิเคราะห์ล้มเหลว:", error);
       hideToast(loadingToast);
-      showErrorToast('เกิดข้อผิดพลาดในการโหลดข้อมูล: ' + error.message);
+      // showErrorToast('เกิดข้อผิดพลาดในการโหลดข้อมูล: ' + error.message);
       this.tableRenderer.renderTable([], datetimeset);
-      this.chartRenderer.hideAllCharts();
     }
   }
 }

@@ -6,8 +6,12 @@ from main.views.compare.result_compare import Resultcompare
 from .model import mock
 from datetime import datetime
 import json
+import os
 
 def date_to_cal(date_ranges, folder_path="media/uploads"):
+    # Check if folder_path exists and contains files
+    if not os.path.exists(folder_path) or not os.listdir(folder_path):
+        return None
     langs = ["ar", "de", "en", "ru", "th", "zh-hans"]
     dr = date_ranges
     start = datetime.strptime(dr['startDate'], "%Y-%m-%d")
@@ -23,16 +27,23 @@ def find_top_clinics_summary(date_ranges): # data_ranges = [{'startDate': 0,'end
     try :
         if len(date_ranges) < 2 and date_ranges != None:
             print(date_ranges, 'one')
-            summary, pop_total, spit_total = date_to_cal(date_ranges[0])
 
-            data = {
-                'table': summary,
-                'chart1': pop_total,
-                'chart2': spit_total
-            }
-            json = TopCenterSerializer(data)
-            # print(json.dumps(processed_data, indent=2))
-            return json.data
+            if date_to_cal(date_ranges[0]) is None:
+                print("No data available for the specified date range.")
+                return {"error": "ยังไม่ได้อัพโหลดไฟล์ หรือไม่มีข้อมูลจากหลังบ้าน"}
+            else:
+                summary, pop_total, spit_total = date_to_cal(date_ranges[0])
+                print('ok')
+                data = {
+                    'table': summary,
+                    'chart1': pop_total,
+                    'chart2': spit_total
+                }
+                
+                json = TopCenterSerializer(data)
+                # print(json.dumps(processed_data, indent=2))
+
+                return json.data
         
         else :
             print(date_ranges, 'two')
