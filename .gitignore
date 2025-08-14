@@ -191,4 +191,8 @@ cython_debug/
 #  exclude from AI features like autocomplete and code analysis. Recommended for sensitive data
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
+<<<<<<< HEAD
 .cursorindexingignore
+=======
+.cursorindexingignore
+>>>>>>> 6cfb50ffeaff70f7ffa9d2545babbccc2c5e636f
