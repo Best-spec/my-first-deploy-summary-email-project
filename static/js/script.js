@@ -1,5 +1,6 @@
 
 import { setDateRange1, setDateRange2, get_btn_id, getDateRange1 } from './datetime.js';
+import { dataLineChart } from './fetchDate/aggreateLine.js';
 import Appfetch from './fetchDate/Appfetch.js';
 
 let appInstance;
@@ -11,6 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   appInstance.init();
   sidebar_toggle();
   analysisOpen();
+  dataLineChart();
 });
 
 // Setup CSRF token for AJAX requests
