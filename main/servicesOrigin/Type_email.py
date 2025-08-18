@@ -5,7 +5,8 @@ from datetime import datetime, timedelta
 from .inquiry import cal_inquiry
 from .appointment import find_appointment_summary
 from .feedback_package import FPtotal
-from .compare.result_compare import Resultcompare
+# from ..utils.compare.data_loader import *
+from ..utils.compare.result_compare import Resultcompare
 
 
 json_temp = [{

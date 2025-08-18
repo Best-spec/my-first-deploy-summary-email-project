@@ -4,8 +4,8 @@ from collections import defaultdict
 import pandas as pd
 from pathlib import Path
 from datetime import datetime
-from .compare.data_loader import *
-from .compare.result_compare import Resultcompare
+from ..utils.compare.data_loader import *
+from ..utils.compare.result_compare import Resultcompare
 import json
 
 LANG_MAP = {

@@ -1,8 +1,8 @@
 # app/controllers/top_clinic_controller.py
-from main.views.TopCenter.services.csv_service import load_csv_appointments
-from main.views.TopCenter.services.clinic_summary_service import summarize_clinic_data
+from main.core.applications.TopCenter.services.csv_service import load_csv_appointments
+from main.core.applications.TopCenter.services.clinic_summary_service import summarize_clinic_data
 from ..serializers.topCenter_seriallizer import TopCenterSerializer
-from main.views.compare.result_compare import Resultcompare
+from main.utils.compare.result_compare import Resultcompare
 from .model import mock
 from datetime import datetime
 import json

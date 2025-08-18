@@ -4,12 +4,12 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.files.storage import default_storage
 from django.views.decorators.http import require_POST
-from main.models import UploadedFile
+from .models import UploadedFile
 import json
 import os
 import mimetypes
 import pandas as pd
-from . import constants
+from main.servicesOrigin.constants import ANALYSIS_ACTIONS
 
 @login_required
 @ensure_csrf_cookie
@@ -17,7 +17,7 @@ def index(request):
     files = UploadedFile.objects.all()
     context = {
         'files': files,
-        'analysis_actions': constants.ANALYSIS_ACTIONS.values(),
+        'analysis_actions': ANALYSIS_ACTIONS.values(),
     }
     return render(request, 'main/index.html', context)
 
@@ -46,6 +46,7 @@ def upload_file(request):
                         'name': uploaded_file.name,
                         'timestamp': uploaded_file.uploaded_at.isoformat(),
                     })
+                    
                 except Exception as e:
                     return JsonResponse({
                         'success': False,
