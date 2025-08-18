@@ -1,12 +1,10 @@
 from django.http import JsonResponse
 from main.models import UploadedFile
-# from main.views.inquiry import get_total_languages_summary, cal_inquiry 
-from main.views.services.inquiry.service import get_total_languages_summary, cal_inquiry 
+from main.views.inquiry import get_total_languages_summary, cal_inquiry 
 from main.views.feedback_package import cal_FeedbackAndPackage
 from main.views.appointment import find_appointment_from_csv_folder
 from main.views.percentage.cal_percentage import find_percentage, cal_percent
 import json
-import os
 
 def cal_TotalMonth(date, Web_Commerce):
     try:
