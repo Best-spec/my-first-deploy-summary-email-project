@@ -28,21 +28,17 @@ class DataFetcher {
 
       if (!res.ok) {
         const errorData = await res.json();
-        showErrorToast(`ไม่สามารถดึงข้อมูลได้: ${errorData.message || 'เกิดปัญหาจากเซิร์ฟเวอร์'}`);
         throw new Error(errorData.message || 'Failed to fetch data from server.');
       }
 
       const result = await res.json();
-      console.log('api data from backend:',result.data);
-      if (result.data.error) {
-        showErrorToast(`${result.data.error}`);
-        throw new Error(result.data.error);
-      } else {
-        return result.data;
-      }
-
+      console.log('api data from backend:',result.data)
+      return result.data;
     } catch (error) {
-      console.error(error);
+      console.error('Error fetching data:', error);
+      // showErrorToast(`ไม่สามารถดึงข้อมูลได้: ${error.message || 'เกิดข้อผิดพลาดไม่ทราบสาเหตุ'}`);
+      showErrorToast(`ไม่สามารถดึงข้อมูลได้: ยังไม่ได้อัพโหลดไฟล์ หรือข้อมูลจากหลังบ้านว่าง`);
+      throw error;
     }
   }
 }

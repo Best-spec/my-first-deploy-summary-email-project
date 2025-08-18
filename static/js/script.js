@@ -1,6 +1,5 @@
 
 import { setDateRange1, setDateRange2, get_btn_id, getDateRange1 } from './datetime.js';
-import { dataLineChart } from './fetchDate/aggreateLine.js';
 import Appfetch from './fetchDate/Appfetch.js';
 
 let appInstance;
@@ -11,8 +10,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   appInstance = new Appfetch();
   appInstance.init();
   sidebar_toggle();
-  analysisOpen();
-  dataLineChart();
 });
 
 // Setup CSRF token for AJAX requests
@@ -270,11 +267,8 @@ setTimeout(() => {
 function analysisOpen() {
     const showdata = document.getElementById('contentAnalysis');
     const wealcomeData = document.getElementById('wealcomeData');
-
-    document.getElementById('startButton').addEventListener('click', () => {
-        wealcomeData.classList.add('hidden');
-        showdata.classList.remove('hidden');
-    });
+    wealcomeData.classList.add('hidden');
+    showdata.classList.remove('hidden');
   fetch('/analyze-all/')
     .then(res => res.json())
     .then(data => {
@@ -286,6 +280,8 @@ function analysisOpen() {
       }
     })
 }
+
+window.analysisOpen = analysisOpen;
 
 
 
