@@ -3,7 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .aggregator import aggregate_by_range
-from .totalLanguageByType import loop_date_range, data_per_date
+# from .totalLanguageByType import loop_date_range, data_per_date
+from .OptimizedDataLoader import generate_filtered_data
 from .raw_data import line, linecompare
 
 class AggregateView(APIView):   
@@ -31,10 +32,10 @@ class AggregateView(APIView):
             print(range_obj)
             # 🔥 ดึง raw data ตาม source และช่วงเวลา
             raw_data = linecompare
-
-            cal = loop_date_range(range_obj)
-            print(cal)
-
+            try:
+                cal = generate_filtered_data(range_obj)
+            except Exception as e:
+                print(e)
             # maincal = [data_per_date(range_obj)]
             # print('\nmaincal : ',maincal)
 
