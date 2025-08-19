@@ -6,8 +6,8 @@ import pandas as pd
 import glob
 import os
 from datetime import datetime
-from .compare.data_loader import *
-from .compare.result_compare import Resultcompare
+from main.utils.compare.data_loader import *
+from main.utils.compare.result_compare import Resultcompare
 
 
 appointment_summary_shared = {

@@ -7,7 +7,7 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
 from django.conf import settings
 from django.conf.urls.static import static
-from .views.services.aggregator.views import AggregateView
+from main.core.services.aggregator.views import AggregateView
 from . import debug
 
 

@@ -5,7 +5,7 @@ from pathlib import Path
 from django.http import JsonResponse
 from datetime import datetime
 import json
-from .compare.result_compare import Resultcompare
+from main.utils.compare.result_compare import Resultcompare
 
 
 def extract_language(filename):

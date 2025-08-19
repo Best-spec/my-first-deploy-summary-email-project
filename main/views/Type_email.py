@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from .inquiry import cal_inquiry
 from .appointment import find_appointment_summary
 from .feedback_package import FPtotal
-from .compare.result_compare import Resultcompare
+from main.utils.compare.result_compare import Resultcompare
 
 
 json_temp = [{
@@ -117,3 +117,38 @@ def find_all_type_email(date_param):
 
     except Exception as e:
         print('From find_all_type_email', e)
+
+
+
+
+
+
+
+
+
+
+
+def map_spit_date(date):
+    start_date = datetime.strptime(date['startDate'], "%Y-%m-%d")
+    end_date = datetime.strptime(date['endDate'], "%Y-%m-%d")
+
+    # preload_all_data(start_date, end_date)
+
+    current = start_date
+    list_data_by_date = []
+
+    while current <= end_date:
+        date_str = current.strftime("%d/%m/%Y")
+        date_key = current.strftime("%Y-%m-%d")
+
+        date_list = {
+            'startDate': date_key,
+            'endDate': date_key
+        }
+        data_per_day = cal_all_type_email(date_list)
+        new_item = {'date': date_str}
+        new_item.update(data_per_day)
+        list_data_by_date.append(new_item)
+        current += timedelta(days=1)
+
+    return list_data_by_date

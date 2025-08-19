@@ -4,8 +4,8 @@ import glob
 from collections import defaultdict
 import json
 from datetime import datetime
-from .compare.data_loader import *
-from .compare.result_compare import Resultcompare
+from main.utils.compare.data_loader import *
+from main.utils.compare.result_compare import Resultcompare
 
 def csv_to_json(folder_path="media/uploads", langs=None, start_date=None, end_date=None):
     """
