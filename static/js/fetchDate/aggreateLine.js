@@ -1,7 +1,8 @@
-import { line }from './mock.js';
+// import { line }from './mock.js';
 import { getCsrfToken } from './utility.js';
 import { renderAutoChart } from '../charts.js';
 import { getDateRange1, getDateRange2, set_btn_id } from '../datetime.js';
+import { showSuccessToast, showErrorToast, showLoadingToast, hideToast } from '../script.js';
 
 export function dataLineChart() {
   const btn = document.getElementById('btnFetch');
@@ -10,31 +11,16 @@ export function dataLineChart() {
   let controller = null;
   let debounceTimer = null;
 
-  mode.addEventListener('change', () => {
-    console.log('กดปุ่มแล้วนะ')
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(()=> doFetch(), 200);
-  });
-
-  async function doFetch(){
-    if (controller) controller.abort();          // cancel previous
+  async function doFetch() {
+    if (controller) controller.abort();
     controller = new AbortController();
-    
-    // const payload = { /* เตรียม payload ตามตัวอย่าง */ };
-    // ตัวอย่าง payload
+
+    let loadingToast = showLoadingToast("⏳ กำลังโหลดข้อมูลกราฟเส้น...");
     const payload = {
-      // data: [
-      //   { date: '01/04/2025', emails: 12, errors: 1 },
-      //   { date: '02/04/2025', emails: 7,  errors: 0 },
-      //   { date: '2025-04-03', emails: 9,  errors: 2 }
-      // ],      
-      data : line,
-      period: 'day',
+      period: mode.value,
       mode: 'sum',
-      // range: { startDate: '2025-01-01', endDate: '2025-01-30' }
-      range: getDateRange1()
+      range: getDateRange1(),
     };
-    payload.period = mode.value;
 
     try {
       const res = await fetch('aggregate', {
@@ -47,27 +33,75 @@ export function dataLineChart() {
         signal: controller.signal,
         body: JSON.stringify(payload)
       });
+
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
       const json = await res.json();
-      console.log(json);
-      console.log(line);
-      console.log(getDateRange1());
 
       renderLine(json.primary);
-      console.log('อัพเดทกราฟแล้ว')
+      hideToast(loadingToast);
+      showSuccessToast('โหลดข้อมูลกราฟเส้นสำเร็จ!');
     } catch (err) {
-      
+      hideToast(loadingToast);
+      // showErrorToast(`โหลดข้อมูลล้มเหลว: ${err.message}`);
     } finally {
       controller = null;
     }
   }
+
+  mode.addEventListener('change', () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => doFetch(), 200);
+  });
+
+  doFetch(); // 👉 เรียกทันทีตอนโหลด
 }
 
 
+export async function doFetch() {
+  let controller = null
+  if (controller) controller.abort(); // cancel previous
+  controller = new AbortController();
+
+  let loadingToast = showLoadingToast("⏳ กำลังโหลดข้อมูลกราฟเส้น..."); // ✅ แสดง toast ตอนเริ่มโหลด
+
+  const payload = {
+    period: 'day',
+    mode: 'sum',
+    range: getDateRange1(),
+    // compareRange: getDateRange2()
+  };
+  payload.period = mode.value;
+
+  try {
+    const res = await fetch('aggregate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCsrfToken(),
+      },
+      credentials: 'include',
+      signal: controller.signal,
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+
+    const json = await res.json();
+    console.log(json);
+
+    renderLine(json.primary);
+    console.log('อัพเดทกราฟแล้ว');
+
+    hideToast(loadingToast);
+    showSuccessToast('โหลดข้อมูลกราฟเส้นสำเร็จ!'); // ✅ แจ้งว่าทำงานเสร็จ
+  } catch (err) {
+    // แนะนำเพิ่ม catch toast ด้วย
+    showErrorToast(`โหลดข้อมูลล้มเหลว: ${err.message}`);
+  } finally {
+    controller = null;
+  }
+}
+
 function renderLine(data) {
-  // this.lineChartBox.classList.remove('hidden');
-  // this.titleline.innerHTML = 'Grand Total By Email Type (LineChart)';
-  console.log(data)
   renderAutoChart(data, {
     canvasId: 'line-chart-canvas',
     typeColors: 'by-type',

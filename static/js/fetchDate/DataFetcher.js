@@ -45,6 +45,35 @@ class DataFetcher {
       console.error(error);
     }
   }
+
+
+  async fetchLineChartData(controller){
+    if (controller) controller.abort();          // cancel previous
+    controller = new AbortController();
+    setStatus('Loading...');
+    const payload = { /* เตรียม payload ตามตัวอย่าง */ };
+    payload.period = mode.value;
+
+    try {
+      const res = await fetch('/api/metrics/aggregate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        signal: controller.signal,
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+      const json = await res.json();
+      setStatus('OK');
+      // update chart: updateChartFromResponse(json)
+      console.log(json);
+    } catch (err) {
+      if (err.name === 'AbortError') setStatus('Cancelled', true);
+      else setStatus('Error: ' + err.message, true);
+    } finally {
+      controller = null;
+    }
+  }
 }
 
 export default DataFetcher;

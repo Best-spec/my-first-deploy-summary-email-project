@@ -1,7 +1,8 @@
 
 import { setDateRange1, setDateRange2, get_btn_id, getDateRange1 } from './datetime.js';
-import { dataLineChart } from './fetchDate/aggreateLine.js';
+// import { periodHandle, drawChart } from './dropdownAggregated.js';
 import Appfetch from './fetchDate/Appfetch.js';
+import { dataLineChart } from './fetchDate/aggreateLine.js'
 
 let appInstance;
 document.addEventListener('DOMContentLoaded', async () => {
@@ -13,6 +14,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   sidebar_toggle();
   analysisOpen();
   dataLineChart();
+//   periodHandle((period) => {
+//     drawChart(period); // วาดกราฟใหม่ตามช่วงที่เลือก
+//   });
+    // periodHandle();
 });
 
 // Setup CSRF token for AJAX requests

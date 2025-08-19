@@ -38,6 +38,12 @@ class Appfetch {
     });
   }
 
+
+  // setupLineButton() {
+  //   this.funcFetchLine = this.dataFetcher.fetchLineChartData() 
+  //   this.uiHandler.fetchToLineChart()
+  // }
+
   // **ปรับปรุง:** ลบ isFromToggle ออกจากพารามิเตอร์แล้ว
   async handleAnalysis(actionId) { 
     this.uiHandler.updateTitle(actionId);

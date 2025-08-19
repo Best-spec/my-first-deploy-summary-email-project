@@ -13,6 +13,12 @@ class UIHandler {
     this.webcom2Input = document.getElementById("webcom2_i");
     this.okButton = document.getElementById("ok");
     this.titleElement = document.getElementById('title'); // สมมติว่ามี element ที่มี id="title" สำหรับแสดงหัวข้อ
+    this.btn = document.getElementById('btnFetch');
+    this.mode = document.getElementById('mode');
+    this.status = document.getElementById('status');
+    
+    this.controller = null;
+    this.debounceTimer = null;
 
     // ตัวแปรเก็บ reference ของ event handlers เพื่อใช้ในการ remove
     this.okButtonHandler = null;
@@ -113,6 +119,12 @@ class UIHandler {
   }
 
   // ไม่จำเป็นต้องมีเมธอด forceWebcom2Toggle แล้ว เพราะ setupModal จัดการโดยตรง
+  fetchToLineChart() {
+    this.btn.addEventListener('click', () => {
+      clearTimeout(this.debounceTimer);
+      debounceTimer = setTimeout(()=> doFetch(this.controller), 200);
+    });
+  }
 }
 
 export default UIHandler;
