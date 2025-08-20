@@ -8,6 +8,7 @@ import os
 from datetime import datetime
 from main.utils.compare.data_loader import *
 from main.utils.compare.result_compare import Resultcompare
+from main.utils.load_data.appointment import csv_to_json_with_type
 
 
 appointment_summary_shared = {
@@ -23,15 +24,15 @@ def detect_lang_from_filename(filename, langs):
     return None
 
 
-def csv_to_json_with_type(filepath, file_type, lang_code):
-    df = pd.read_csv(filepath)
-    df.columns = df.columns.str.strip().str.replace('\ufeff', '')
-    json_list = df.to_dict(orient='records')
-    # เพิ่มข้อมูล type กับ lang_code ให้แต่ละ dict
-    for d in json_list:
-        d['file_type'] = file_type
-        d['lang_code'] = lang_code
-    return json_list
+# def csv_to_json_with_type(filepath, file_type, lang_code):
+#     df = pd.read_csv(filepath)
+#     df.columns = df.columns.str.strip().str.replace('\ufeff', '')
+#     json_list = df.to_dict(orient='records')
+#     # เพิ่มข้อมูล type กับ lang_code ให้แต่ละ dict
+#     for d in json_list:
+#         d['file_type'] = file_type
+#         d['lang_code'] = lang_code
+#     return json_list
 
 
 def calculate_appointment_from_json(data_list):
@@ -163,7 +164,7 @@ def find_appointment_from_csv_folder(dateset):
 def find_appointment(dateset):
     try:
         if len(dateset) <= 1:
-            print(dateset)
+            # print(dateset)
             dateset1 = dateset[0].get('startDate')
             dateset2 = dateset[0].get('endDate')
             table = find_appointment_from_csv_folder((dateset1, dateset2))
