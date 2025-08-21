@@ -58,24 +58,21 @@ def clear_summary_cache():
     print("🧹 Cleared ALL summary cache.")
 
 # ✅ ล้าง cache เฉพาะวัน
-def clear_day_from_cache(day_str):  # format: 'YYYY-MM-DD'
-    if day_str in _cached_summary_per_date:
-        del _cached_summary_per_date[day_str]
-        print(f"🧹 Cleared cache for {day_str}")
+def clear_summary_cache_except(keys_to_keep):
+    keys_to_keep = set(keys_to_keep)
+    keys_to_delete = [k for k in _cached_summary_per_date if k not in keys_to_keep]
+    for k in keys_to_delete:
+        del _cached_summary_per_date[k]
 
 def data_per_date(date):  # {'startDate': '2025-04-01', 'endDate': '2025-04-01'}
     try:
-        date_key = date.get('startDate')
-
-        # 🚫 อาจเพิ่ง clear ไป ต้องเช็กอีกที
-        if date_key in _cached_summary_per_date:
-            return _cached_summary_per_date[date_key]
-        else :
-            print('ข้อมูลใหม่')
-            # clear_summary_cache()
-
         start = date.get('startDate')
         end = date.get('endDate')
+        key = start  # ใช้ startDate เป็น key ของ cache
+
+        # 👇 เช็กอีกรอบ (หลังล้าง)
+        if key in _cached_summary_per_date:
+            return _cached_summary_per_date[key]
 
         raw, summary = cal_inquiry(start, end)
         summaryFeed = FPtotal(date)
@@ -93,7 +90,7 @@ def data_per_date(date):  # {'startDate': '2025-04-01', 'endDate': '2025-04-01'}
             'Appointment Recommended':      summaryAppointment[0].get('Appointment Recommended', 0),
         }
 
-        _cached_summary_per_date[date_key] = json_temp  # ✅ เก็บ cache
+        _cached_summary_per_date[key] = json_temp  # ✅ เก็บ cache
         return json_temp
 
     except Exception as e:
@@ -108,19 +105,48 @@ def loop_date_range(date_dict):
     start_date = datetime.strptime(start_str, '%Y-%m-%d')
     end_date = datetime.strptime(end_str, '%Y-%m-%d')
 
+    # 🔑 เตรียม key ล่วงหน้า
+    expected_keys = []
     current = start_date
-    results = []
-
     while current <= end_date:
-        day_str = current.strftime('%Y-%m-%d')
-        single_day_dict = {
-            'startDate': day_str,
-            'endDate': day_str
-        }
-
-        result = data_per_date(single_day_dict)  # 👈 เอาไปใช้ตรงนี้
-        results.append(result)
-
+        expected_keys.append(current.strftime('%Y-%m-%d'))
         current += timedelta(days=1)
 
+    # ✅ ล้าง cache ที่ไม่ใช่ช่วงนี้
+    clear_summary_cache_except(expected_keys)
+
+    # 🔁 แล้วค่อยลูปคำนวณ
+    results = []
+    for key in expected_keys:
+        single_day_dict = {
+            'startDate': key,
+            'endDate': key
+        }
+        result = data_per_date(single_day_dict)
+        results.append(result)
+
     return results
+
+# def loop_date_range(date_dict):
+#     start_str = date_dict['startDate']
+#     end_str = date_dict['endDate']
+
+#     start_date = datetime.strptime(start_str, '%Y-%m-%d')
+#     end_date = datetime.strptime(end_str, '%Y-%m-%d')
+
+#     current = start_date
+#     results = []
+
+#     while current <= end_date:
+#         day_str = current.strftime('%Y-%m-%d')
+#         single_day_dict = {
+#             'startDate': day_str,
+#             'endDate': day_str
+#         }
+
+#         result = data_per_date(single_day_dict)  # 👈 เอาไปใช้ตรงนี้
+#         results.append(result)
+
+#         current += timedelta(days=1)
+
+#     return results
