@@ -11,14 +11,18 @@ from .cache import preload_all_inquiry_files
 #     end_date = datetime.strptime(end, "%Y-%m-%d").strftime("%d/%m/%Y")
 #     df = load_csv_to_dataframe(start_date, end_date)
 #     return calculate_inquiry_summary(df)
-loaded = None
+loaded = False
+
 def load_files():
+    global loaded
     if not loaded:
         preload_all_inquiry_files()
         loaded = True
-    return ('โหลดแล้ว')
+    return 'โหลดแล้ว'
 
 def cal_inquiry(start, end):
+    # Ensure data is preloaded before filtering by date
+    load_files()
     df = filter_inquiry_by_date(start, end)
     return calculate_inquiry_summary(df)
 
