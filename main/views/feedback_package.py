@@ -6,59 +6,60 @@ from django.http import JsonResponse
 from datetime import datetime
 import json
 from main.utils.compare.result_compare import Resultcompare
+from main.utils.load_data.feedback_package import convert_csv_to_json
 
 
-def extract_language(filename):
-    basename = os.path.basename(filename).lower()
-    if '-ar' in basename:
-        return 'Arabic'
-    elif '-de' in basename:
-        return 'German'
-    elif '-en' in basename:
-        return 'English'
-    elif '-ru' in basename:
-        return 'Russia'
-    elif '-th' in basename:
-        return 'Thai'
-    elif '-zh' in basename:
-        return 'Chinese'
-    return 'Unknown'
+# def extract_language(filename):
+#     basename = os.path.basename(filename).lower()
+#     if '-ar' in basename:
+#         return 'Arabic'
+#     elif '-de' in basename:
+#         return 'German'
+#     elif '-en' in basename:
+#         return 'English'
+#     elif '-ru' in basename:
+#         return 'Russia'
+#     elif '-th' in basename:
+#         return 'Thai'
+#     elif '-zh' in basename:
+#         return 'Chinese'
+#     return 'Unknown'
 
-def convert_csv_to_json(folder_path="media/uploads"):
-    """
-    อ่านไฟล์ feedback*.csv และ packages*.csv แล้วแปลงเป็น JSON list
-    แต่ละ record จะมี field: [column from csv] + Language + Type
-    """
-    all_data = []
+# def convert_csv_to_json(folder_path="media/uploads"):
+#     """
+#     อ่านไฟล์ feedback*.csv และ packages*.csv แล้วแปลงเป็น JSON list
+#     แต่ละ record จะมี field: [column from csv] + Language + Type
+#     """
+#     all_data = []
 
-    feedback_files = glob.glob(os.path.join(folder_path, "feedback*.csv"))
-    packages_files = glob.glob(os.path.join(folder_path, "packages*.csv"))
+#     feedback_files = glob.glob(os.path.join(folder_path, "feedback*.csv"))
+#     packages_files = glob.glob(os.path.join(folder_path, "packages*.csv"))
 
-    # อ่าน feedback
-    for file in feedback_files:
-        lang = extract_language(file)
-        try:
-            df = pd.read_csv(file)
-            df.columns = df.columns.str.strip().str.replace('\ufeff', '')
-            df['Language'] = lang
-            df['Type'] = 'Feedback'
-            all_data.extend(df.to_dict(orient='records'))
-        except Exception as e:
-            print(f"🔥 Error reading {file}: {e}")
+#     # อ่าน feedback
+#     for file in feedback_files:
+#         lang = extract_language(file)
+#         try:
+#             df = pd.read_csv(file)
+#             df.columns = df.columns.str.strip().str.replace('\ufeff', '')
+#             df['Language'] = lang
+#             df['Type'] = 'Feedback'
+#             all_data.extend(df.to_dict(orient='records'))
+#         except Exception as e:
+#             print(f"🔥 Error reading {file}: {e}")
 
-    # อ่าน packages
-    for file in packages_files:
-        lang = extract_language(file)
-        try:
-            df = pd.read_csv(file)
-            df.columns = df.columns.str.strip().str.replace('\ufeff', '')
-            df['Language'] = lang
-            df['Type'] = 'Packages'
-            all_data.extend(df.to_dict(orient='records'))
-        except Exception as e:
-            print(f"🔥 Error reading {file}: {e}")
-    # print(json.dumps(all_data, indent=2))
-    return all_data
+#     # อ่าน packages
+#     for file in packages_files:
+#         lang = extract_language(file)
+#         try:
+#             df = pd.read_csv(file)
+#             df.columns = df.columns.str.strip().str.replace('\ufeff', '')
+#             df['Language'] = lang
+#             df['Type'] = 'Packages'
+#             all_data.extend(df.to_dict(orient='records'))
+#         except Exception as e:
+#             print(f"🔥 Error reading {file}: {e}")
+#     # print(json.dumps(all_data, indent=2))
+#     return all_data
 
 def process_json_list(data_list, date_col='Entry Date', start_date=None, end_date=None):
     """
@@ -170,7 +171,7 @@ def cal_FeedbackAndPackage(date_param):
         # print(data[0])
         # print(json.dumps(data, indent=2, ensure_ascii=False))  # พิมพ์ให้ดูสวย อ่านง่าย
         summary = process_json_list(data, start_date=start_date, end_date=end_date)
-        print(summary)
+        # print(summary)
         return summary
     except Exception as e:
         print(f"🔥 Error in find_FeedbackAndPackage: {e}")

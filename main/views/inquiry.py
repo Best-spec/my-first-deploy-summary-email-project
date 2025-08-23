@@ -6,6 +6,7 @@ from pathlib import Path
 from datetime import datetime
 from main.utils.compare.data_loader import *
 from main.utils.compare.result_compare import Resultcompare
+# from main.utils.load_data.inquiry import load_csv_to_json
 import json
 
 LANG_MAP = {
@@ -72,53 +73,108 @@ category_mapping = {
     ]
 }
 
+_cached_data = {}
 
+# def load_csv_to_json(start_date=None, end_date=None):
+#     folder_path = Path("media/uploads")
+#     all_data = []
 
-def load_csv_to_json(start_date=None, end_date=None):
+#     files = folder_path.glob("inquiry-form-*.csv")
+
+#     for file in files:
+#         try:
+#             df = pd.read_csv(file)
+#             df.columns = df.columns.str.replace('\ufeff', '').str.strip('"')
+#             col_name = df.columns[0]
+#             date_col = "Entry Date"
+#             count = df[col_name].astype(str).str.strip().str.lower().eq("general inquiry").sum()
+#         except Exception as e:
+#             print(f"❌ Failed to read {file}: {e}")
+#             continue
+
+#         # ✅ หาภาษา
+#         lang = next((LANG_MAP[suffix] for suffix in LANG_MAP if suffix in file.name), None)
+#         if not lang:
+#             continue
+
+#         try:
+#             df[date_col] = pd.to_datetime(df[date_col], errors='coerce') #total all
+#             # print(df[date_col])
+#         except Exception as e:
+#             print(f"⚠️ Date parse error in {file}: {e}")
+#             continue
+
+#         if start_date:
+#             start_dt = datetime.strptime(start_date, "%d/%m/%Y").date()
+#             df = df[df[date_col].dt.date >= start_dt]
+
+#         if end_date:
+#             end_dt = datetime.strptime(end_date, "%d/%m/%Y").date()
+#             df = df[df[date_col].dt.date <= end_dt]
+
+#         for val in df[col_name].astype(str).str.strip():
+#             all_data.append({
+#                 "language": lang,
+#                 "question": val
+#             })
+        
+#         # print(json.dumps(all_data, indent=2, ensure_ascii=False))
+#     return all_data
+
+def load_all_csv_files_to_json(start_date=None, end_date=None):
     folder_path = Path("media/uploads")
-    all_data = []
-
     files = folder_path.glob("inquiry-form-*.csv")
+    all_data = []
 
     for file in files:
         try:
             df = pd.read_csv(file)
             df.columns = df.columns.str.replace('\ufeff', '').str.strip('"')
-            col_name = df.columns[0]
-            date_col = "Entry Date"
-            count = df[col_name].astype(str).str.strip().str.lower().eq("general inquiry").sum()
+
+            col_name = df.columns[0]  # เช่น "Type of Inquiry"
+            if col_name not in df.columns:
+                continue
+
+            lang = next((LANG_MAP[suffix] for suffix in LANG_MAP if suffix in file.name), None)
+            if not lang:
+                continue
+
+            df["Entry Date"] = pd.to_datetime(df["Entry Date"], errors='coerce')
+
+            if start_date:
+                start_dt = datetime.strptime(start_date, "%d/%m/%Y").date()
+                df = df[df["Entry Date"].dt.date >= start_dt]
+
+            if end_date:
+                end_dt = datetime.strptime(end_date, "%d/%m/%Y").date()
+                df = df[df["Entry Date"].dt.date <= end_dt]
+
+            for val in df[col_name].astype(str).str.strip():
+                all_data.append({
+                    "language": lang,
+                    "question": val
+                })
+
         except Exception as e:
-            print(f"❌ Failed to read {file}: {e}")
-            continue
-
-        # ✅ หาภาษา
-        lang = next((LANG_MAP[suffix] for suffix in LANG_MAP if suffix in file.name), None)
-        if not lang:
-            continue
-
-        try:
-            df[date_col] = pd.to_datetime(df[date_col], errors='coerce') #total all
-            # print(df[date_col])
-        except Exception as e:
-            print(f"⚠️ Date parse error in {file}: {e}")
-            continue
-
-        if start_date:
-            start_dt = datetime.strptime(start_date, "%d/%m/%Y").date()
-            df = df[df[date_col].dt.date >= start_dt]
-
-        if end_date:
-            end_dt = datetime.strptime(end_date, "%d/%m/%Y").date()
-            df = df[df[date_col].dt.date <= end_dt]
-
-        for val in df[col_name].astype(str).str.strip():
-            all_data.append({
-                "language": lang,
-                "question": val
-            })
-        
-        # print(json.dumps(all_data, indent=2, ensure_ascii=False))
+            print(f"❌ Failed to process {file.name}: {e}")
+    
     return all_data
+
+def load_csv_to_json(start_date=None, end_date=None):
+    global _cached_data
+    cache_key = f"{start_date}_{end_date}"
+    if cache_key in _cached_data:
+        print('inquiry cache: ใช้แคชเก่า')
+        return _cached_data[cache_key]
+    else :
+        print('inquiry cache: โหลดข้อมูลใหม่')
+        
+
+    results = load_all_csv_files_to_json(start_date, end_date)
+    _cached_data[cache_key] = results
+    return results
+
+
 
 def calculate_inquiry_summary(data_json):
     try:
@@ -203,7 +259,6 @@ def cal_inquiry(start, end):
 def find_inquiry(date_param):
     try:
         if len(date_param) <= 1:
-            # print(date_param, len(date_param))
             start = date_param[0]['startDate']
             end = date_param[0]['endDate']
             for_table, for_chart = cal_inquiry(start, end)
@@ -220,7 +275,7 @@ def find_inquiry(date_param):
             endset2 = date_param[1]['endDate']
             table1, chart1 = cal_inquiry(startset1, endset1)
             table2, chart2 = cal_inquiry(startset2, endset2)
-            print(Resultcompare(table1, table2, date_param))
+            # print(Resultcompare(table1, table2, date_param))
             # return [Resultcompare(table1, table2, date_param)]
             return {
                 "dataForTable": Resultcompare(table1, table2, date_param),

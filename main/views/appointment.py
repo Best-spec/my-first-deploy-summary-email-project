@@ -8,6 +8,7 @@ import os
 from datetime import datetime
 from main.utils.compare.data_loader import *
 from main.utils.compare.result_compare import Resultcompare
+from main.utils.load_data.appointment import csv_to_json_with_type
 
 
 appointment_summary_shared = {
@@ -23,15 +24,15 @@ def detect_lang_from_filename(filename, langs):
     return None
 
 
-def csv_to_json_with_type(filepath, file_type, lang_code):
-    df = pd.read_csv(filepath)
-    df.columns = df.columns.str.strip().str.replace('\ufeff', '')
-    json_list = df.to_dict(orient='records')
-    # เพิ่มข้อมูล type กับ lang_code ให้แต่ละ dict
-    for d in json_list:
-        d['file_type'] = file_type
-        d['lang_code'] = lang_code
-    return json_list
+# def csv_to_json_with_type(filepath, file_type, lang_code):
+#     df = pd.read_csv(filepath)
+#     df.columns = df.columns.str.strip().str.replace('\ufeff', '')
+#     json_list = df.to_dict(orient='records')
+#     # เพิ่มข้อมูล type กับ lang_code ให้แต่ละ dict
+#     for d in json_list:
+#         d['file_type'] = file_type
+#         d['lang_code'] = lang_code
+#     return json_list
 
 
 def calculate_appointment_from_json(data_list):
@@ -86,6 +87,22 @@ def calculate_appointment_from_json(data_list):
 
     return appointment
 
+# รองรับหลาย format
+KNOWN_DATE_FORMATS = [
+    "%Y-%m-%d",
+    "%d/%m/%Y",
+    "%d-%m-%Y",
+    "%Y/%m/%d",
+]
+
+def try_parse_date(date_str):
+    for fmt in KNOWN_DATE_FORMATS:
+        try:
+            return datetime.strptime(date_str, fmt)
+        except ValueError:
+            continue
+    return None
+
 def filter_date_range(filtered_list, start_date, end_date, date_key="Entry Date"):
     result = []
 
@@ -94,18 +111,42 @@ def filter_date_range(filtered_list, start_date, end_date, date_key="Entry Date"
     end = datetime.strptime(end_date, "%Y-%m-%d")
 
     for item in filtered_list:
-        entry_str = item.get(date_key, "")
-        try:
-            entry = datetime.strptime(entry_str.split(" ")[0], "%Y-%m-%d")  # ดึงแค่วันที่
-            if start <= entry <= end:
-                # print(item["Entry Date"], item['lang_code'])
-                result.append(item)
-        except ValueError:
-            print(f"❌ Invalid date format: {entry_str}")
-            continue
+        raw_entry = item.get(date_key, "")
+        entry_str = raw_entry.split(" ")[0].strip()  # กัน whitespace
+        print(f"🔍 Checking date: {entry_str} against range {start_date} to {end_date}")
 
-    # print(f"✅ Matched entries: {len(result)}")
+        entry = try_parse_date(entry_str)
+        if entry:
+            print(f"✅ Parsed date: {entry}")
+            if start <= entry <= end:
+                result.append(item)
+        else:
+            print(f"❌ Invalid date format: {entry_str}")
+
     return result
+
+# def filter_date_range(filtered_list, start_date, end_date, date_key="Entry Date"):
+#     result = []
+
+#     # แปลง start และ end เป็น datetime object
+#     start = datetime.strptime(start_date, "%Y-%m-%d")
+#     end = datetime.strptime(end_date, "%Y-%m-%d")
+
+#     for item in filtered_list:
+#         entry_str = item.get(date_key, "")
+#         print(f"🔍 Checking date: {entry_str} against range {start_date} to {end_date}")
+#         try:
+#             entry = datetime.strptime(entry_str.split(" ")[0], "%Y-%m-%d")  # ดึงแค่วันที่
+#             print(f"✅ Parsed date: {entry}")
+#             if start <= entry <= end:
+#                 # print(item["Entry Date"], item['lang_code'])
+#                 result.append(item)
+#         except ValueError:
+#             # print(f"❌ Invalid date format: {entry_str}")
+#             continue
+
+#     # print(f"✅ Matched entries: {len(result)}")
+#     return result
 
 def load_date(datetimes):
     start = datetimes[0]['startDate']
@@ -163,7 +204,7 @@ def find_appointment_from_csv_folder(dateset):
 def find_appointment(dateset):
     try:
         if len(dateset) <= 1:
-            print(dateset)
+            # print(dateset)
             dateset1 = dateset[0].get('startDate')
             dateset2 = dateset[0].get('endDate')
             table = find_appointment_from_csv_folder((dateset1, dateset2))
