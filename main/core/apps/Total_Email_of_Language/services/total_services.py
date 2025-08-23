@@ -1,6 +1,6 @@
 from .Total_Email_of_Language import cal_TotalMonth
 # from main.views.Type_email import cal_all_type_email
-from main.core.services.inquiry.allTypeEmail import cal_all_type_email
+from ..models.chart2 import cal_all_type_email
 from main.utils.compare.result_compare import Resultcompare
 from ..models.chart1 import Grand_Total_By_Language 
 from ..models.chart3 import Total_Email_Type_By_Language

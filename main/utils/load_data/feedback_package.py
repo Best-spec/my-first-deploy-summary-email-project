@@ -1,6 +1,7 @@
 import os
 import glob
 import pandas as pd
+import json
 
 # 🌍 ภาษาจากชื่อไฟล์
 LANG_MAP = {
@@ -36,10 +37,7 @@ def convert_csv_to_json(folder_path="media/uploads"):
     global _cached_feedback_packages
 
     if _cached_feedback_packages is not None:
-        print('feedback cache: ใช้แคชเก่า')
         return _cached_feedback_packages
-    else :
-        print('feedback cache: โหลดข้อมูลใหม่')
     all_data = []
 
     feedback_files = glob.glob(os.path.join(folder_path, "feedback*.csv"))

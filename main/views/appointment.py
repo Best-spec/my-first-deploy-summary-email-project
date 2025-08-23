@@ -24,16 +24,6 @@ def detect_lang_from_filename(filename, langs):
     return None
 
 
-# def csv_to_json_with_type(filepath, file_type, lang_code):
-#     df = pd.read_csv(filepath)
-#     df.columns = df.columns.str.strip().str.replace('\ufeff', '')
-#     json_list = df.to_dict(orient='records')
-#     # เพิ่มข้อมูล type กับ lang_code ให้แต่ละ dict
-#     for d in json_list:
-#         d['file_type'] = file_type
-#         d['lang_code'] = lang_code
-#     return json_list
-
 
 def calculate_appointment_from_json(data_list):
 
@@ -113,11 +103,9 @@ def filter_date_range(filtered_list, start_date, end_date, date_key="Entry Date"
     for item in filtered_list:
         raw_entry = item.get(date_key, "")
         entry_str = raw_entry.split(" ")[0].strip()  # กัน whitespace
-        print(f"🔍 Checking date: {entry_str} against range {start_date} to {end_date}")
 
         entry = try_parse_date(entry_str)
         if entry:
-            print(f"✅ Parsed date: {entry}")
             if start <= entry <= end:
                 result.append(item)
         else:
@@ -125,28 +113,6 @@ def filter_date_range(filtered_list, start_date, end_date, date_key="Entry Date"
 
     return result
 
-# def filter_date_range(filtered_list, start_date, end_date, date_key="Entry Date"):
-#     result = []
-
-#     # แปลง start และ end เป็น datetime object
-#     start = datetime.strptime(start_date, "%Y-%m-%d")
-#     end = datetime.strptime(end_date, "%Y-%m-%d")
-
-#     for item in filtered_list:
-#         entry_str = item.get(date_key, "")
-#         print(f"🔍 Checking date: {entry_str} against range {start_date} to {end_date}")
-#         try:
-#             entry = datetime.strptime(entry_str.split(" ")[0], "%Y-%m-%d")  # ดึงแค่วันที่
-#             print(f"✅ Parsed date: {entry}")
-#             if start <= entry <= end:
-#                 # print(item["Entry Date"], item['lang_code'])
-#                 result.append(item)
-#         except ValueError:
-#             # print(f"❌ Invalid date format: {entry_str}")
-#             continue
-
-#     # print(f"✅ Matched entries: {len(result)}")
-#     return result
 
 def load_date(datetimes):
     start = datetimes[0]['startDate']
@@ -244,6 +210,8 @@ def find_appointment_summary(dateset):
             "Appointment Recommended": 0
         }
         for item in data_sum:
+            if item.get("Language") == "Total":
+                continue
             total_dict["Appointment"] += item.get("Appointment", 0)
             total_dict["Appointment Recommended"] += item.get("Appointment Recommended", 0)
 
