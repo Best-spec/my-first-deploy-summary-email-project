@@ -2,7 +2,51 @@
 // export const line = [
 //   {"date": "01/01/2025", "English": 75, "Thai": 65, "Russia": 80, "German": 43, "Chinese": 17, "Arabic": 13},
 // ];
+export const data_compare = [
+  {
+    date: "2025-07-01",
 
+    // 🔹 Original values
+    "General Inquiry": 5,
+    "Estimated Cost": 1,
+    "Other": 8,
+    "Contact Doctor": 0,
+    "Package Inquiry": 0,
+    "Feedback & Suggestion": 0,
+    "Appointment": 30,
+    "Appointment Recommended": 79,
+
+    // 🔹 Compare values (ต้องมี key ชื่อตาม twinMap)
+    "General Inquiry compare": 7,
+    "Estimated Cost_compare": 2,
+    "Other_compare": 10,
+    "Contact Doctor_compare": 1,
+    "Package Inquiry_compare": 2,
+    "Feedback & Suggestion_compare": 3,
+    "Appointment_compare": 40,
+    "Appointment Recommended_compare": 85
+  },
+  {
+    date: "2025-07-02",
+    "General Inquiry": 6,
+    "Estimated Cost": 2,
+    "Other": 5,
+    "Contact Doctor": 1,
+    "Package Inquiry": 1,
+    "Feedback & Suggestion": 0,
+    "Appointment": 25,
+    "Appointment Recommended": 70,
+
+    "General Inquiry compare": 8,
+    "Estimated Cost_compare": 3,
+    "Other_compare": 7,
+    "Contact Doctor_compare": 0,
+    "Package Inquiry_compare": 2,
+    "Feedback & Suggestion_compare": 4,
+    "Appointment_compare": 35,
+    "Appointment Recommended_compare": 75
+  }
+];
 // ข้อมูลรวมทุกภาษาแยก type
 export const line = [
   {

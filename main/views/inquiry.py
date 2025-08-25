@@ -139,7 +139,9 @@ def load_all_csv_files_to_json(start_date=None, end_date=None):
             if not lang:
                 continue
 
-            df["Entry Date"] = pd.to_datetime(df["Entry Date"], errors='coerce')
+            # df["Entry Date"] = pd.to_datetime(df["Entry Date"], errors='coerce')
+            df['Entry Date'] = pd.to_datetime(df['Entry Date'], dayfirst=True)
+
 
             if start_date:
                 start_dt = datetime.strptime(start_date, "%d/%m/%Y").date()
@@ -164,10 +166,7 @@ def load_csv_to_json(start_date=None, end_date=None):
     global _cached_data
     cache_key = f"{start_date}_{end_date}"
     if cache_key in _cached_data:
-        print('inquiry cache: ใช้แคชเก่า')
         return _cached_data[cache_key]
-    else :
-        print('inquiry cache: โหลดข้อมูลใหม่')
         
 
     results = load_all_csv_files_to_json(start_date, end_date)

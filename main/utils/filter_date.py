@@ -1,7 +1,7 @@
 # services/inquiry/utils.py
 import pandas as pd
 from datetime import datetime
-from main.views.services.inquiry.cache import PRELOADED_INQUIRY_DF
+from main.core.services.inquiry.cache import PRELOADED_INQUIRY_DF
 
 def filter_inquiry_by_date(start, end):
     if PRELOADED_INQUIRY_DF is None:
