@@ -1,13 +1,13 @@
 from django.urls import path
 from main.views import views
-from main.views import load_files
+from main.utils import load_files
 from main.views import Type_email
 from main.views import constants
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
 from django.conf import settings
 from django.conf.urls.static import static
-from main.core.services.aggregator.views import AggregateView
+from main.services.aggregator.views import AggregateView
 from . import debug
 
 
@@ -21,7 +21,7 @@ urlpatterns = [
     path('load_files/', load_files.list_uploaded_files, name='load_file'),
     path('delete_file/', views.delete_uploaded_file, name='delete_file'),
     path('delete_all_files/', views.delete_all_files, name='delete_all_files'),
-    path('plot_all/', Type_email.find_all_type_email, name='plot_all'),
+    # path('plot_all/', Type_email.find_all_type_email, name='plot_all'),
     path('analyze/', constants.analyze, name='analyze'),
     path('aggregate', AggregateView.as_view(), name='metrics-aggregate'),
 ]   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

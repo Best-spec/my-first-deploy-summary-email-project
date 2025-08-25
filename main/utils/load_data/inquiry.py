@@ -1,6 +1,7 @@
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
+from django.conf import settings
 
 # ภาษาในชื่อไฟล์
 LANG_MAP = {
@@ -17,7 +18,7 @@ _cached_data = {}
 
 
 def load_all_csv_files_to_json(start_date=None, end_date=None):
-    folder_path = Path("media/uploads")
+    folder_path = settings.MEDIA_ROOT / 'uploads'
     files = folder_path.glob("inquiry-form-*.csv")
     all_data = []
 

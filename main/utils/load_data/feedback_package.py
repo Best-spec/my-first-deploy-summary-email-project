@@ -2,6 +2,7 @@ import os
 import glob
 import pandas as pd
 import json
+from django.conf import settings
 
 # 🌍 ภาษาจากชื่อไฟล์
 LANG_MAP = {
@@ -29,7 +30,7 @@ def reset_feedback_packages_cache():
 
 
 
-def convert_csv_to_json(folder_path="media/uploads"):
+def convert_csv_to_json(folder_path=settings.MEDIA_ROOT / 'uploads'):
     """
     อ่านไฟล์ feedback*.csv และ packages*.csv แล้วแปลงเป็น JSON list
     แต่ละ record จะมี field: [column from csv] + Language + Type

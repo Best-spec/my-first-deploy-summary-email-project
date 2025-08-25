@@ -90,14 +90,28 @@ def delete_uploaded_file(request):
 
 @login_required
 @require_POST
+# def delete_all_files(request):
+#     try:
+#         # ถ้ามี FileField ให้ลบไฟล์จาก storage ด้วย
+#         for obj in UploadedFile.objects.all():
+#             if hasattr(obj, "file") and obj.file:
+#                 obj.file.delete(save=False)
+#             obj.delete()
+#         return JsonResponse({"success": True, "message": "ลบไฟล์ทั้งหมดสำเร็จ"})
+#     except Exception as e:
+#         return JsonResponse({"success": False, "message": str(e)})
 def delete_all_files(request):
     try:
-        # ถ้ามี FileField ให้ลบไฟล์จาก storage ด้วย
+        count = 0
         for obj in UploadedFile.objects.all():
-            if hasattr(obj, "file") and obj.file:
-                obj.file.delete(save=False)
-            obj.delete()
-        return JsonResponse({"success": True, "message": "ลบไฟล์ทั้งหมดสำเร็จ"})
+            print(f"🧹 ลบ record id: {obj.id} | file: {obj.file.name}")
+            if obj.file:
+                obj.file.delete(save=False)  # ✅ ลบจาก disk
+            obj.delete()  # ✅ ลบจาก DB
+            count += 1
+
+        return JsonResponse({"success": True, "message": f"ลบ {count} ไฟล์เรียบร้อย"})
     except Exception as e:
         return JsonResponse({"success": False, "message": str(e)})
+
     

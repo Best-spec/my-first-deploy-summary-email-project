@@ -1,5 +1,5 @@
-from main.core.apps.TopCenter.controllers.top_clinic_controller import find_top_clinics_summary
-from main.core.apps.Total_Email_of_Language.services.total_services import find_TotalMonth
+from main.controllers.TopCenter.controllers.top_clinic_controller import find_top_clinics_summary
+from main.controllers.Total_Email_of_Language.services.total_services import find_TotalMonth
 from django.http import JsonResponse
 
 from django.views.decorators.csrf import csrf_exempt

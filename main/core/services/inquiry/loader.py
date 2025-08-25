@@ -3,11 +3,12 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime
 from .constants import LANG_MAP
+from django.conf import settings
 
 
 # 📁 services/inquiry/loader.py
 def load_csv_all():
-    folder_path = Path("media/uploads")
+    folder_path = settings.MEDIA_ROOT / 'uploads'
     df_list = []
 
     for file in folder_path.glob("inquiry-form-*.csv"):
