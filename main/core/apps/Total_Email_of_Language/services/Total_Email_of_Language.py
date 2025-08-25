@@ -1,12 +1,9 @@
 from django.http import JsonResponse
 from main.models import UploadedFile
-# from main.views.inquiry import get_total_languages_summary, cal_inquiry 
 from main.views.inquiry import get_total_languages_summary, cal_inquiry 
 from main.views.feedback_package import cal_FeedbackAndPackage
 from main.views.appointment import find_appointment_from_csv_folder
 from main.utils.percentage.cal_percentage import find_percentage, cal_percent
-import json
-import os
 
 def cal_TotalMonth(date, Web_Commerce):
     try:
@@ -168,7 +165,6 @@ def cal_TotalMonth(date, Web_Commerce):
             lang = entry["language"]
             total_all_row[lang] = sum(entry.get(cat, 0) for cat in categories)
         transposed.append(total_all_row)
-        print(plot_data)
         return summary, plot_data, transposed
 
     except Exception as e:

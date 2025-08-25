@@ -1,7 +1,5 @@
 from django.http import JsonResponse
-from main.models import UploadedFile
 from pathlib import Path
-from collections import defaultdict
 import pandas as pd
 import glob
 import os
@@ -117,7 +115,7 @@ def filter_date_range(filtered_list, start_date, end_date, date_key="Entry Date"
 def load_date(datetimes):
     start = datetimes[0]['startDate']
     end = datetimes[0]['endDate']
-    print(start, end)
+    # print(start, end)
     return start, end
 
 def find_appointment_from_csv_folder(dateset):

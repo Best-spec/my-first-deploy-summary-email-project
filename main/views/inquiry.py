@@ -75,52 +75,6 @@ category_mapping = {
 
 _cached_data = {}
 
-# def load_csv_to_json(start_date=None, end_date=None):
-#     folder_path = Path("media/uploads")
-#     all_data = []
-
-#     files = folder_path.glob("inquiry-form-*.csv")
-
-#     for file in files:
-#         try:
-#             df = pd.read_csv(file)
-#             df.columns = df.columns.str.replace('\ufeff', '').str.strip('"')
-#             col_name = df.columns[0]
-#             date_col = "Entry Date"
-#             count = df[col_name].astype(str).str.strip().str.lower().eq("general inquiry").sum()
-#         except Exception as e:
-#             print(f"❌ Failed to read {file}: {e}")
-#             continue
-
-#         # ✅ หาภาษา
-#         lang = next((LANG_MAP[suffix] for suffix in LANG_MAP if suffix in file.name), None)
-#         if not lang:
-#             continue
-
-#         try:
-#             df[date_col] = pd.to_datetime(df[date_col], errors='coerce') #total all
-#             # print(df[date_col])
-#         except Exception as e:
-#             print(f"⚠️ Date parse error in {file}: {e}")
-#             continue
-
-#         if start_date:
-#             start_dt = datetime.strptime(start_date, "%d/%m/%Y").date()
-#             df = df[df[date_col].dt.date >= start_dt]
-
-#         if end_date:
-#             end_dt = datetime.strptime(end_date, "%d/%m/%Y").date()
-#             df = df[df[date_col].dt.date <= end_dt]
-
-#         for val in df[col_name].astype(str).str.strip():
-#             all_data.append({
-#                 "language": lang,
-#                 "question": val
-#             })
-        
-#         # print(json.dumps(all_data, indent=2, ensure_ascii=False))
-#     return all_data
-
 def load_all_csv_files_to_json(start_date=None, end_date=None):
     folder_path = Path("media/uploads")
     files = folder_path.glob("inquiry-form-*.csv")

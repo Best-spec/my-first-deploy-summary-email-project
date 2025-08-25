@@ -1,6 +1,4 @@
 from django.http import JsonResponse
-from collections import defaultdict
-
 from .inquiry import find_inquiry
 from .appointment import find_appointment_summary
 from .feedback_package import FPtotal

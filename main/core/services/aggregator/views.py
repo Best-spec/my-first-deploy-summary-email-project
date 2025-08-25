@@ -46,8 +46,3 @@ class AggregateView(APIView):
             return Response(result)
         except Exception as e:
             return Response({'error': str(e)}, status=400)
-        
-        #     res = aggregate_by_range(data, period=period, mode=mode, range_obj=range_obj, compare_range=compare_range)
-        #     return Response(res)
-        # except Exception as e:
-        #     return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

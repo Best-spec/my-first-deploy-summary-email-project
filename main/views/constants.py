@@ -1,9 +1,4 @@
-from .inquiry import find_inquiry, get_total_languages_summary
-from .appointment import find_appointment
-from .feedback_package import find_FeedbackAndPackage, FPtotal
-from .Type_email import find_all_type_email
 from main.core.apps.TopCenter.controllers.top_clinic_controller import find_top_clinics_summary
-from .top_center import find_top_clinics_summary_main
 from main.core.apps.Total_Email_of_Language.services.total_services import find_TotalMonth
 from django.http import JsonResponse
 
@@ -12,26 +7,9 @@ from django.http import JsonResponse
 import json
 
 ANALYSIS_ACTIONS = {
-    # 'inquiry': {
-    #     'id': 'inquiry', 'name': 'Type Inquiry', 'color': 'blue', 'icon': '💬',
-    #     'function': find_inquiry
-    # },
-    # 'appointment': {
-    #     'id': 'appointment', 'name': 'Type Appointment', 'color': 'green', 'icon': '📅',
-    #     'function': find_appointment
-    # },
-    # 'feedback': {
-    #     'id': 'feedback', 'name': 'Type Feedback', 'color': 'purple', 'icon': '❤️',
-    #     'function': find_FeedbackAndPackage
-    # },
-    # 'plot-all': {
-    #     'id': 'plot-all', 'name': 'Total Email by Type', 'color': 'orange', 'icon': '📊',
-    #     'function': find_all_type_email
-    # },
     'top-center': {
         'id': 'top-center', 'name': 'Top Center', 'color': 'red', 'icon': '⭐',
         'function': find_top_clinics_summary
-        # 'function': find_top_clinics_summary_main
     },
     'total-month': {
         'id': 'total-month', 'name': 'Total Email by Language', 'color': 'teal', 'icon': '📈',
