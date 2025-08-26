@@ -2,14 +2,10 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.core.files.storage import default_storage
 from django.views.decorators.http import require_POST
 from main.models import UploadedFile
-import json
-import os
-import mimetypes
-import pandas as pd
 from . import constants
+from main.utils.cache_control import clear_all_caches
 
 @login_required
 @ensure_csrf_cookie
