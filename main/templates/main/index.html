@@ -7,7 +7,7 @@
 
 <div class="flex flex-col lg:flex-row">
     <div id="col1" class="">
-        <div class="w-full bg-white border-r border-gray-200 shadow-md">
+        <div class="w-80 lg:bg-white border-r border-gray-200 shadow-md">
             <div class="flex justify-between p-6 border-b border-gray-200 bg-gradient-to-br from-indigo-500 to-purple-700 text-white">
                 <h1 class="text-xl font-semibold flex items-center gap-3">📁 File Manager</h1>
                 <div id="btn-side" class="relative flex items-center justify-center cursor-pointer w-[40px] h-[40px]">
@@ -56,7 +56,7 @@
 
     <div id="col2" class="bg=[#f7f9fa] w-full h-screen">
         <div id="wealcomeData"
-            class="hidden h-screen flex-1 flex items-center justify-center bg-gradient-to-br from-purple-700 to-purple-900 text-white">
+            class="h-screen flex-1 flex items-center justify-center bg-gradient-to-br from-purple-700 to-purple-900 text-white">
             <div class="text-center max-w-lg">
                 <div class="w-30 h-30 bg-white bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-6 text-5xl backdrop-blur-md">
                     🗂️</div>
@@ -67,7 +67,7 @@
                 </p>
             </div>
         </div>
-        <div id="contentAnalysis" class="">
+        <div id="contentAnalysis" class="hidden">
 
             {% include 'auth/logout.html' %}
             <!-- Analysis Actions -->
