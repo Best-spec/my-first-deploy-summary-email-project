@@ -7,6 +7,8 @@ from main.utils.compare.data_loader import *
 from main.utils.compare.result_compare import Resultcompare
 from main.utils.load_data.appointment import csv_to_json_with_type
 from django.conf import settings
+import json
+import re
 
 
 appointment_summary_shared = {
@@ -15,9 +17,13 @@ appointment_summary_shared = {
 }
 
 def detect_lang_from_filename(filename, langs):
-    # หา lang code จากชื่อไฟล์ เช่น appointment-en-xxx.csv => en
+    """
+    ดึง lang code จากชื่อไฟล์ เช่น appointment-en-xxx.csv
+    โดยใช้ regex เพื่อไม่ให้ match แบบมั่ว
+    """
     for lang in langs:
-        if f"-{lang}" in filename:
+        pattern = fr"-({lang})([-\.])"  # -en- หรือ -en.
+        if re.search(pattern, filename):
             return lang
     return None
 
@@ -142,7 +148,6 @@ def find_appointment_from_csv_folder(dateset):
             lang = detect_lang_from_filename(file, langs)
             if lang:
                 all_data.extend(csv_to_json_with_type(file, "appointment", lang))
-                print(f"✅ Loaded {file}, found {len(all_data)} records so far.")
 
         keys_to_show = ["Centers & Clinics","Entry Date","file_type","lang_code"]
 
@@ -155,8 +160,8 @@ def find_appointment_from_csv_folder(dateset):
         start_date, end_date = dateset
 
         fil = filter_date_range(filtered_list, start_date, end_date)
+        # print(json.dumps(fil, indent=2))
 
-        # print(json.dumps(filtered_list, indent=2, ensure_ascii=False)) 
         result = calculate_appointment_from_json(fil)
         return result
     
