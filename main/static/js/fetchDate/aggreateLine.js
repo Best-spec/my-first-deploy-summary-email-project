@@ -6,73 +6,6 @@ import { showSuccessToast, showErrorToast, showLoadingToast, hideToast } from '.
 import { data_compare } from './mock.js';
 
 
-//ทํางานตอนกดเปลื่ยนช่วงเวลา
-// export function dataLineChart() {
-//   const btn = document.getElementById('btnFetch');
-//   const mode = document.getElementById('mode');
-//   const status = document.getElementById('status');
-//   let controller = null;
-//   let debounceTimer = null;
-  
-//   const date1 = getDateRange1();
-//   const date2 = getDateRange2();
-  
-//   const datetimeset = date2 === null ? [date1] : [date1, date2];
-//   const isCompareDateSelected = date2 !== null; // ตรวจสอบว่ามีวันที่เปรียบเทียบหรือไม่
-
-//   async function doFetch() {
-//     if (controller) controller.abort();
-//     controller = new AbortController();
-
-//     let loadingToast = showLoadingToast("⏳ กำลังโหลดข้อมูลกราฟเส้น...");
-//     const payload = {
-//       period: mode.value,
-//       mode: 'sum',
-//       range: getDateRange1(),
-//     };
-
-//     try {
-//       const res = await fetch('aggregate', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//           'X-CSRFToken': getCsrfToken(),
-//         },
-//         credentials: 'include',
-//         signal: controller.signal,
-//         body: JSON.stringify(payload)
-//       });
-
-//       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-//       const json = await res.json();
-
-//       if (isCompareDateSelected) {
-//         console.log('compare', [date1, date2])
-//         renderLine(data_compare);
-//       } else {
-//         console.log('not compare', date1)
-//         renderLine(json.primary);
-//       }
-//       console.log("จำนวน data:", json.primary.length);
-//       hideToast(loadingToast);
-//       showSuccessToast('โหลดข้อมูลกราฟเส้นสำเร็จ!');
-//     } catch (err) {
-//       hideToast(loadingToast);
-//       // showErrorToast(`โหลดข้อมูลล้มเหลว: ${err.message}`);
-//     } finally {
-//       controller = null;
-//     }
-//   }
-
-//   mode.addEventListener('change', () => {
-//     clearTimeout(debounceTimer);
-//     debounceTimer = setTimeout(() => doFetch(), 200);
-//   });
-
-//   doFetch(); // 👉 เรียกทันทีตอนโหลด
-// }
-
-
 export async function doFetch() {
   let controller = null
   if (controller) controller.abort(); // cancel previous
@@ -110,17 +43,14 @@ export async function doFetch() {
     const json = await res.json();
     console.log(json);
 
-      if (isCompareDateSelected) {
-        console.log('compare', [date1, date2])
-        renderLine(data_compare);
-      } else {
-        console.log('not compare', date1)
-        renderLine(json.primary);
-      }
+      // if (isCompareDateSelected) {
+      //   console.log('compare', [date1, date2])
+      //   renderLine(json);
+      // } else {
+      //   console.log('not compare', date1)
+      //   renderLine(json.primary);
+      // }
     renderLine(json.primary);
-    // renderLine(data_compare);
-    console.log("จำนวน data:", json.primary.length);
-    console.log('อัพเดทกราฟแล้ว');
 
     hideToast(loadingToast);
     showSuccessToast('โหลดข้อมูลกราฟเส้นสำเร็จ!'); // ✅ แจ้งว่าทำงานเสร็จ
@@ -175,15 +105,16 @@ export function dataLineChart() {
 
       const json = await res.json();
       // 👇 สมมุติ backend คืน { primary: [...], compare: [...] } เวลาแนบ compareRange ไป
-      if (hasCompare && Array.isArray(json.compare)) {
-        console.log('compare', date1, date2);
-        renderLine(json.compare);
-      } else {
-        console.log('not compare', date1);
-        renderLine(json.primary);
-      }
+      // if (hasCompare && Array.isArray(json.compare)) {
+      //   console.log('compare', date1, date2);
+      //   renderLine(json.compare);
+      // } else {
+      //   console.log('not compare', date1);
+      //   renderLine(json.primary);
+      // }
+      renderLine(json.primary)
 
-      console.log("จำนวน primary:", Array.isArray(json.primary) ? json.primary.length : 0);
+      // console.log("จำนวน primary:", Array.isArray(json.primary) ? json.primary.length : 0);
       hideToast(loadingToast);
       showSuccessToast('โหลดข้อมูลกราฟเส้นสำเร็จ!');
     } catch (err) {
