@@ -1,8 +1,8 @@
 #!/bin/bash
 
-export DJANGO_SETTINGS_MODULE=filemanager.settings 
+export DJANGO_SETTINGS_MODULE=main.settings.settings 
 echo "🔧 Running migrations..."
 python manage.py migrate --noinput
 
 echo "🚀 Starting server..."
-gunicorn filemanager.wsgi:application --bind 0.0.0.0:$PORT
+gunicorn main.settings.wsgi:application --bind 0.0.0.0:$PORT
