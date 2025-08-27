@@ -32,7 +32,7 @@ print(BASE_DIR)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['summary-inquiry.onrender.com','127.0.0.1']
+ALLOWED_HOSTS = ['summary-inquiry.onrender.com','127.0.0.1', 'https://whale-app-ufaiu.ondigitalocean.app']
 
 
 # Application definition
