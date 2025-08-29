@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   sidebar_toggle();
   analysisOpen();
   toggle_period_lineChart();
+  console.log = function () {};
 });
 
 // Setup CSRF token for AJAX requests
@@ -270,7 +271,7 @@ function analysisOpen() {
     const wealcomeData = document.getElementById('wealcomeData');
 
     document.getElementById('startButton').addEventListener('click', () => {
-        wealcomeData.classList.add('hidden');
+        // wealcomeData.classList.add('hidden');
         showdata.classList.remove('hidden');
     });
   fetch('/analyze-all/')
