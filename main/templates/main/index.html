@@ -45,7 +45,7 @@
 
     <div id="col2" class="bg=[#f7f9fa] w-screen h-screen">
         <div id="wealcomeData"
-            class="hidden h-screen flex-1 flex items-center justify-center bg-gradient-to-br from-purple-700 to-purple-900 text-white">
+            class="h-screen flex-1 flex items-center justify-center bg-gradient-to-br from-purple-700 to-purple-900 text-white">
             <div class="text-center max-w-lg">
                 <div class="w-30 h-30 bg-white bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-6 text-5xl backdrop-blur-md">
                     🗂️</div>
@@ -56,18 +56,20 @@
                 </p>
             </div>
         </div>
-        <div id="contentAnalysis" class="">
+        <div id="contentAnalysis" class="hidden overflow-y-auto h-[calc(100vh-64px)]">
 
             {% include 'auth/logout.html' %}
             <!-- Analysis Actions -->
-            {% include 'main/partials/analysis_actions.html' %}
-
-            <!-- Charts -->
-            {% include 'main/partials/charts.html' %}
-
-            <!-- KPI Cards -->
-            {% include 'main/partials/kpi_cards.html' %}
-            <br>
+            <div class="z-0">
+                {% include 'main/partials/analysis_actions.html' %}
+                <!-- Charts -->
+                {% include 'main/partials/charts.html' %}
+    
+                <!-- KPI Cards -->
+                {% include 'main/partials/kpi_cards.html' %}
+                <br>
+            </div>
+            
         </div>
 
 

@@ -570,7 +570,7 @@ export function initComparePicker() {
         cancelLabel: 'Clear'
     },
     ranges: {
-        'Today': [moment('2025-04-01'), moment('2025-04-15')],
+        'Today': [moment(), moment()],
         'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
         'Last 7 Days': [moment().subtract(6, 'days'), moment()],
         'Last 30 Days': [moment().subtract(29, 'days'), moment()],
@@ -614,7 +614,7 @@ export function initComparePicker() {
                 cancelLabel: 'Clear'
             },
             ranges: {
-                'Today': [moment('2025-04-16'), moment('2025-04-30')],
+                'Today': [moment(), moment()],
                 'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
                 'Last 7 Days': [moment().subtract(6, 'days'), moment()],
                 'Last 30 Days': [moment().subtract(29, 'days'), moment()],
