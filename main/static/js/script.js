@@ -14,10 +14,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   sidebar_toggle();
   analysisOpen();
   dataLineChart();
-//   periodHandle((period) => {
-//     drawChart(period); // วาดกราฟใหม่ตามช่วงที่เลือก
-//   });
-    // periodHandle();
 });
 
 // Setup CSRF token for AJAX requests
@@ -42,28 +38,25 @@ let fileIdCounter = 1;
 
 function sidebar_toggle() {
     const col1 = document.getElementById('col1');
-    const col_off = document.getElementById('col-off');
-    const btn = document.getElementById('btn-side');
-    const side1 = document.getElementById('side1');
-    const side2 = document.getElementById('side2');
+    const col2 = document.getElementById('col2');
+    const menu_on = document.getElementById('menu-on');
+    const menu_off = document.getElementById('menu-off');
 
-  btn.addEventListener('click', () => {
-    const isSide1Visible = !side1.classList.contains('hidden');
+    const side_open = !col1.classList.contains('hidden');
 
-    if (isSide1Visible) {
-        console.log(isSide1Visible)
+    if (side_open) {
+        menu_off.classList.add('hidden');
+    }
+
+    menu_on.addEventListener('click', () => {
         col1.classList.add('hidden');
-        col_off.classList.remove('hidden');
-    } 
-  });
-  side2.addEventListener('click', () => {
-    const isSide2Visible = !side1.classList.contains('hidden');
-    
-    if (isSide2Visible) {
-        col_off.classList.add('hidden');
+        menu_off.classList.remove('hidden');
+    });
+
+    menu_off.addEventListener('click', () => {
         col1.classList.remove('hidden');
-    } 
-  })
+        menu_off.classList.add('hidden');
+    })
 }
 
 
