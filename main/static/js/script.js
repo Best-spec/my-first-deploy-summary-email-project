@@ -2,7 +2,7 @@
 import { setDateRange1, setDateRange2, get_btn_id, getDateRange1 } from './datetime.js';
 // import { periodHandle, drawChart } from './dropdownAggregated.js';
 import Appfetch from './fetchDate/Appfetch.js';
-import { dataLineChart } from './fetchDate/aggreateLine.js'
+import { toggle_period_lineChart } from './fetchDate/aggreateLine.js'
 
 let appInstance;
 document.addEventListener('DOMContentLoaded', async () => {
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   appInstance.init();
   sidebar_toggle();
   analysisOpen();
-  dataLineChart();
+  toggle_period_lineChart();
 });
 
 // Setup CSRF token for AJAX requests

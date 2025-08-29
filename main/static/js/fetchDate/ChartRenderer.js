@@ -1,8 +1,7 @@
 import { renderAutoChart } from "../charts.js";
 import { renderPieChartBoxes } from "../charts.js";
 import { line } from './mock.js';
-import { dataLineChart, doFetch } from "./aggreateLine.js";
-// import { aggregateByRange } from "../aggregateBy.js";  
+import { renderLineChart } from "./aggreateLine.js";
 
 class ChartRenderer {
   constructor() {
@@ -118,35 +117,7 @@ class ChartRenderer {
       this.titlechart5.innerHTML = 'Appointment Type By Language';
       this.titleline.innerHTML = 'Grand Total By Email Type (LineChart)';
 
-
-      // renderAutoChart(line, {
-      //   canvasId: 'line-chart-canvas',
-      //   typeColors: 'by-type',
-      //   chartType: 'line',       // 📌 กราฟเส้น
-      //   colorMode: 'dataset',    // สีตาม dataset
-      //   yScale: 'logarithmic',        // แกน Y เส้นตรง
-
-      //   // ✅ แต่งเส้นให้สวย
-      //   datasetStyle: {
-      //     borderWidth: 3,        // เส้นหนา
-      //     tension: 0.45,         // โค้งนุ่ม
-      //     fill: true,            // เติมสีใต้เส้น
-      //     backgroundOpacity: 0.18,
-      //     pointRadius: 5,        // จุดใหญ่ขึ้น
-      //     pointHoverRadius: 8
-      //   },
-      //   useGradient: true,       // ✅ ไล่สีพื้นหลังใต้เส้น
-
-      //   // ✅ โชว์เลขบนจุด
-      //   showValueLabels: true,
-      //   valueLabelOptions: {
-      //     align: 'top',
-      //     fontSize: 14,          // ตัวเลขใหญ่ขึ้น
-      //     fontWeight: '600',
-      //     color: '#000'
-      //   }
-      // });
-      doFetch();
+      renderLineChart();
 
       renderAutoChart(data.chart1, {
         canvasId: 'bar-chart-canvas',

@@ -9,10 +9,10 @@
 <body>
     <!-- Header -->
         <header class="bg-white/90 backdrop-blur-sm shadow-lg border-b border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="px-4 sm:px-6 lg:px-20">
                 <div class="flex justify-between items-center h-16">
                     <!-- Logo/Brand -->
-                    <div class="flex">
+                    <div class="flex gap-4 justify-between">
                         <div id="menu-off" class="transition-opacity duration-300 opacity-100 hover:bg-gray-300 hover:rounded-lg">
                             <svg width="35" height="35" viewBox="0 0 24 24" fill="none">
                             <path d="M5.5 6L11.5 12L5.5 18" stroke="black" stroke-linecap="round" stroke-linejoin="round" />
@@ -52,7 +52,7 @@
                             {% csrf_token %}
                             <button 
                                 type="submit"
-                                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+                                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg hidden lg:block"
                             >
                                 ออกจากระบบ
                             </button>
