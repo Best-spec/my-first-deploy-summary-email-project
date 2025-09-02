@@ -6,17 +6,17 @@ from django.views.decorators.http import require_POST
 from main.models import UploadedFile
 from . import constants
 from main.utils.cache_control import clear_all_caches
+from django.contrib.auth.decorators import permission_required
 
 @login_required
 @ensure_csrf_cookie
 def index(request):
-    files = UploadedFile.objects.all()
     context = {
-        'files': files,
         'analysis_actions': constants.ANALYSIS_ACTIONS.values(),
     }
     return render(request, 'main/index.html', context)
 
+@permission_required('main.add_uploadedfile', raise_exception=True)
 def upload_file(request):
     if request.method == 'POST':
         files = request.FILES.getlist('files')
@@ -35,7 +35,9 @@ def upload_file(request):
                         })
                     uploaded_file = UploadedFile.objects.create(
                         name=file.name,
-                        file=file
+                        file=file,
+                        uploaded_by=request.user
+
                     )
                     uploaded_files.append({
                         'id': uploaded_file.id,
@@ -67,7 +69,7 @@ def upload_file(request):
         'error': 'Invalid request method'
     })
 
-
+@permission_required('main.delete_uploadedfile', raise_exception=True)
 @require_POST
 def delete_uploaded_file(request):
     file_id = request.POST.get('file_id')
@@ -83,7 +85,7 @@ def delete_uploaded_file(request):
     except UploadedFile.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'File not found'})
 
-
+@permission_required('main.delete_uploadedfile', raise_exception=True)
 @login_required
 @require_POST
 def delete_all_files(request):
