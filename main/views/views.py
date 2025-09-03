@@ -7,12 +7,21 @@ from main.models import UploadedFile
 from . import constants
 from main.utils.cache_control import clear_all_caches
 from django.contrib.auth.decorators import permission_required
+from django.utils.safestring import mark_safe
+import json
 
 @login_required
 @ensure_csrf_cookie
 def index(request):
     context = {
         'analysis_actions': constants.ANALYSIS_ACTIONS.values(),
+        'permissions': mark_safe(json.dumps({
+            "can_delete": request.user.has_perm("main.delete_uploadedfile"),
+            "is_superuser": request.user.is_superuser,
+            "is_staff": request.user.is_staff,
+            "user_permissions": list(request.user.get_all_permissions()),
+            "can_view": request.user.is_staff,
+        }))
     }
     return render(request, 'main/index.html', context)
 
