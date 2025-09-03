@@ -2,7 +2,9 @@ import { renderAutoChart } from "../charts.js";
 import { renderPieChartBoxes } from "../charts.js";
 import { line } from './mock.js';
 import { renderLineChart } from "./aggreateLine.js";
+import { permissions } from "../config.js";
 
+const perm = permissions()
 class ChartRenderer {
   constructor() {
     this.showChart1Element = document.getElementById('row-1col');
@@ -78,19 +80,22 @@ class ChartRenderer {
     console.log('from rendercharts data: ', data);
 
     if (actionId === 'top-center') {
-      this.showChart1Element.classList.remove('hidden');
-      this.titlechart3.innerHTML = 'Top Appointment & Appointment Recommended 20 Center';
-      this.titlechart4.innerHTML = 'Top Total 20 Center';
-      this.barChartBox3.classList.remove('hidden');
-      this.barChartBox4.classList.remove('hidden');
+      if (perm.isStaff) {
+        this.titlechart3.innerHTML = 'Top Appointment & Appointment Recommended 20 Center';
+        this.barChartBox3.classList.remove('hidden');
 
-      renderAutoChart(data.chart1, {
-        canvasId: 'bar-chart-canvas3',
-        typeColors: 'top-center-first',
-        chartType: 'bar',
-        colorMode: 'dataset',
-        yScale: 'logarithmic'
-      });
+        renderAutoChart(data.chart1, {
+          canvasId: 'bar-chart-canvas3',
+          typeColors: 'top-center-first',
+          chartType: 'bar',
+          colorMode: 'dataset',
+          yScale: 'logarithmic'
+        });
+      }
+
+      this.showChart1Element.classList.remove('hidden');
+      this.titlechart4.innerHTML = 'Top Total 20 Center';
+      this.barChartBox4.classList.remove('hidden');
 
       renderAutoChart(data.chart2, {
         canvasId: 'bar-chart-canvas4',
@@ -101,21 +106,51 @@ class ChartRenderer {
       });
 
     } else if (actionId === 'total-month') {
-      this.showChart1Element.classList.remove('hidden');
+      if (perm.isStaff) {
+        console.log('staff เลือกกราฟแล้ว')
+        this.showChart1Element.classList.remove('hidden');
+        this.barChartBox3.classList.remove('hidden');
+        this.barChartBox4.classList.remove('hidden');
+        this.barChartBox5.classList.remove('hidden');
+        this.lineChartBox.classList.remove('hidden');
+
+        this.titlechart3.innerHTML = 'Total Email Type By Language';
+        this.titlechart4.innerHTML = 'Inquiry Type By Language';
+        this.titlechart5.innerHTML = 'Appointment Type By Language';
+        this.titleline.innerHTML = 'Grand Total By Email Type (LineChart)';
+        renderAutoChart(data.chart3, {
+          canvasId: 'bar-chart-canvas3',
+          typeColors: 'group-country',
+          chartType: 'bar',
+          colorMode: 'dataset',
+          yScale: 'logarithmic'
+        });
+  
+        renderAutoChart(data.chart4, {
+          canvasId: 'bar-chart-canvas4',
+          typeColors: 'group-country',
+          chartType: 'bar',
+          colorMode: 'dataset',
+          yScale: 'logarithmic'
+        });
+  
+        renderAutoChart(data.chart5, {
+          canvasId: 'bar-chart-canvas5',
+          typeColors: 'group-country',
+          chartType: 'bar',
+          colorMode: 'dataset',
+          yScale: 'logarithmic'
+        });
+  
+        renderPieChartBoxes(Object.keys(data.chart6), data.chart6, 'colorByCountry');
+      }
+
       this.showChart2Element.classList.remove('hidden');
       this.barChartBox.classList.remove('hidden');
-      this.barChartBox2.classList.remove('hidden'); 
-      this.barChartBox3.classList.remove('hidden');
-      this.barChartBox4.classList.remove('hidden');
-      this.barChartBox5.classList.remove('hidden');
-      this.lineChartBox.classList.remove('hidden');
+      this.barChartBox2.classList.remove('hidden');
 
       this.titlechart.innerHTML = 'Grand Total By Language';
       this.titlechart2.innerHTML = 'Grand Total By Email Type';
-      this.titlechart3.innerHTML = 'Total Email Type By Language';
-      this.titlechart4.innerHTML = 'Inquiry Type By Language';
-      this.titlechart5.innerHTML = 'Appointment Type By Language';
-      this.titleline.innerHTML = 'Grand Total By Email Type (LineChart)';
 
       renderLineChart();
 
@@ -135,46 +170,9 @@ class ChartRenderer {
         yScale: 'logarithmic'
       });
 
-      renderAutoChart(data.chart3, {
-        canvasId: 'bar-chart-canvas3',
-        typeColors: 'group-country',
-        chartType: 'bar',
-        colorMode: 'dataset',
-        yScale: 'logarithmic'
-      });
 
-      renderAutoChart(data.chart4, {
-        canvasId: 'bar-chart-canvas4',
-        typeColors: 'group-country',
-        chartType: 'bar',
-        colorMode: 'dataset',
-        yScale: 'logarithmic'
-      });
-
-      renderAutoChart(data.chart5, {
-        canvasId: 'bar-chart-canvas5',
-        typeColors: 'group-country',
-        chartType: 'bar',
-        colorMode: 'dataset',
-        yScale: 'logarithmic'
-      });
-
-      renderPieChartBoxes(Object.keys(data.chart6), data.chart6, 'colorByCountry');
-
-    } else if (actionId === 'plot-all') {
-      this.showChart1Element.classList.remove('hidden');
-      this.barChartBox.classList.remove('hidden');
-      this.titlechart.innerHTML = 'Total Email by type';
-
-      renderAutoChart(data.chart1, {
-        canvasId: 'bar-chart-canvas',
-        typeColors: 'by-type',
-        chartType: 'bar',
-        colorMode: 'dataset',
-        yScale: 'logarithmic'
-      });
-
-    } else {
+    } 
+    else {
       console.warn("Unknown data format for chart rendering:", data);
     }
   }
