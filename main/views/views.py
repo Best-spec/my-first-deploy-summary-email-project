@@ -3,6 +3,8 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
+from django.contrib.auth import logout
+from django.shortcuts import redirect
 from main.models import UploadedFile
 from . import constants
 from main.utils.cache_control import clear_all_caches
@@ -110,5 +112,15 @@ def delete_all_files(request):
         return JsonResponse({"success": True, "message": f"ลบ {count} ไฟล์เรียบร้อย"})
     except Exception as e:
         return JsonResponse({"success": False, "message": str(e)})
+    
+@login_required
+@require_POST
+def logout_view(request):
+    user = request.user
+    if user.is_authenticated:
+        print(f"ผู้ใช้ {user.username} ออกจากระบบ")
+        clear_all_caches()
+    logout(request)
+    return redirect('/')
 
     

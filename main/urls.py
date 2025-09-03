@@ -15,7 +15,7 @@ urlpatterns = [
     path("debug/db/", debug.db_summary),
     path("debug/db/<str:model_name>/", debug.list_model_data),
     path('login/', auth_views.LoginView.as_view(template_name='auth/login.html'), name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
+    path('logout/', views.logout_view, name='logout'),
     path('upload/', views.upload_file, name='upload_file'),
     path('load_files/', load_files.list_uploaded_files, name='load_file'),
     path('delete_file/', views.delete_uploaded_file, name='delete_file'),
