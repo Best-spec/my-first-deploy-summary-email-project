@@ -1,10 +1,12 @@
 
 import { setDateRange1, setDateRange2, get_btn_id, getDateRange1 } from './datetime.js';
-// import { periodHandle, drawChart } from './dropdownAggregated.js';
 import Appfetch from './fetchDate/Appfetch.js';
 import { toggle_period_lineChart } from './fetchDate/aggreateLine.js'
+import { permissions } from './config.js';
 
 let appInstance;
+const perm = permissions()
+Object.keys(perm).forEach(key => {console.log(key, perm[key])})
 document.addEventListener('DOMContentLoaded', async () => {
   await loadFiles();
   renderFiles();
@@ -14,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   sidebar_toggle();
   analysisOpen();
   toggle_period_lineChart();
-  console.log = function () {};
+//   console.log = function () {};
 });
 
 // Setup CSRF token for AJAX requests
@@ -222,7 +224,6 @@ document.getElementById('uploadArea').addEventListener('click', () => {
 // Drag and Drop
 document.getElementById('fileInput').addEventListener('change', async (e) => {
     const selectedFiles = Array.from(e.target.files);
-    // selectedFiles.forEach(file => addFile(file));
     uploadToModels(selectedFiles);
     e.target.value = ''; // เคลียร์ input
 });
@@ -274,132 +275,128 @@ function analysisOpen() {
         // wealcomeData.classList.add('hidden');
         showdata.classList.remove('hidden');
     });
-  fetch('/analyze-all/')
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        // document.getElementById('kpi-container').innerHTML = data.results;
-        // มึงจะโชว์ตารางหรือกราฟก็ได้ตรงนี้
-      } else {
-        showErrorToast("เกิดข้อผิดพลาด ดึงข้อมูลไม่ได้", "red")
-      }
-    })
 }
 
 
 
 async function deleteFile(fileId) {
-    const fileElement = document.querySelector(`[data-file-id="${fileId}"]`);
-    
-    if (!fileElement) {
-        alert("ลบไม่สำเร็จ: ไม่เจอ element");
-        return;
-    }
-
-    // แสดง loading state บน element ที่จะลบ
-    const originalContent = fileElement.innerHTML;
-    fileElement.innerHTML = `
-        <div class="flex items-center justify-between">
-            <span class="text-gray-500">กำลังลบ...</span>
-            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></div>
-        </div>
-    `;
-
-    try {
-        // ยิง POST ไปลบที่ backend
-        const response = await fetch('/delete_file/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: `file_id=${fileId}`
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            // แสดงข้อความสำเร็จ
-            showSuccessToast('ลบไฟล์สำเร็จ');
-            
-            // เพิ่ม animation ก่อนลบ
-            fileElement.classList.add('slide-out', 'opacity-50');
-            
-            // รอ animation เสร็จแล้ว reload หน้าเว็บ
-            setTimeout(async () => {
-                await loadFiles();
-                renderFiles();
-                updateFileCount();
-            }, 300);
-            
-        } else {
-            // คืนค่า original content กรณีลบไม่สำเร็จ
-            fileElement.innerHTML = originalContent;
-            showErrorToast(data.message || 'ลบไม่สำเร็จ');
+    if (perm.canDelete) {
+        
+        const fileElement = document.querySelector(`[data-file-id="${fileId}"]`);
+        
+        if (!fileElement) {
+            alert("ลบไม่สำเร็จ: ไม่เจอ element");
+            return;
         }
-        
-    } catch (err) {
-        console.error('ลบไฟล์ผิดพลาด:', err);
-        
-        // คืนค่า original content กรณีเกิดข้อผิดพลาด
-        fileElement.innerHTML = originalContent;
-        showErrorToast('ลบไฟล์ผิดพลาด');
+    
+        // แสดง loading state บน element ที่จะลบ
+        const originalContent = fileElement.innerHTML;
+        fileElement.innerHTML = `
+            <div class="flex items-center justify-between">
+                <span class="text-gray-500">กำลังลบ...</span>
+                <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></div>
+            </div>
+        `;
+    
+        try {
+            // ยิง POST ไปลบที่ backend
+            const response = await fetch('/delete_file/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: `file_id=${fileId}`
+            });
+    
+            const data = await response.json();
+    
+            if (data.success) {
+                // แสดงข้อความสำเร็จ
+                showSuccessToast('ลบไฟล์สำเร็จ');
+                
+                // เพิ่ม animation ก่อนลบ
+                fileElement.classList.add('slide-out', 'opacity-50');
+                
+                // รอ animation เสร็จแล้ว reload หน้าเว็บ
+                setTimeout(async () => {
+                    await loadFiles();
+                    renderFiles();
+                    updateFileCount();
+                }, 300);
+                
+            } else {
+                // คืนค่า original content กรณีลบไม่สำเร็จ
+                fileElement.innerHTML = originalContent;
+                showErrorToast(data.message || 'ลบไม่สำเร็จ');
+            }
+            
+        } catch (err) {
+            console.error('ลบไฟล์ผิดพลาด:', err);
+            
+            // คืนค่า original content กรณีเกิดข้อผิดพลาด
+            fileElement.innerHTML = originalContent;
+            showErrorToast('ลบไฟล์ผิดพลาด');
+        }
     }
 }
 
 window.deleteFile = deleteFile;
 
-
 async function deleteAllFiles() {
-    const fileListContainer = document.querySelector('.file-item'); // ปรับ selector ให้ตรงกับ container ของไฟล์
-    if (!fileListContainer) {
-        alert("ไม่พบรายการไฟล์");
-        return;
-    }
+    if (perm.canDelete) {
+        console.log('Staff กดลบไฟล์ทั้งหมดแล้ว')
 
-    // backup content
-    const originalContent = fileListContainer.innerHTML;
-
-    // แสดง loading state
-    fileListContainer.innerHTML = `
-        <div class="flex items-center justify-center py-4">
-            <span class="text-gray-500 mr-2">กำลังลบไฟล์ทั้งหมด...</span>
-            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></div>
-        </div>
-    `;
-
-    try {
-        const response = await fetch('/delete_all_files/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: '' // ไม่มีพารามิเตอร์
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            showSuccessToast('ลบไฟล์ทั้งหมดสำเร็จ');
-
-            // รอให้ user เห็นข้อความก่อน reload
-            setTimeout(async () => {
-                await loadFiles();
-                renderFiles();
-                updateFileCount();
-            }, 300);
-
-        } else {
-            // คืนค่าเดิมถ้าไม่สำเร็จ
-            fileListContainer.innerHTML = originalContent;
-            showErrorToast(data.message || 'ลบไฟล์ทั้งหมดไม่สำเร็จ');
+        const fileListContainer = document.querySelector('.file-item'); // ปรับ selector ให้ตรงกับ container ของไฟล์
+        if (!fileListContainer) {
+            alert("ไม่พบรายการไฟล์");
+            return;
         }
-
-    } catch (err) {
-        console.error('ลบไฟล์ทั้งหมดผิดพลาด:', err);
-        fileListContainer.innerHTML = originalContent;
-        showErrorToast('เกิดข้อผิดพลาดขณะลบไฟล์ทั้งหมด');
+    
+        // backup content
+        const originalContent = fileListContainer.innerHTML;
+    
+        // แสดง loading state
+        fileListContainer.innerHTML = `
+            <div class="flex items-center justify-center py-4">
+                <span class="text-gray-500 mr-2">กำลังลบไฟล์ทั้งหมด...</span>
+                <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></div>
+            </div>
+        `;
+    
+        try {
+            const response = await fetch('/delete_all_files/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: '' // ไม่มีพารามิเตอร์
+            });
+    
+            const data = await response.json();
+    
+            if (data.success) {
+                showSuccessToast('ลบไฟล์ทั้งหมดสำเร็จ');
+    
+                // รอให้ user เห็นข้อความก่อน reload
+                setTimeout(async () => {
+                    await loadFiles();
+                    renderFiles();
+                    updateFileCount();
+                }, 300);
+    
+            } else {
+                // คืนค่าเดิมถ้าไม่สำเร็จ
+                fileListContainer.innerHTML = originalContent;
+                showErrorToast(data.message || 'ลบไฟล์ทั้งหมดไม่สำเร็จ');
+            }
+    
+        } catch (err) {
+            console.error('ลบไฟล์ทั้งหมดผิดพลาด:', err);
+            fileListContainer.innerHTML = originalContent;
+            showErrorToast('เกิดข้อผิดพลาดขณะลบไฟล์ทั้งหมด');
+        }
     }
 }
 
