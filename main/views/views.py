@@ -18,11 +18,12 @@ def index(request):
     context = {
         'analysis_actions': constants.ANALYSIS_ACTIONS.values(),
         'permissions': mark_safe(json.dumps({
+            "username": request.user.username,
             "can_delete": request.user.has_perm("main.delete_uploadedfile"),
             "is_superuser": request.user.is_superuser,
             "is_staff": request.user.is_staff,
             "user_permissions": list(request.user.get_all_permissions()),
-            "can_view": request.user.is_staff,
+            "can_view": request.user.has_perm("main.view_uploadedfile")
         }))
     }
     return render(request, 'main/index.html', context)
@@ -102,7 +103,8 @@ def delete_uploaded_file(request):
 def delete_all_files(request):
     try:
         count = 0
-        for obj in UploadedFile.objects.all():
+        user = request.user
+        for obj in UploadedFile.objects.filter(uploaded_by=user):
             print(f"🧹 ลบ record id: {obj.id} | file: {obj.file.name}")
             if obj.file:
                 obj.file.delete(save=False)  # ✅ ลบจาก disk
@@ -122,5 +124,3 @@ def logout_view(request):
         clear_all_caches()
     logout(request)
     return redirect('/')
-
-    
