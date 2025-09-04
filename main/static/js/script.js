@@ -3,6 +3,7 @@ import { setDateRange1, setDateRange2, get_btn_id, getDateRange1 } from './datet
 import Appfetch from './fetchDate/Appfetch.js';
 import { toggle_period_lineChart } from './fetchDate/aggreateLine.js'
 import { permissions } from './config.js';
+import { hiddenSidebar } from './perm_ui.js';
 
 let appInstance;
 const perm = permissions()
@@ -38,6 +39,8 @@ function getCookie(name) {
 const csrftoken = getCookie('csrftoken');
 let files = [];
 let fileIdCounter = 1;
+
+if (!perm.isStaff) {hiddenSidebar()}
 
 function sidebar_toggle() {
     const col1 = document.getElementById('col1');
