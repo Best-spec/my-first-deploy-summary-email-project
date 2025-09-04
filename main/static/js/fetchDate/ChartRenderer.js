@@ -91,85 +91,89 @@ class ChartRenderer {
           colorMode: 'dataset',
           yScale: 'logarithmic'
         });
-      }
-
-      this.showChart1Element.classList.remove('hidden');
-      this.titlechart4.innerHTML = 'Top Total 20 Center';
-      this.barChartBox4.classList.remove('hidden');
-
-      renderAutoChart(data.chart2, {
-        canvasId: 'bar-chart-canvas4',
-        typeColors: 'top-center',
-        chartType: 'bar',
-        colorMode: 'point',
-        yScale: 'logarithmic'
-      });
-
-    } else if (actionId === 'total-month') {
-      if (perm.isStaff) {
-        console.log('staff เลือกกราฟแล้ว')
+      } 
+      if(perm.canView) {
         this.showChart1Element.classList.remove('hidden');
-        this.barChartBox3.classList.remove('hidden');
+        this.titlechart4.innerHTML = 'Top Total 20 Center';
         this.barChartBox4.classList.remove('hidden');
-        this.barChartBox5.classList.remove('hidden');
-        this.lineChartBox.classList.remove('hidden');
-
-        this.titlechart3.innerHTML = 'Total Email Type By Language';
-        this.titlechart4.innerHTML = 'Inquiry Type By Language';
-        this.titlechart5.innerHTML = 'Appointment Type By Language';
-        this.titleline.innerHTML = 'Grand Total By Email Type (LineChart)';
-        renderAutoChart(data.chart3, {
-          canvasId: 'bar-chart-canvas3',
-          typeColors: 'group-country',
-          chartType: 'bar',
-          colorMode: 'dataset',
-          yScale: 'logarithmic'
-        });
   
-        renderAutoChart(data.chart4, {
+        renderAutoChart(data.chart2, {
           canvasId: 'bar-chart-canvas4',
-          typeColors: 'group-country',
+          typeColors: 'top-center',
           chartType: 'bar',
-          colorMode: 'dataset',
+          colorMode: 'point',
           yScale: 'logarithmic'
         });
-  
-        renderAutoChart(data.chart5, {
-          canvasId: 'bar-chart-canvas5',
-          typeColors: 'group-country',
-          chartType: 'bar',
-          colorMode: 'dataset',
-          yScale: 'logarithmic'
-        });
-  
-        renderPieChartBoxes(Object.keys(data.chart6), data.chart6, 'colorByCountry');
       }
 
-      this.showChart2Element.classList.remove('hidden');
-      this.barChartBox.classList.remove('hidden');
-      this.barChartBox2.classList.remove('hidden');
+    } 
+    else if (actionId === 'total-month') {
+        if (perm.isStaff) {
+          console.log('staff เลือกกราฟแล้ว')
+          this.showChart1Element.classList.remove('hidden');
+          this.barChartBox3.classList.remove('hidden');
+          this.barChartBox4.classList.remove('hidden');
+          this.barChartBox5.classList.remove('hidden');
+          this.lineChartBox.classList.remove('hidden');
 
-      this.titlechart.innerHTML = 'Grand Total By Language';
-      this.titlechart2.innerHTML = 'Grand Total By Email Type';
+          this.titlechart3.innerHTML = 'Total Email Type By Language';
+          this.titlechart4.innerHTML = 'Inquiry Type By Language';
+          this.titlechart5.innerHTML = 'Appointment Type By Language';
+          this.titleline.innerHTML = 'Grand Total By Email Type (LineChart)';
 
-      renderLineChart();
+          renderLineChart();
 
-      renderAutoChart(data.chart1, {
-        canvasId: 'bar-chart-canvas',
-        typeColors: 'group-country',
-        chartType: 'bar',
-        colorMode: 'point',
-        yScale: 'logarithmic'
-      });
+          renderAutoChart(data.chart3, {
+            canvasId: 'bar-chart-canvas3',
+            typeColors: 'group-country',
+            chartType: 'bar',
+            colorMode: 'dataset',
+            yScale: 'logarithmic'
+          });
+    
+          renderAutoChart(data.chart4, {
+            canvasId: 'bar-chart-canvas4',
+            typeColors: 'group-country',
+            chartType: 'bar',
+            colorMode: 'dataset',
+            yScale: 'logarithmic'
+          });
+    
+          renderAutoChart(data.chart5, {
+            canvasId: 'bar-chart-canvas5',
+            typeColors: 'group-country',
+            chartType: 'bar',
+            colorMode: 'dataset',
+            yScale: 'logarithmic'
+          });
+    
+          renderPieChartBoxes(Object.keys(data.chart6), data.chart6, 'colorByCountry');
 
-      renderAutoChart(data.chart2, {
-        canvasId: 'bar-chart-canvas2',
-        typeColors: 'by-type',
-        chartType: 'bar',
-        colorMode: 'dataset',
-        yScale: 'logarithmic'
-      });
+        } else if (perm.canView){
+          console.log("ดูได้")
+          this.showChart2Element.classList.remove('hidden');
+          this.barChartBox.classList.remove('hidden');
+          this.barChartBox2.classList.remove('hidden');
 
+          this.titlechart.innerHTML = 'Grand Total By Language';
+          this.titlechart2.innerHTML = 'Grand Total By Email Type';
+
+          renderAutoChart(data.chart1, {
+            canvasId: 'bar-chart-canvas',
+            typeColors: 'group-country',
+            chartType: 'bar',
+            colorMode: 'point',
+            yScale: 'logarithmic'
+          });
+
+          renderAutoChart(data.chart2, {
+            canvasId: 'bar-chart-canvas2',
+            typeColors: 'by-type',
+            chartType: 'bar',
+            colorMode: 'dataset',
+            yScale: 'logarithmic'
+          });
+        }
 
     } 
     else {
