@@ -4,8 +4,8 @@ from main.models import UploadedFile
 
 
 def list_uploaded_files(request):
-    if request.user.groups.filter(name='admin').exists() or request.user.is_superuser:
-        files = UploadedFile.objects.all()
+    if request.user.groups.filter(name='admin').exists() or request.user.is_superuser or request.user.is_staff:
+        files = UploadedFile.objects.all()  
     else:
         files = UploadedFile.objects.filter(uploaded_by=request.user)
         
