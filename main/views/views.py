@@ -104,7 +104,13 @@ def delete_all_files(request):
     try:
         count = 0
         user = request.user
-        for obj in UploadedFile.objects.filter(uploaded_by=user):
+
+        if (user.is_staff):
+            upfiles = UploadedFile.objects.all()
+        else :
+            upfiles = UploadedFile.objects.filter(user)
+
+        for obj in upfiles:
             print(f"🧹 ลบ record id: {obj.id} | file: {obj.file.name}")
             if obj.file:
                 obj.file.delete(save=False)  # ✅ ลบจาก disk
