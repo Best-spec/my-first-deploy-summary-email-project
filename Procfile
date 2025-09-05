@@ -1,1 +1,1 @@
-web: gunicorn filemanager.wsgi:application
+web: gunicorn main.settings.wsgi:application --bind 0.0.0.0:$PORT
