@@ -22,6 +22,7 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG") == "True"
+PRODUCTION = os.getenv("PRODUCTION", "False") == "True"
 
 
 # Quick-start development settings - unsuitable for production
@@ -82,15 +83,21 @@ WSGI_APPLICATION = 'main.settings.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if PRODUCTION:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.getenv("DATABASE_URL"),
+            conn_max_age=600,   # ต่อ connection ค้างไว้นาน ๆ ให้เร็วขึ้น
+            ssl_require=True    # ถ้า host ต้องการ SSL
+        )
     }
-    # 'default': dj_database_url.config(
-    #     default=os.getenv("DATABASE_URL")
-    # )    
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
