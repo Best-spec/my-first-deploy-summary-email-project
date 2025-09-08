@@ -7,3 +7,4 @@ dj_database_url
 pytest
 dotenv
 djangorestframework
+polars

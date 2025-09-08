@@ -17,6 +17,13 @@
             
             <form class="space-y-6" method="post">
                 {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                <div class="bg-red-100 text-red-700 px-4 py-2 rounded">
+                    {% for err in form.non_field_errors %}<p>{{ err }}</p>{% endfor %}
+                </div>
+                {% endif %}
+
                 <div class="space-y-2">
                     <label class="block text-sm font-semibold text-gray-700">ชื่อผู้ใช้</label>
                     <input 

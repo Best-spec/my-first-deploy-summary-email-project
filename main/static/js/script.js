@@ -579,7 +579,8 @@ export function initComparePicker() {
         'Last Month': [
         moment().subtract(1, 'month').startOf('month'),
         moment().subtract(1, 'month').endOf('month')
-        ]
+        ],
+        'last 3 months': [moment().subtract(3, 'months'), moment()] // ตัวอย่างช่วง 3 เดือน
     }
     }, function(start, end, label) {
     // เวลาเลือกจาก predefined หรือเลือกเอง

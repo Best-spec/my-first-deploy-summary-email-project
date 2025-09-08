@@ -149,7 +149,8 @@ class ChartRenderer {
     
           renderPieChartBoxes(Object.keys(data.chart6), data.chart6, 'colorByCountry');
 
-        } else if (perm.canView){
+        }
+        if (perm.canView){
           console.log("ดูได้")
           this.showChart2Element.classList.remove('hidden');
           this.barChartBox.classList.remove('hidden');

@@ -45,7 +45,8 @@ class DatePickerManager {
         'Last Month': [
           moment().subtract(1, 'month').startOf('month'),
           moment().subtract(1, 'month').endOf('month')
-        ]
+        ],
+        'period': [moment().subtract(3, 'months'), moment()] // ตัวอย่างช่วง 3 เดือน
       }
     }, this.handleMainDateApply);
   }
@@ -154,6 +155,7 @@ class DatePickerManager {
   }
 
   init() {
+    console.log("Initializing DatePickerManager...");
     this.initMainDatePicker();
     this.initToggleListener();
     setTimeout(() => {
