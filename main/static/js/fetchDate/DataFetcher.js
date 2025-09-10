@@ -74,6 +74,25 @@ class DataFetcher {
       controller = null;
     }
   }
+
+  static async fetchPeriodData() {
+    try {
+      const res = await fetch('/get_period/', {
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken(),
+        },
+      });
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+      const json = await res.json();
+      console.log('Period data from backend:', json);
+      return json;
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }
 
 export default DataFetcher;

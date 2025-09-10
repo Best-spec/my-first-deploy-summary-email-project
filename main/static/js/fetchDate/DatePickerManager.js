@@ -3,6 +3,7 @@
 // หน้าที่: จัดการ Date Range Pickers และ Toggle สำหรับการเปรียบเทียบ
 // ===================================
 import { getDateRange1, getDateRange2, setDateRange1, setDateRange2, get_btn_id } from '../datetime.js';
+import { period } from '../script.js';
 
 class DatePickerManager {
   constructor(analyzeCallback) {
@@ -46,7 +47,7 @@ class DatePickerManager {
           moment().subtract(1, 'month').startOf('month'),
           moment().subtract(1, 'month').endOf('month')
         ],
-        'period': [moment().subtract(3, 'months'), moment()] // ตัวอย่างช่วง 3 เดือน
+        'Start - End': [moment(period.min), moment(period.max)] // ตัวอย่างช่วง 3 เดือน
       }
     }, this.handleMainDateApply);
   }
@@ -155,7 +156,6 @@ class DatePickerManager {
   }
 
   init() {
-    console.log("Initializing DatePickerManager...");
     this.initMainDatePicker();
     this.initToggleListener();
     setTimeout(() => {

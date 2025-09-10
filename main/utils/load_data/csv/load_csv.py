@@ -5,25 +5,23 @@ import polars as pl
 from pathlib import Path
 
 class LoadAllCSV(View):
-    def get(self, request, *args, **kwargs):
-        folder_path = Path(settings.MEDIA_ROOT) / 'uploads'
-        csv_files = list(folder_path.glob("*.csv"))
+    def get_folder_path(self):
+        return Path(settings.MEDIA_ROOT) / 'uploads'
 
-        # if not csv_files:
-        #     return JsonResponse({"error": "No matching CSV files found."}, status=404)
+    def load_csv_files(self, folder_path):
+        return list(folder_path.glob("*.csv"))
 
-        try:
-            print("จํานวนไฟล์ที่นับได้:",len(csv_files))
-            frames = [pl.read_csv(f).lazy() for f in csv_files]
-            df = pl.concat(frames)
-            print(df.head())
-
-        #     summary = df.filter(pl.col("lang") == "Thai")\
-        #                 .groupby("email_type")\
-        #                 .agg(pl.count().alias("total"))\
-        #                 .sort("total", descending=True)\
-        #                 .collect()
-            return JsonResponse(safe=False)
-        
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
+    def read_csv_files(self, all_files, columns='Entry Date'):
+        return [pl.read_csv(f, columns=columns).lazy() for f in all_files]
+    
+    def sum_all_dataframes(self, frames):
+        if not frames:
+            return pl.DataFrame()
+        return pl.concat(frames).collect()
+    
+    def date_all_files(self):
+        folder_path = self.get_folder_path()
+        all_files = self.load_csv_files(folder_path)
+        lazy_frames = self.read_csv_files(all_files)
+        all_files = self.sum_all_dataframes(lazy_frames)
+        return all_files

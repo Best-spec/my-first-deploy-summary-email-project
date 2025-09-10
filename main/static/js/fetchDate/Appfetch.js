@@ -26,6 +26,17 @@ class Appfetch {
     this.datePickerManager.init(); 
   }
 
+  reloadDatePicker() {
+    console.log('Reloading DatePickerManager...');
+    // 🚨 ถ้ามี method cleanup ก็เรียกก่อน (ถ้ามี listener, timer)
+    if (this.datePickerManager?.destroy) {
+      this.datePickerManager.destroy();
+    }
+
+    // 🧼 จากนั้นสร้างใหม่
+    this.datePickerManager = new DatePickerManager(this.handleAnalysis.bind(this));
+  }
+
   setupAnalyzeButtons() {
     const buttons = document.querySelectorAll('.analyze-btn');
     buttons.forEach(btn => {

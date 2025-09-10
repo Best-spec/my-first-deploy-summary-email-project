@@ -2,12 +2,15 @@
 import { setDateRange1, setDateRange2, get_btn_id, getDateRange1 } from './datetime.js';
 import Appfetch from './fetchDate/Appfetch.js';
 import { toggle_period_lineChart } from './fetchDate/aggreateLine.js'
+import DataFetcher from './fetchDate/DataFetcher.js';
+import DatePickerManager from './fetchDate/DatePickerManager.js';
 import { permissions } from './config.js';
 import { hiddenSidebar } from './perm_ui.js';
 
 let appInstance;
 const perm = permissions()
-Object.keys(perm).forEach(key => {console.log(key, perm[key])})
+// Object.keys(perm).forEach(key => {console.log(key, perm[key])})
+// console.log('period:', period());
 document.addEventListener('DOMContentLoaded', async () => {
   await loadFiles();
   renderFiles();
@@ -17,7 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   sidebar_toggle();
   analysisOpen();
   toggle_period_lineChart();
-//   console.log = function () {};
+  console.log = function () {};
 });
 
 // Setup CSRF token for AJAX requests
@@ -38,6 +41,7 @@ function getCookie(name) {
 
 const csrftoken = getCookie('csrftoken');
 let files = [];
+export let period = {};
 let fileIdCounter = 1;
 
 if (!perm.isStaff) {hiddenSidebar()}
@@ -174,8 +178,10 @@ async function loadFiles() {
             return;
         }
         files = data.files;
+        period = await DataFetcher.fetchPeriodData();// อัปเดตช่วงวันที่ใน DatePickerManager
         
-
+        
+        
     } catch (err) {
         console.error('Error loading files:', err);
         showErrorToast('โหลดไฟล์ผิดพลาด');

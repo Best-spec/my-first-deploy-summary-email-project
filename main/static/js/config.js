@@ -1,5 +1,5 @@
 export function permissions() {
-    const permissionsData = JSON.parse(document.getElementById('permissions-data').textContent);
+    const permissionsData = JSON.parse(document.getElementById('permissions').textContent);
 
     const username = permissionsData.username
     const canDelete = permissionsData.can_delete
@@ -15,5 +15,13 @@ export function permissions() {
         isSuperUser,
         isStaff,
         userPermissions,
+    };
+}
+
+export function period() {
+    const periodData = JSON.parse(document.getElementById('period').textContent);
+    return {
+        min: periodData.min,
+        max: periodData.max,
     };
 }

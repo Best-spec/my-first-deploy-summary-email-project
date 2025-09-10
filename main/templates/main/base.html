@@ -39,8 +39,11 @@
     {% block extra_js %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- {% load static %} -->
-    <script id="permissions-data" type="application/json">
+    <script id="permissions" type="application/json">
         {{ permissions|safe }}
+    </script>
+    <script id="period" type="application/json">
+        {{ period|safe }}
     </script>
     <script src="{% static 'js/script.js' %}" type="module"></script>
     {% endblock %}
