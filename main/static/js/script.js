@@ -126,9 +126,10 @@ async function addFile(file) {
     };
     
     files.push(fileObj);
-    await loadFiles();
-    renderFiles();
-    updateFileCount();
+    // await loadFiles();
+    // renderFiles();
+    // updateFileCount();
+    // console.log('เพิ่มไฟล์:', fileObj);
 }
 
 async function uploadToModels(files) {
@@ -156,6 +157,10 @@ async function uploadToModels(files) {
 
         const data = await response.json();
         if (data.success) {
+            await loadFiles();
+            renderFiles();
+            updateFileCount();
+            console.log('อัปโหลดสำเร็จ:', data);
             showSuccessToast('อัปโหลดเสร็จเรียบร้อย');
         } else {
             console.error('อัปโหลดไม่สำเร็จ:', data.error);
@@ -217,6 +222,7 @@ function renderFiles() {
 
         fileItems.appendChild(fileElement);
     });
+    console.log('เรนเดอร์ไฟล์:', files);
 
 }
 
