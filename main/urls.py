@@ -8,7 +8,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from main.services.aggregator.views import AggregateView
 from . import debug
-from main.utils.load_data.csv.load_csv import LoadAllCSV
+# from main.utils.load_data.csv.load_csv import LoadAllCSV
 
 
 urlpatterns = [
@@ -24,5 +24,5 @@ urlpatterns = [
     path('analyze/', constants.analyze, name='analyze'),
     path('aggregate', AggregateView.as_view(), name='metrics-aggregate'),
     # path('get_period/', views.period, name='get_period'),
-    path("csv-summary/", LoadAllCSV.as_view(), name="csv-summary"),
+    # path("csv-summary/", LoadAllCSV.as_view(), name="csv-summary"),
 ]   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

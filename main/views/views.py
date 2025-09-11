@@ -10,7 +10,7 @@ from . import constants
 from main.utils.cache_control import clear_all_caches
 from django.contrib.auth.decorators import permission_required
 from django.utils.safestring import mark_safe
-from main.utils.read_period import period_min_max
+# from main.utils.read_period import period_min_max
 import json
 
 @login_required
@@ -26,7 +26,6 @@ def index(request):
             "user_permissions": list(request.user.get_all_permissions()),
             "can_view": request.user.has_perm("main.view_uploadedfile")
         })),
-        'period': mark_safe(json.dumps(period_min_max()))
 
     }
     return render(request, 'main/index.html', context)
@@ -134,5 +133,5 @@ def logout_view(request):
     logout(request)
     return redirect('/')
 
-def period(request):
-    return JsonResponse(period_min_max())
+# def period(request):
+#     return JsonResponse(period_min_max())
