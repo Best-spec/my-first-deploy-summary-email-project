@@ -23,6 +23,6 @@ urlpatterns = [
     path('delete_all_files/', views.delete_all_files, name='delete_all_files'),
     path('analyze/', constants.analyze, name='analyze'),
     path('aggregate', AggregateView.as_view(), name='metrics-aggregate'),
-    path('get_period/', views.period, name='get_period'),
+    # path('get_period/', views.period, name='get_period'),
     path("csv-summary/", LoadAllCSV.as_view(), name="csv-summary"),
 ]   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

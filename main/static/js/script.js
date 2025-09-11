@@ -3,7 +3,6 @@ import { setDateRange1, setDateRange2, get_btn_id, getDateRange1 } from './datet
 import Appfetch from './fetchDate/Appfetch.js';
 import { toggle_period_lineChart } from './fetchDate/aggreateLine.js'
 import DataFetcher from './fetchDate/DataFetcher.js';
-import DatePickerManager from './fetchDate/DatePickerManager.js';
 import { permissions } from './config.js';
 import { hiddenSidebar } from './perm_ui.js';
 
@@ -178,7 +177,6 @@ async function loadFiles() {
             return;
         }
         files = data.files;
-        period = await DataFetcher.fetchPeriodData();// อัปเดตช่วงวันที่ใน DatePickerManager
         
         
         
