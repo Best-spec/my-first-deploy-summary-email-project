@@ -45,32 +45,41 @@ def convert_csv_to_json(folder_path=settings.MEDIA_ROOT / 'uploads'):
 
     def safe_read(file, type_name):
         lang = extract_language(file)
+        print(f"\n📂 Reading file: {file} | lang={lang} | type={type_name}")
         try:
             df = pd.read_csv(file)
+            print(f"✅ Loaded {len(df)} rows from {file}")
 
-            # ทำให้แน่ใจว่า column ทั้งหมดเป็น string ก่อน strip
+            # ✅ Clean column names
             df.columns = [str(col).strip().replace('\ufeff', '') for col in df.columns]
 
-            # Add extra columns
+            # ✅ Add metadata
             df["Language"] = lang
             df["Type"] = type_name
 
-            # ลบ row ที่เป็น NaN ทั้งแถว
-            df.dropna(how='all', inplace=True)
+            # ❌ ไม่ต้องลบ NaN rows แล้วนะ!
 
-            # ป้องกัน error strip ใน value
+            # ✅ Clean each row safely
             records = []
-            for row in df.to_dict(orient="records"):
-                safe_row = {
-                    k: str(v).strip() if isinstance(v, str) else v
-                    for k, v in row.items()
-                }
-                records.append(safe_row)
+            for i, row in enumerate(df.to_dict(orient="records")):
+                try:
+                    safe_row = {
+                        k.strip() if isinstance(k, str) else str(k): (
+                            v.strip() if isinstance(v, str) else v
+                        )
+                        for k, v in row.items()
+                    }
+                    records.append(safe_row)
+                except Exception as e:
+                    print(f"❌ Row {i+1} failed to clean in {file}: {e}")
+                    print(f"   ↪️ Raw row: {row}")
 
             all_data.extend(records)
+            print(f"✅ Parsed {len(records)} clean rows (NaN kept) from {file}")
 
         except Exception as e:
-            print(f"🔥 Error reading {file}: {e}")
+            print(f"🔥 Failed to read {file}: {e}")
+
 
     # 📥 โหลด feedback
     for file in feedback_files:
