@@ -47,7 +47,7 @@ class DatePickerManager {
           moment().subtract(1, 'month').startOf('month'),
           moment().subtract(1, 'month').endOf('month')
         ],
-        // 'Start - End': [moment(), moment()] // ตัวอย่างช่วง 3 เดือน
+        // 'Start - End': [moment().subtract(5, 'month'), moment()]
       }
     }, this.handleMainDateApply);
   }

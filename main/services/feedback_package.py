@@ -90,8 +90,6 @@ def cal_FeedbackAndPackage(date_param):
 def find_FeedbackAndPackage(date_param):
     try:
         if len(date_param) <= 1:
-            # print(date_param, len(date_param))
-            # return [cal_FeedbackAndPackage(date_param[0])]
             table =  cal_FeedbackAndPackage(date_param[0])
             return {
                 "dataForTable": table,
@@ -102,13 +100,11 @@ def find_FeedbackAndPackage(date_param):
             print('มากกว่าสอง')
             data1 = cal_FeedbackAndPackage(date_param[0])
             data2 = cal_FeedbackAndPackage(date_param[1])
-            # return [Resultcompare(data1, data2, date_param)]
             table = Resultcompare(data1, data2, date_param)
             return {
                 "dataForTable": table,
                 "dataForChart": table
             }
-            # print(Resultcompare(data1, data2, date_param))
 
 
 
