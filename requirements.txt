@@ -7,4 +7,5 @@ dj_database_url
 pytest
 dotenv
 djangorestframework
+djangorestframework-simplejwt
 polars

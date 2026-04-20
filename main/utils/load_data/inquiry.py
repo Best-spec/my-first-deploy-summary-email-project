@@ -1,16 +1,16 @@
-from pathlib import Path
 from datetime import datetime
 import pandas as pd
 from django.conf import settings
 
 # ภาษาในชื่อไฟล์
 LANG_MAP = {
-    "-eng": "English",
-    "-thai": "Thai",
-    "-rus": "Russian",
-    "-ger": "German",
-    "-chi": "Chinese",
-    "-arab": "Arabic",
+    "-th": "Thai",
+    "-en": "English",
+    "-ar": "Arabic",
+    "-ru": "Russia",
+    "-de": "German",
+    "-zh-hans": "Chinese",
+    "-zh": "Chinese",
 }
 
 # 🔁 Cache
@@ -68,3 +68,9 @@ def load_csv_to_json(start_date=None, end_date=None):
     results = load_all_csv_files_to_json(start_date, end_date)
     _cached_data[cache_key] = results
     return results
+
+
+def reset_inquiry_cache():
+    global _cached_data
+    _cached_data = {}
+    print('🧹 Cleared inquiry cache')

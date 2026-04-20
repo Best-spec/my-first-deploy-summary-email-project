@@ -1,17 +1,26 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 from django.contrib.auth import logout
 from django.shortcuts import redirect
-from main.models import UploadedFile
-from . import constants
 from main.utils.cache_control import clear_all_caches
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import permission_required, login_required
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils.safestring import mark_safe
-# from main.utils.read_period import period_min_max
+from . import constants
 import json
+
+
+# Import upload service and file service
+from main.services.upload_service import (
+    process_uploaded_files,
+    get_all_uploaded_files,
+    get_uploaded_files_count
+)
+from main.services.file_service import (
+    delete_uploaded_file as delete_uploaded_file_service,
+    delete_all_uploaded_files as delete_all_uploaded_files_service,
+)
 
 @login_required
 @ensure_csrf_cookie
@@ -19,58 +28,46 @@ def index(request):
     context = {
         'analysis_actions': constants.ANALYSIS_ACTIONS.values(),
         'permissions': mark_safe(json.dumps({
-            "username": request.user.username,
-            "can_delete": request.user.has_perm("main.delete_uploadedfile"),
-            "is_superuser": request.user.is_superuser,
-            "is_staff": request.user.is_staff,
-            "user_permissions": list(request.user.get_all_permissions()),
-            "can_view": request.user.has_perm("main.view_uploadedfile")
+            'username': request.user.username,
+            'can_delete': request.user.has_perm('main.delete_uploadedfile'),
+            'is_superuser': request.user.is_superuser,
+            'is_staff': request.user.is_staff,
+            'user_permissions': list(request.user.get_all_permissions()),
+            'can_view': request.user.has_perm('main.view_uploadedfile'),
         })),
-
     }
     return render(request, 'main/index.html', context)
 
+
 @permission_required('main.add_uploadedfile', raise_exception=True)
 def upload_file(request):
+    """
+    Handle file upload requests.
+    
+    Only accepts POST requests with file(s) in the 'files' parameter.
+    Files are validated through the upload service.
+    """
     if request.method == 'POST':
         files = request.FILES.getlist('files')
         print("ไฟล์ที่รับมา:", request.FILES)
-        uploaded_files = []
-        # files_count = UploadedFile.objects.count()
-        allowed_extensions = ['.csv', '.xls', '.xlsx']
         
         try:
-            for file in files:
-                try:
-                    if not any(file.name.endswith(ext) for ext in allowed_extensions):
-                        return JsonResponse({
-                            'success': False,
-                            'error': f'ไฟล์ {file.name} ไม่ใช่ไฟล์ CSV หรือ Excel ที่รองรับ'
-                        })
-                    uploaded_file = UploadedFile.objects.create(
-                        name=file.name,
-                        file=file,
-                        uploaded_by=request.user
-
-                    )
-                    uploaded_files.append({
-                        'id': uploaded_file.id,
-                        'name': uploaded_file.name,
-                        'timestamp': uploaded_file.uploaded_at.isoformat(),
-                    })
-                except Exception as e:
-                    return JsonResponse({
-                        'success': False,
-                        'error': f'ไม่สามารถอัปโหลดไฟล์ {file.name} ได้: {str(e)}'
-                    })
+            # Process files through the upload service
+            result = process_uploaded_files(files, request.user)
+            
+            if not result['success']:
+                return JsonResponse({
+                    'success': False,
+                    'error': result['error']
+                })
             
             # Get all files after upload for immediate display
-            all_files = list(UploadedFile.objects.values('id', 'name', 'uploaded_at'))
+            all_files = get_all_uploaded_files()
             return JsonResponse({
                 'success': True, 
-                'files': uploaded_files,
+                'files': result['uploaded_files'],
                 'allFiles': all_files,
-                'count': UploadedFile.objects.count()
+                'count': get_uploaded_files_count()
             })
         except Exception as e:
             return JsonResponse({
@@ -91,37 +88,21 @@ def delete_uploaded_file(request):
     if not file_id:
         return JsonResponse({'success': False, 'message': 'Missing file ID'})
 
-    try:
-        file = UploadedFile.objects.get(id=file_id)
-        file.file.delete()  # ลบไฟล์จริงจาก disk ด้วย
-        file.delete()       # ลบ record ออกจาก database
-        return JsonResponse({'success': True})
-    except UploadedFile.DoesNotExist:
-        return JsonResponse({'success': False, 'message': 'File not found'})
+    result = delete_uploaded_file_service(file_id, request.user)
+    return JsonResponse(result)
 
 @permission_required('main.delete_uploadedfile', raise_exception=True)
 @login_required
 @require_POST
 def delete_all_files(request):
-    try:
-        count = 0
-        user = request.user
-
-        if (user.is_staff):
-            upfiles = UploadedFile.objects.all()
-        else :
-            upfiles = UploadedFile.objects.filter(user)
-
-        for obj in upfiles:
-            print(f"🧹 ลบ record id: {obj.id} | file: {obj.file.name}")
-            if obj.file:
-                obj.file.delete(save=False)  # ✅ ลบจาก disk
-            obj.delete()  # ✅ ลบจาก DB
-            count += 1
+    result = delete_all_uploaded_files_service(request.user)
+    if result['success']:
         clear_all_caches()
-        return JsonResponse({"success": True, "message": f"ลบ {count} ไฟล์เรียบร้อย"})
-    except Exception as e:
-        return JsonResponse({"success": False, "message": str(e)})
+        return JsonResponse({
+            'success': True,
+            'message': f'ลบ {result["count"]} ไฟล์เรียบร้อย'
+        })
+    return JsonResponse(result)
     
 @login_required
 @require_POST
@@ -132,6 +113,3 @@ def logout_view(request):
         clear_all_caches()
     logout(request)
     return redirect('/')
-
-# def period(request):
-#     return JsonResponse(period_min_max())
