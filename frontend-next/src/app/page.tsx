@@ -17,6 +17,7 @@ export default function DashboardPage() {
   const [currentDates, setCurrentDates] = useState<any[]>([{ startDate: '2025-01-01', endDate: '2025-04-30' }]);
   const [analysisData, setAnalysisData] = useState<any>(null);
   const [loadingAnalysis, setLoadingAnalysis] = useState(false);
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const router = useRouter();
 
   useEffect(() => {
@@ -24,18 +25,18 @@ export default function DashboardPage() {
       const token = localStorage.getItem('access_token');
       const storedUser = localStorage.getItem('username');
       if (storedUser) setUsername(storedUser);
-      
+
       if (!token) {
         router.push('/login');
         return;
       }
 
       try {
-        const res = await fetch('/backend/api/index/', {
+        const res = await fetch(`${API_BASE}/api/index/`, {
           headers: { 'Authorization': `Bearer ${token}` },
           cache: 'no-store'
         });
-        
+
         const contentType = res.headers.get('content-type') || '';
         if (res.ok && !res.redirected && contentType.includes('application/json')) {
           const data = await res.json();
@@ -64,7 +65,7 @@ export default function DashboardPage() {
     try {
       const token = localStorage.getItem('access_token');
       if (token) {
-        await fetch('/backend/api/auth/logout/', {
+        await fetch(`${API_BASE}/api/auth/logout/`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -83,7 +84,7 @@ export default function DashboardPage() {
     setLoadingAnalysis(true);
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch('/backend/analyze/', {
+      const res = await fetch(`${API_BASE}/analyze/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -119,9 +120,9 @@ export default function DashboardPage() {
     <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-900 font-sans">
       {/* Sidebar Area */}
       <div className={`transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-full lg:w-96' : 'w-0 overflow-hidden'}`}>
-        <Sidebar 
-          isOpen={isSidebarOpen} 
-          onToggle={() => setIsSidebarOpen(!isSidebarOpen)} 
+        <Sidebar
+          isOpen={isSidebarOpen}
+          onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
           onFilesSelected={(files) => console.log('Files selected:', files)}
           onStart={() => {
             handleAnalyze('top-center', [{ startDate: '2025-01-01', endDate: '2025-04-30' }], '');
@@ -131,18 +132,18 @@ export default function DashboardPage() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden bg-[#f7f9fa]">
-        <Header 
-          username={username} 
-          role={role} 
+        <Header
+          username={username}
+          role={role}
           onLogout={handleLogout}
           isSidebarOpen={isSidebarOpen}
           onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
         />
-        
+
         <div className="flex-1 overflow-y-auto pb-10">
-          <AnalysisActions 
-            actions={actions} 
-            onActionSelect={(id, date, wc) => handleAnalyze(id, date, wc || '')} 
+          <AnalysisActions
+            actions={actions}
+            onActionSelect={(id, date, wc) => handleAnalyze(id, date, wc || '')}
             loading={loadingAnalysis}
           />
           {analysisData && (
