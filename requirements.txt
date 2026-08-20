@@ -7,3 +7,4 @@ python-dotenv
 dj_database_url
 gunicorn
 whitenoise
+django-cors-headers
