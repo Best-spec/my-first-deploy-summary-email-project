@@ -1,11 +1,9 @@
 django
-gunicorn
-psycopg2-binary
-whitenoise
-pandas
-dj_database_url
-pytest
-dotenv
 djangorestframework
 djangorestframework-simplejwt
-polars
+pandas
+openpyxl
+python-dotenv
+dj_database_url
+gunicorn
+whitenoise
