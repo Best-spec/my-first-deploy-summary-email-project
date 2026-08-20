@@ -74,7 +74,7 @@ def cal_TotalMonth(date, Web_Commerce):
                     "total Email": inquiry_total + feedback + packages + appointment + appointment_recommended,
                     '%Total Inquiry': 0, 
                     '%Total Appointment': 0, 
-                    '%_webCommerce': 0
+                    # '%_webCommerce': 0
                 })  
         
         
@@ -90,7 +90,7 @@ def cal_TotalMonth(date, Web_Commerce):
             "packages": sum(item["packages"] for item in summary),
             "appointment": sum(item["appointment"] for item in summary),
             "appointment recommended": sum(item["appointment recommended"] for item in summary),
-            "Web Commerce": Web_Commerce,
+            # "Web Commerce": Web_Commerce,
         }
 
         total_row_inquiry = {
@@ -116,8 +116,8 @@ def cal_TotalMonth(date, Web_Commerce):
             total_row["feedback"] +
             total_row["packages"] +
             total_row["appointment"] +
-            total_row["appointment recommended"] +
-            total_row["Web Commerce"]
+            total_row["appointment recommended"]
+            # total_row["Web Commerce"]
         )
 
         percent_inquiry = [item for item in cal_percent(percent_dict, total_row["total Email"])]
