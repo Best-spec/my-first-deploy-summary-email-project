@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   trailingSlash: true,
   async rewrites() {
+    if (process.env.VERCEL) {
+      return [];
+    }
     return [
       {
         source: '/backend/:path*',
@@ -12,7 +15,7 @@ const nextConfig: NextConfig = {
         source: '/media/:path*',
         destination: 'http://127.0.0.1:8000/media/:path*'
       }
-    ]
+    ];
   }
 };
 

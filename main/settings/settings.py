@@ -33,7 +33,7 @@ PRODUCTION = os.getenv("PRODUCTION", "False") == "True"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['summary-inquiry.onrender.com','127.0.0.1', 'whale-app-ufaiu.ondigitalocean.app','localhost:3001']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
