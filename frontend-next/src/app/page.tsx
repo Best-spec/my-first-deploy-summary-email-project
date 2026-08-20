@@ -13,6 +13,8 @@ export default function DashboardPage() {
   const [username, setUsername] = useState('User');
   const [role, setRole] = useState('User');
   const [actions, setActions] = useState([]);
+  const [currentActionId, setCurrentActionId] = useState<string>('top-center');
+  const [currentDates, setCurrentDates] = useState<any[]>([{ startDate: '2025-01-01', endDate: '2025-04-30' }]);
   const [analysisData, setAnalysisData] = useState<any>(null);
   const [loadingAnalysis, setLoadingAnalysis] = useState(false);
   const router = useRouter();
@@ -34,7 +36,8 @@ export default function DashboardPage() {
           cache: 'no-store'
         });
         
-        if (res.ok) {
+        const contentType = res.headers.get('content-type') || '';
+        if (res.ok && !res.redirected && contentType.includes('application/json')) {
           const data = await res.json();
           if (data.permissions) {
             setUsername(data.permissions.username);
@@ -44,7 +47,8 @@ export default function DashboardPage() {
           if (data.analysis_actions) {
             setActions(data.analysis_actions);
           }
-        } else if (res.status === 401 || res.status === 403) {
+        } else {
+          // Token expired or server returned non-JSON redirect
           localStorage.removeItem('access_token');
           router.push('/login');
         }
@@ -74,6 +78,8 @@ export default function DashboardPage() {
   };
 
   const handleAnalyze = async (actionId: string, date: any[], webCommerce: string) => {
+    setCurrentActionId(actionId);
+    setCurrentDates(date);
     setLoadingAnalysis(true);
     try {
       const token = localStorage.getItem('access_token');
@@ -86,17 +92,21 @@ export default function DashboardPage() {
         body: JSON.stringify({
           action_id: actionId,
           date: date,
-          Web_Commerce: webCommerce
+          Web_Commerce: Array.isArray(webCommerce) ? webCommerce : [webCommerce || '', webCommerce || '']
         })
       });
 
-      if (res.ok) {
+      const contentType = res.headers.get('content-type') || '';
+      if (res.ok && !res.redirected && contentType.includes('application/json')) {
         const result = await res.json();
         if (result.status === 'success') {
           setAnalysisData(result.data);
         } else {
           console.error("API error:", result);
         }
+      } else if (res.redirected || res.status === 401 || res.status === 403) {
+        localStorage.removeItem('access_token');
+        router.push('/login');
       }
     } catch (error) {
       console.error("Failed to analyze", error);
@@ -113,7 +123,9 @@ export default function DashboardPage() {
           isOpen={isSidebarOpen} 
           onToggle={() => setIsSidebarOpen(!isSidebarOpen)} 
           onFilesSelected={(files) => console.log('Files selected:', files)}
-          onStart={() => console.log('Start analysis')}
+          onStart={() => {
+            handleAnalyze('top-center', [{ startDate: '2025-01-01', endDate: '2025-04-30' }], '');
+          }}
         />
       </div>
 
@@ -123,18 +135,19 @@ export default function DashboardPage() {
           username={username} 
           role={role} 
           onLogout={handleLogout}
+          isSidebarOpen={isSidebarOpen}
           onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
         />
         
         <div className="flex-1 overflow-y-auto pb-10">
           <AnalysisActions 
             actions={actions} 
-            onActionSelect={(id, date, wc) => handleAnalyze(id, date, wc)} 
+            onActionSelect={(id, date, wc) => handleAnalyze(id, date, wc || '')} 
             loading={loadingAnalysis}
           />
           {analysisData && (
             <>
-              <Charts data={analysisData} />
+              <Charts data={analysisData} actionId={currentActionId} dateRanges={currentDates} />
               <KpiCards data={analysisData.table} />
             </>
           )}

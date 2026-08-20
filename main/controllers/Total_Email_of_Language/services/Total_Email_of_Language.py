@@ -25,7 +25,10 @@ def cal_TotalMonth(date, Web_Commerce):
 
         feedback_map = {row["Language"]: row for row in total_feedback_package if row["Language"] != "Total"}
         appointment_map = {row["Language"]: row for row in total_appointment if row["Language"] != "Total"}
-        Web_Commerce = int(Web_Commerce)
+        try:
+            Web_Commerce = int(Web_Commerce) if Web_Commerce else 0
+        except (ValueError, TypeError):
+            Web_Commerce = 0
         
         for row in total_inquiry:
             lang = row.get("language")

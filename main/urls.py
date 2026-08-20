@@ -20,6 +20,7 @@ urlpatterns = [
     path('login/', django_auth_views.LoginView.as_view(template_name='auth/login.html'), name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('aggregate', AggregateView.as_view(), name='metrics-aggregate'),
+    path('aggregate/', AggregateView.as_view(), name='metrics-aggregate-slash'),
 
     # new refector api for frontend integration
     path('api/index/', index_views.index, name='api_index'),

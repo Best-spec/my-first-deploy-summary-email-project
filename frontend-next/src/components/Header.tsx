@@ -1,14 +1,15 @@
 import React from 'react';
-import { LogOut, ChevronsLeft } from 'lucide-react';
+import { LogOut, ChevronsRight } from 'lucide-react';
 
 interface HeaderProps {
   username?: string;
   role?: string;
   onLogout?: () => void;
   onToggleSidebar?: () => void;
+  isSidebarOpen?: boolean;
 }
 
-export default function Header({ username = 'User', role = 'Admin', onLogout, onToggleSidebar }: HeaderProps) {
+export default function Header({ username = 'User', role = 'Admin', onLogout, onToggleSidebar, isSidebarOpen = true }: HeaderProps) {
   const initial = username ? username.charAt(0).toUpperCase() : 'U';
 
   return (
@@ -17,12 +18,15 @@ export default function Header({ username = 'User', role = 'Admin', onLogout, on
         <div className="flex justify-between items-center h-16">
           {/* Logo/Brand */}
           <div className="flex gap-4 items-center">
-            <div 
-              onClick={onToggleSidebar}
-              className="flex items-center justify-center p-1 transition-opacity duration-300 opacity-100 hover:bg-gray-300 rounded-lg cursor-pointer"
-            >
-              <ChevronsLeft className="w-8 h-8 text-black" />
-            </div>
+            {!isSidebarOpen && (
+              <div
+                onClick={onToggleSidebar}
+                className="flex items-center justify-center p-1 transition-opacity duration-300 opacity-100 hover:bg-gray-300 rounded-lg cursor-pointer"
+                title="แสดง Sidebar"
+              >
+                <ChevronsRight className="w-8 h-8 text-black" />
+              </div>
+            )}
             <div className="flex items-center">
               <button onClick={() => window.location.reload()}>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -31,7 +35,7 @@ export default function Header({ username = 'User', role = 'Admin', onLogout, on
               </button>
             </div>
           </div>
-          
+
           {/* User Info and Logout */}
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-3">
@@ -43,8 +47,8 @@ export default function Header({ username = 'User', role = 'Admin', onLogout, on
                 <p className="text-sm font-bold text-gray-900">{username}</p>
               </div>
             </div>
-            
-            <button 
+
+            <button
               onClick={onLogout}
               className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg hidden lg:flex items-center gap-2"
             >
