@@ -8,6 +8,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -16,7 +17,7 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const res = await fetch('/backend/api/auth/login/', {
+      const res = await fetch(`${API_BASE}/api/auth/login/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -30,7 +31,7 @@ export default function LoginPage() {
       }
 
       const data = await res.json();
-      
+
       // Save token to localStorage for now
       if (data.access) {
         localStorage.setItem('access_token', data.access);
@@ -44,7 +45,7 @@ export default function LoginPage() {
 
       // Redirect to dashboard
       router.push('/');
-      
+
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -59,7 +60,7 @@ export default function LoginPage() {
           <h1 className="text-4xl font-bold text-gray-800 mb-2">เข้าสู่ระบบ</h1>
           <p className="text-gray-600">กรุณากรอกข้อมูลเพื่อเข้าสู่ระบบ</p>
         </div>
-        
+
         <form className="space-y-6" onSubmit={handleLogin}>
           {error && (
             <div className="bg-red-100 text-red-700 px-4 py-3 rounded-xl border border-red-200">
@@ -71,8 +72,8 @@ export default function LoginPage() {
             <label className="block text-sm font-semibold text-gray-700" htmlFor="username">
               ชื่อผู้ใช้
             </label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               id="username"
               name="username"
               value={username}
@@ -82,13 +83,13 @@ export default function LoginPage() {
               required
             />
           </div>
-          
+
           <div className="space-y-2">
             <label className="block text-sm font-semibold text-gray-700" htmlFor="password">
               รหัสผ่าน
             </label>
-            <input 
-              type="password" 
+            <input
+              type="password"
               id="password"
               name="password"
               value={password}
@@ -98,9 +99,9 @@ export default function LoginPage() {
               required
             />
           </div>
-          
-          <button 
-            type="submit" 
+
+          <button
+            type="submit"
             disabled={loading}
             className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl active:scale-95 disabled:opacity-70 disabled:hover:scale-100"
           >
