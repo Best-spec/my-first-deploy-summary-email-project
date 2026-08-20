@@ -1,0 +1,32 @@
+info:
+  name: login
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://127.0.0.1:8000/api/auth/login/
+  body:
+    type: json
+    data: |-
+      {
+        "username": "best",
+        "password": 1234
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        if (res.status === 200) {
+          const data = res.body;
+          bru.setEnvVar("accessToken", data.access);
+          console.log("Token saved:", data.access);
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

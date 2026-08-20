@@ -33,7 +33,7 @@ PRODUCTION = os.getenv("PRODUCTION", "False") == "True"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['summary-inquiry.onrender.com','127.0.0.1', 'whale-app-ufaiu.ondigitalocean.app']
+ALLOWED_HOSTS = ['summary-inquiry.onrender.com','127.0.0.1', 'whale-app-ufaiu.ondigitalocean.app','localhost:3001']
 
 
 # Application definition
@@ -56,6 +56,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'main.middleware.jwt_middleware.JWTAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',

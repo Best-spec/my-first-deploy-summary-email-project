@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "@tailwindcss/oxide-linux-x64-gnu": "^4.3.3"
+  }
+}
