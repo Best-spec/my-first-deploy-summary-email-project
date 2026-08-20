@@ -32,6 +32,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, onToggle, onStart }: SidebarProps) {
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const [files, setFiles] = useState<UploadedFileItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -52,7 +53,7 @@ export default function Sidebar({ isOpen, onToggle, onStart }: SidebarProps) {
   const loadFiles = async () => {
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch('/backend/load_files/', {
+      const res = await fetch(`${API_BASE}/load_files/`, {
         headers: token ? { 'Authorization': `Bearer ${token}` } : {},
         cache: 'no-store'
       });
@@ -87,7 +88,7 @@ export default function Sidebar({ isOpen, onToggle, onStart }: SidebarProps) {
 
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch('/backend/upload/', {
+      const res = await fetch(`${API_BASE}/upload/`, {
         method: 'POST',
         headers: token ? { 'Authorization': `Bearer ${token}` } : {},
         body: formData,
@@ -123,7 +124,7 @@ export default function Sidebar({ isOpen, onToggle, onStart }: SidebarProps) {
       const formData = new FormData();
       formData.append('file_id', String(fileId));
 
-      const res = await fetch('/backend/delete_file/', {
+      const res = await fetch(`${API_BASE}/delete_file/`, {
         method: 'POST',
         headers: token ? { 'Authorization': `Bearer ${token}` } : {},
         body: formData,
@@ -155,7 +156,7 @@ export default function Sidebar({ isOpen, onToggle, onStart }: SidebarProps) {
     setDeletingAll(true);
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch('/backend/delete_all_files/', {
+      const res = await fetch(`${API_BASE}/delete_all_files/`, {
         method: 'POST',
         headers: token ? { 'Authorization': `Bearer ${token}` } : {},
       });
@@ -347,7 +348,7 @@ export default function Sidebar({ isOpen, onToggle, onStart }: SidebarProps) {
                     {renderFileIcon(file.name)}
                     <div className="min-w-0 flex-1">
                       <a
-                        href={file.url.startsWith('/') ? `/backend${file.url}` : file.url}
+                        href={file.url.startsWith('/') ? `${API_BASE}${file.url}` : file.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="font-medium text-xs text-slate-800 hover:text-indigo-600 truncate block leading-tight"

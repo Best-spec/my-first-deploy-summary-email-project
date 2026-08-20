@@ -637,6 +637,7 @@ function GroupedBarChart({
 
 /* Timeline Line Chart component connecting to /backend/aggregate/ using Chart.js Line */
 function TimelineLineChart({ dateRanges }: { dateRanges?: any[] }) {
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const [period, setPeriod] = useState('day');
   const [linePoints, setLinePoints] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -648,7 +649,7 @@ function TimelineLineChart({ dateRanges }: { dateRanges?: any[] }) {
         const token = localStorage.getItem('access_token');
         const range = dateRanges?.[0] || { startDate: '2025-01-01', endDate: '2025-04-30' };
 
-        const res = await fetch('/backend/aggregate/', {
+        const res = await fetch(`${API_BASE}/aggregate/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
